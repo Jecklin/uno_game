@@ -2,6 +2,7 @@
 #include <iostream>
 #include <cstdlib>
 #include <ctime>
+#include "CTest.h"
 using namespace std;
 
 CGameLoop::CGameLoop()
@@ -60,9 +61,16 @@ void CGameLoop::GameInit()
 void CGameLoop::GameLoop()
 {
     cout << "**********  Game Loop  **********" << endl;
+    CPlayer player_cur;
+    CCardBox::IterBox it_box;
+    CCardInfo out_card;
+    CCardInfo index_card;
+    bool allow_out = false;
+    bool allow_add = true;
+
     do
     {
-        CPlayer player_cur= this->m_players[this->m_current];
+        player_cur= this->m_players[this->m_current];
         //判定当前玩家是否为胜者
         if (player_cur.IsEmpty())
         {
@@ -77,11 +85,6 @@ void CGameLoop::GameLoop()
             ;
         }
 
-        CCardBox::IterBox it_box;
-        CCardInfo out_card;
-        CCardInfo index_card;
-        bool allow_out = false;
-
         //查询当前玩家牌库
         for (it_box = player_cur.GetItBegin(); it_box != player_cur.GetItEnd(); ++it_box)
         {
@@ -92,6 +95,7 @@ void CGameLoop::GameLoop()
               ||(index_card.GetId() == this->m_endcard.GetId()))
             {
                 allow_out = true;
+                allow_add = false;
                 out_card = index_card;
                 break;
             }
@@ -104,6 +108,17 @@ void CGameLoop::GameLoop()
         //玩家有牌可出
         if (allow_out)
         {
+            //*测试
+            CTest test;
+            cout << "Player out card :  "
+                 << player_cur.GetPlayerName() << " ";
+            test.PrintCard(out_card);
+            cout << endl;
+
+            cout << "Player now cards are: "<< endl;
+            test.PrintBox(player_cur);
+            //********************//
+
             this->m_box_hasopen.AddCard(out_card);
             this->m_endcard = out_card;
             player_cur.RemoveCard(out_card);
@@ -116,15 +131,10 @@ void CGameLoop::GameLoop()
             {
                 ;
             }
-
-            //*测试
-            cout << "Player out card :  "
-                 << player_cur.GetPlayerName() << " ";
-            this->PrintCard(out_card);
-            cout << endl;
-
+            allow_out = false;
+            allow_add = true;
         }
-        else
+        else if (allow_add)
         {
             CCardInfo add_card;
             CCardBox::IterBox it_not_box = this->m_box_notopen.GetItBegin();
@@ -136,11 +146,22 @@ void CGameLoop::GameLoop()
             player_cur.AddCard(add_card);
             this->m_box_notopen.RemoveCard(add_card);
 
+
             //*测试
+            CTest test;
             cout << "Player in card :  "
                  << player_cur.GetPlayerName() << " ";
-            this->PrintCard(add_card);
-            cout << endl;
+            test.PrintCard(add_card);
+
+            cout << "Player now cards are: "<< endl;
+            test.PrintBox(player_cur);
+
+            allow_out = false;
+            allow_add = true;
+        }
+        else
+        {
+            ;
         }
 
         this->m_current += this->m_toward;
@@ -192,10 +213,10 @@ void CGameLoop::InitPlayerName()
 {
     cout << "**********  Init Player Name  **********" << endl;
 
-    this->m_players[0].SetPlayerName("Jack");
-    this->m_players[1].SetPlayerName("Tom");
-    this->m_players[2].SetPlayerName("Lili");
-    this->m_players[3].SetPlayerName("Anna");
+    this->m_players[0].SetPlayerName("*Zero*");
+    this->m_players[1].SetPlayerName("*One*");
+    this->m_players[2].SetPlayerName("*Two*");
+    this->m_players[3].SetPlayerName("*Three*");
 
     //*测试
     cout << "players name are:" << endl;
@@ -214,9 +235,9 @@ void CGameLoop::InitNopenBox()
     this->m_box_notopen.InitNopenBox();
 
     //*测试
+    CTest test;
     cout << "the not open box's cards are:" << endl;
-    this->PrintBox(this->m_box_notopen);
-    cout << endl;
+    test.PrintBox(this->m_box_notopen);
 
 }
 
@@ -249,9 +270,9 @@ void CGameLoop::RandNopenBox()
     }
 
     //*测试
+    CTest test;
     cout << "the not open box's cards are:" << endl;
-    this->PrintBox(this->m_box_notopen);
-    cout << endl;
+    test.PrintBox(this->m_box_notopen);
 }
 
 void CGameLoop::InitEndCard()
@@ -271,10 +292,10 @@ void CGameLoop::InitEndCard()
     this->m_endcard = *it_box;
 
     //*测试
+    CTest test;
     cout << "the end card is : ";
-    this->PrintCard(this->m_endcard);
+    test.PrintCard(this->m_endcard);
     cout << endl;
-
 }
 
 void CGameLoop::InitBanker()
@@ -309,16 +330,14 @@ void CGameLoop::RoundOne()
     }
 
     //*测试
-    cout << "After one round, player's box now : " << endl;
-
+    CTest test;
+    cout << "After one round : " << endl;
     for (int i = 0; i < 4; ++i)
     {
-        CPlayer cplayer;
-        cplayer = this->m_players[i];
-        this->PrintPlayer(cplayer);
-        cout << endl;
+        CPlayer player;
+        player = this->m_players[i];
+        test.PrintPlayer(player);
     }
-    cout << endl;
 }
 
 void CGameLoop::FunctionCardAction(const CCardInfo &card)
@@ -358,7 +377,6 @@ void CGameLoop::FunctionCardAction(const CCardInfo &card)
 
 void CGameLoop::ActionCardIn(int num)
 {
-    cout << "**********  Action Card In  **********" << endl;
     int action_state = this->m_current + this->m_toward;
     CPlayer action_player = this->m_players[action_state];
 
@@ -374,17 +392,17 @@ void CGameLoop::ActionCardIn(int num)
         this->m_box_notopen.RemoveCard(action_card);
         action_player.AddCard(action_card);
     }
+    cout << "** Action ** --- Add Card" << num << " times" << endl;
 }
 
 void CGameLoop::ActionCardStop()
 {
-    cout << "**********  Action Card Stop  **********" << endl;
     m_current += m_toward;
+    cout << "** Action ** --- Stop" << endl;
 }
 
 void CGameLoop::ActionCardReverse()
 {
-    cout << "**********  Action Card Reverse  **********" << endl;
     if (this->m_toward == 1)
     {
         this->m_toward = -1;
@@ -397,11 +415,11 @@ void CGameLoop::ActionCardReverse()
     {
         ;
     }
+    cout << "** Action ** --- Reverse" << endl;
 }
 
 void CGameLoop::ActionCardChangeColor()
 {
-    cout << "**********  Action Card Change Color  **********" << endl;
     CPlayer action_player = this->m_players[this->m_current];
 
     CCardBox::IterBox it_box = action_player.GetItBegin();
@@ -432,11 +450,11 @@ void CGameLoop::ActionCardChangeColor()
     }
 
     int max_color_num = 0;
-    for (int index = 0; index < 4; ++index)
+    for (int index = 1; index < 4; ++index)
     {
-        if (color[index + 1] > color[index])
+        if (color[index] > color[index - 1])
         {
-            max_color_num = index + 1;
+            max_color_num = index;
         }
     }
 
@@ -460,6 +478,8 @@ void CGameLoop::ActionCardChangeColor()
     {
         ;
     }
+
+    cout << "** Action ** --- Change Color " << endl;
 }
 
 void CGameLoop::RecycleOpenBox()
@@ -471,43 +491,9 @@ void CGameLoop::RecycleOpenBox()
     for (it_open = this->m_box_hasopen.GetItBegin(); it_open != this->m_box_hasopen.GetItEnd(); ++it_open)
     {
         index_card = *it_open;
-        this->m_box_hasopen.RemoveCard(index_card);
         this->m_box_notopen.AddCard(index_card);
+        this->m_box_hasopen.RemoveCard(index_card);
     }
     this->RandNopenBox();
-}
-
-void CGameLoop::PrintCard(CCardInfo &card)
-{
-    cout << (ECardAction)card.GetAction() << " "
-         << (ECardColor)card.GetColor() << " "
-         << (ECardId)card.GetId() << "\t";
-}
-
-void CGameLoop::PrintBox(CCardBox &box)
-{
-    CCardBox::IterBox it;
-    CCardInfo card;
-    cout << "box size: " << box.GetSize() << endl;
-    for (it = box.GetItBegin(); it != box.GetItEnd(); ++it)
-    {
-        card = *it;
-        this->PrintCard(card);
-    }
-}
-
-void CGameLoop::PrintPlayer(CPlayer &player)
-{
-    CCardBox::IterBox it;
-    CCardInfo card;
-    cout << "name: " << player.GetPlayerName() << " "
-         << "score:" << player.GetPlayerScore() << " "
-         << "box size: " << player.GetSize() << endl;
-    cout << "cards:" << endl;
-    for (it = player.GetItBegin(); it != player.GetItEnd(); ++it)
-    {
-        card = *it;
-        this->PrintCard(card);
-    }
 }
 

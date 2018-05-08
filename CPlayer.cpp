@@ -12,7 +12,7 @@ CPlayer::~CPlayer()
     ;
 }
 
-CPlayer::CPlayer(const CPlayer &other)
+CPlayer::CPlayer(const CPlayer &other):CCardBox(other)
 {
     *this = other;
 }

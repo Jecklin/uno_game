@@ -33,13 +33,6 @@ private:
     void ActionCardChangeColor();
     void RecycleOpenBox();
 
-//测试
-private:
-    void PrintCard(CCardInfo &card);
-    void PrintBox(CCardBox &box);
-    void PrintPlayer(CPlayer &player);
-
-
 private:
     int          m_player_count;                 //玩家人数
     int          m_banker_location;              //庄家位置

@@ -14,6 +14,7 @@ CCardBox::~CCardBox()
 }
 
 CCardBox::CCardBox(const CCardBox &other)
+    :m_box(other.m_box)
 {
     *this = other;
 }

@@ -27,7 +27,6 @@ enum ECardColor
 
 enum ECardId
 {
-    ECI_Invalid  =   -1 ,
     ECI_Zero     =   0  ,
     ECI_One             ,
     ECI_Two             ,
@@ -42,7 +41,8 @@ enum ECardId
     ECI_Resverse        ,
     ECI_Stop            ,
     ECI_Black           ,
-    ECI_BlackFour
+    ECI_BlackFour       ,
+    ECI_Invalid  =   -1
 
 };
 #endif // DATATYPEDEFINE_H
