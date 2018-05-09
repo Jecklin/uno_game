@@ -71,37 +71,3 @@ ECardAction CCardInfo::GetAction() const
 {
     return this->m_action;
 }
-
-void CCardInfo::SetColor(ECardColor color)
-{
-    this->m_color = color;
-}
-
-void CCardInfo::SetId(ECardId id)
-{
-    this->m_id = id;
-}
-
-void CCardInfo::SetAction(ECardAction action)
-{
-    this->m_action = action;
-}
-
-bool CCardInfo::IsSimilar(const CCardInfo &cardinfo)
-{
-    bool is_similar = false;
-    if (cardinfo.m_action == this->m_action)
-    {
-        is_similar = true;
-    }
-    else if (cardinfo.m_color == this->m_color)
-    {
-        is_similar = true;
-    }
-    else if (cardinfo.m_id == this->m_id)
-    {
-        is_similar = true;
-    }
-
-    return is_similar;
-}

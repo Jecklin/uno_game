@@ -20,8 +20,8 @@ public:
     void AddCard(const CCardInfo &card);
     void RemoveCard(const CCardInfo &card);
 
-    int GetSize();
-    bool IsEmpty();
+    int GetSize() const;
+    bool IsEmpty() const;
     IterBox GetItBegin();
     IterBox GetItEnd();
 

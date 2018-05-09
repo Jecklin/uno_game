@@ -1,5 +1,6 @@
 #include <cstdlib>
 #include <algorithm>
+#include <ctime>
 #include "CCardBox.h"
 
 CCardBox::CCardBox()
@@ -52,12 +53,12 @@ void CCardBox::RemoveCard(const CCardInfo &card)
     }
 }
 
-int CCardBox::GetSize()
+int CCardBox::GetSize() const
 {
     return this->m_box.size();
 }
 
-bool CCardBox::IsEmpty()
+bool CCardBox::IsEmpty() const
 {
     return this->m_box.empty();
 }
@@ -163,6 +164,28 @@ void CCardBox::InitNopenBox()
 
 void CCardBox::RandNopenBox()
 {
-;
+    IterBox it_box1 = this->m_box.begin();
+    IterBox it_box2 = this->m_box.end();
+    CCardInfo index_card;
+    int len_nbox = this->m_box.size();
+    int index_sround;
+
+    srand((unsigned int)time(nullptr));
+    for (int change = 0; change < len_nbox - 1; ++change)
+    {
+        index_sround = rand()%(len_nbox - 1);
+        it_box1 = this->m_box.begin();
+        it_box2 = this->m_box.end();
+        --it_box2;
+
+        for (int i = 0; i < index_sround; ++i)
+        {
+            ++it_box1;
+            --it_box2;
+        }
+        index_card = *it_box1;
+        *it_box1 = *it_box2;
+        *it_box2 = index_card;
+    }
 }
 
