@@ -164,25 +164,29 @@ void CCardBox::InitNopenBox()
 
 void CCardBox::RandNopenBox()
 {
-    IterBox it_box1 = this->m_box.begin();
-    IterBox it_box2 = this->m_box.end();
+    IterBox it_box1;
+    IterBox it_box2;
     CCardInfo index_card;
-    int len_nbox = this->m_box.size();
-    int index_sround;
+    int index_sround = 0;
 
     srand((unsigned int)time(nullptr));
-    for (int change = 0; change < len_nbox - 1; ++change)
+    for (unsigned int change = 0; change < this->m_box.size(); ++change)
     {
-        index_sround = rand()%(len_nbox - 1);
+        index_sround = rand()%(this->m_box.size() - 1);
         it_box1 = this->m_box.begin();
-        it_box2 = this->m_box.end();
-        --it_box2;
+        it_box2 = this->m_box.begin();
 
         for (int i = 0; i < index_sround; ++i)
         {
             ++it_box1;
-            --it_box2;
         }
+
+        index_sround = rand()%(this->m_box.size() - 1);
+        for (int i = 0; i < index_sround; ++i)
+        {
+            ++it_box2;
+        }
+
         index_card = *it_box1;
         *it_box1 = *it_box2;
         *it_box2 = index_card;

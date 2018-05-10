@@ -17,23 +17,23 @@ void CTest::PrintCard(CCardInfo &card)
     string color;
     if (card.GetColor() == ECC_Red)
     {
-        color = "red";
+        color = "R";
     }
     else if (card.GetColor() == ECC_Yellow)
     {
-        color = "yellow";
+        color = "Y";
     }
     else if (card.GetColor() == ECC_Blue)
     {
-        color = "blue";
+        color = "B";
     }
     else if (card.GetColor() == ECC_Green)
     {
-        color = "green";
+        color = "G";
     }
     else if (card.GetColor() == ECC_Black)
     {
-        color = "black";
+        color = "BL";
     }
     else
     {
@@ -83,7 +83,7 @@ void CTest::PrintCard(CCardInfo &card)
     }
     else if (card.GetId() == ECI_AddTwo )
     {
-        id = "add_two";
+        id = "add_2";
     }
     else if (card.GetId() == ECI_Resverse )
     {
@@ -99,7 +99,7 @@ void CTest::PrintCard(CCardInfo &card)
     }
     else if (card.GetId() == ECI_BlackFour )
     {
-        id = "black_four";
+        id = "black_4";
     }
     else
     {

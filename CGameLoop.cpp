@@ -53,17 +53,22 @@ void CGameLoop::GameInit()
     this->m_box_notopen.RandNopenBox();
 
     //InitEndCard
-    it_nbox = this->m_box_notopen.GetItBegin();
-    len_nbox = this->m_box_notopen.GetSize();
-
-    srand((unsigned int)time(nullptr));
-    int index_sround = rand()%(len_nbox - 1);
-
-    for (int i = 0; i < index_sround; ++i)
+    bool end_is_black = false;
+    do
     {
-        ++it_nbox;
-    }
-    card_index = *it_nbox;
+        it_nbox = this->m_box_notopen.GetItBegin();
+        len_nbox = this->m_box_notopen.GetSize();
+
+        srand((unsigned int)time(nullptr));
+        int index_sround = rand()%(len_nbox - 1);
+
+        for (int i = 0; i < index_sround; ++i)
+        {
+            ++it_nbox;
+        }
+        card_index = *it_nbox;
+
+    }while(end_is_black);
 
     this->m_endcard.SetAction(card_index.GetAction());
     this->m_endcard.SetColor(card_index.GetColor());
@@ -113,7 +118,6 @@ void CGameLoop::GameLoop()
     CCardInfo out_card;
     CCardInfo index_card;
     bool allow_out = false;
-    bool allow_add = true;
     do
     {
         pplayer = &this->m_players[this->m_current];
@@ -133,12 +137,10 @@ void CGameLoop::GameLoop()
         {
             index_card = *it_box;
 
-            if ((index_card.GetAction() & this->m_endcard.GetAction())
-              ||(index_card.GetColor() & this->m_endcard.GetColor())
-              ||(index_card.GetId() == this->m_endcard.GetId()))
+            if ( (index_card.GetColor() & this->m_endcard.GetColor())
+                 ||(index_card.GetId() == this->m_endcard.GetId()))
             {
                 allow_out = true;
-                allow_add = false;
                 out_card = index_card;
                 break;
             }
@@ -162,6 +164,13 @@ void CGameLoop::GameLoop()
             //玩家牌库减牌
             pplayer->RemoveCard(out_card);
 
+            //*********** 测试 ************//
+            cout << pplayer->GetPlayerName() << " Out card: ";
+            CTest test;
+            test.PrintCard(out_card);
+            cout << endl;
+            //****************************//
+
             if (out_card.GetAction() & 0xF)
             {
                 this->FunctionCardAction(out_card);
@@ -171,11 +180,10 @@ void CGameLoop::GameLoop()
                 ;
             }
             allow_out = false;
-            allow_add = true;
         }
 
         //玩家摸牌
-        else if (allow_add)
+        else
         {
             CCardInfo add_card;
             CCardBox::IterBox it_not_box = this->m_box_notopen.GetItBegin();
@@ -187,12 +195,12 @@ void CGameLoop::GameLoop()
             pplayer->AddCard(add_card);
             this->m_box_notopen.RemoveCard(add_card);
 
-            allow_out = false;
-            allow_add = true;
-        }
-        else
-        {
-            ;
+            //*********** 测试 ************//
+            cout << pplayer->GetPlayerName() << " In card: ";
+            CTest test;
+            test.PrintCard(add_card);
+            cout << endl;
+            //****************************//
         }
 
         //设置下一玩家
@@ -239,26 +247,25 @@ void CGameLoop::GameOver()
 
 void CGameLoop::FunctionCardAction(const CCardInfo &card)
 {
-    ECardId index_id = card.GetId();
-    if (index_id == ECI_AddTwo)
+    if (card.GetId() == ECI_AddTwo)
     {
         this->ActionCardIn(2);
         this->ActionCardStop();
     }
-    else if (index_id == ECI_Resverse)
+    else if (card.GetId() == ECI_Resverse)
     {
         this->ActionCardReverse();
     }
-    else if (index_id == ECI_Stop)
+    else if (card.GetId() == ECI_Stop)
     {
         this->ActionCardStop();
     }
-    else if (index_id == ECI_Black)
+    else if (card.GetId() == ECI_Black)
     {
         this->ActionCardChangeColor();
         this->ActionCardStop();
     }
-    else if (index_id == ECI_BlackFour)
+    else if (card.GetId() == ECI_BlackFour)
     {
         this->ActionCardChangeColor();
         this->ActionCardIn(4);
@@ -273,6 +280,20 @@ void CGameLoop::FunctionCardAction(const CCardInfo &card)
 void CGameLoop::ActionCardIn(int num)
 {
     int action_state = this->m_current + this->m_toward;
+
+    if (action_state > this->m_player_count - 1)
+    {
+        action_state -= this->m_player_count;
+    }
+    else if (action_state < 0)
+    {
+        action_state += this->m_player_count;
+    }
+    else
+    {
+        ;
+    }
+
     CPlayer *pplayer_act = &this->m_players[action_state];
     CCardInfo action_card;
     CCardBox::IterBox it_box_not;
@@ -282,18 +303,45 @@ void CGameLoop::ActionCardIn(int num)
         {
             this->RecycleOpenBox();
         }
+
         it_box_not = this->m_box_notopen.GetItBegin();
         action_card = *it_box_not;
-        this->m_box_notopen.RemoveCard(action_card);
+
         pplayer_act->AddCard(action_card);
+        this->m_box_notopen.RemoveCard(action_card);
+
+
+        //*********** 测试 ************//
+        cout << pplayer_act->GetPlayerName() << " In card: ";
+        CTest test;
+        test.PrintCard(action_card);
+        cout << endl;
+        //****************************//
     }
-    cout << "** Action ** --- Add Card" << num << " times" << endl;
+    pplayer_act = nullptr;
 }
 
 void CGameLoop::ActionCardStop()
 {
-    m_current += m_toward;
-    cout << "** Action ** --- Stop" << endl;
+    this->m_current += this->m_toward;
+
+    if (this->m_current > this->m_player_count - 1)
+    {
+        this->m_current -= this->m_player_count;
+    }
+    else if (this->m_current < 0)
+    {
+        this->m_current += this->m_player_count;
+    }
+    else
+    {
+        ;
+    }
+
+    //*********** 测试 ************//
+    cout << this->m_players[m_current].GetPlayerName() << " Stop " << endl;
+    //****************************//
+
 }
 
 void CGameLoop::ActionCardReverse()
@@ -318,62 +366,84 @@ void CGameLoop::ActionCardChangeColor()
     CPlayer *pplayer_act = &this->m_players[this->m_current];
     CCardBox::IterBox it_box = pplayer_act->GetItBegin();
     CCardInfo index_card;
-    int len = pplayer_act->GetSize();
-    int color[4] = {0}; //red,yellow,blue,green
 
-    for (int index = 0; index < len; ++index)
+    int sum_red    = 0;
+    int sum_yellow = 0;
+    int sum_blue   = 0;
+    int sum_green  = 0;
+
+    for (it_box = pplayer_act->GetItBegin(); it_box != pplayer_act->GetItEnd(); ++it_box)
     {
         index_card = *it_box;
         if (index_card.GetColor() == ECC_Red)
         {
-            ++color[0];
+            ++sum_red;
         }
         else if (index_card.GetColor() == ECC_Yellow)
         {
-            ++color[1];
+            ++sum_yellow;
         }
         else if (index_card.GetColor() == ECC_Blue)
         {
-            ++color[2];
+            ++sum_blue;
         }
         else if (index_card.GetColor() == ECC_Green)
         {
-            ++color[3];
+            ++sum_green;
         }
-        ++it_box;
     }
 
-    int max_color_num = 0;
+    int max_color_name = 0;
+    int max_sum = sum_red;
+    int color[4] = {sum_red, sum_yellow, sum_blue, sum_green};
+
     for (int index = 1; index < 4; ++index)
     {
-        if (color[index] > color[index - 1])
+        if (color[index] > max_sum)
         {
-            max_color_num = index;
+            max_color_name = index;
+            max_sum = color[index];
         }
     }
 
-    if (max_color_num == 0)
+    if (max_color_name == 0)
     {
         this->m_endcard.SetColor(ECC_Red);
+
+        //*********** 测试 ************//
+        cout << "Change color to Red" << endl;
+        //****************************//
     }
-    else if(max_color_num == 1)
+    else if(max_color_name == 1)
     {
         this->m_endcard.SetColor(ECC_Yellow);
+
+        //*********** 测试 ************//
+        cout << "Change color to Yellow" << endl;
+        //****************************//
     }
-    else if (max_color_num == 2)
+    else if (max_color_name == 2)
     {
         this->m_endcard.SetColor(ECC_Blue);
+
+        //*********** 测试 ************//
+        cout << "Change color to Blue" << endl;
+        //****************************//
     }
-    else if (max_color_num == 3)
+    else if (max_color_name == 3)
     {
         this->m_endcard.SetColor(ECC_Green);
+
+        //*********** 测试 ************//
+        cout << "Change color to Green" << endl;
+        //****************************//
     }
     else
     {
         ;
     }
 
-    cout << "** Action ** --- Change Color " << endl;
+    pplayer_act = nullptr;
 }
 
 void CGameLoop::RecycleOpenBox()
