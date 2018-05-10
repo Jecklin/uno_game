@@ -114,14 +114,10 @@ void CGameLoop::GameLoop()
 {
     cout << "**********  Game Loop  **********" << endl;
     CPlayer *pplayer = nullptr;
-    CCardBox::IterBox it_box;
-    CCardInfo out_card;
-    CCardInfo index_card;
-    bool allow_out = false;
     do
     {
         pplayer = &this->m_players[this->m_current];
-        //判定当前玩家是否为胜者
+        //**1.判定当前玩家是否为胜者
         if (pplayer->IsEmpty())
         {
             this->m_winner = *pplayer;
@@ -132,78 +128,18 @@ void CGameLoop::GameLoop()
             ;
         }
 
-        //查询当前玩家牌库
-        for (it_box = pplayer->GetItBegin(); it_box != pplayer->GetItEnd(); ++it_box)
+        //**2.玩家出牌
+        if (this->m_current == 0)       //我出牌
         {
-            index_card = *it_box;
-
-            if ( (index_card.GetColor() & this->m_endcard.GetColor())
-                 ||(index_card.GetId() == this->m_endcard.GetId()))
-            {
-                allow_out = true;
-                out_card = index_card;
-                break;
-            }
-            else
-            {
-                ;
-            }
+            this->MyRound(pplayer);
+        }
+        else                           //电脑出牌
+        {
+            this->OtherRound(pplayer);
         }
 
-        //玩家出牌
-        if (allow_out)
-        {
-            //已出牌库加牌
-            this->m_box_hasopen.AddCard(out_card);
 
-            //变换底牌
-            this->m_endcard.SetAction(out_card.GetAction());
-            this->m_endcard.SetColor(out_card.GetColor());
-            this->m_endcard.SetId(out_card.GetId());
-
-            //玩家牌库减牌
-            pplayer->RemoveCard(out_card);
-
-            //*********** 测试 ************//
-            cout << pplayer->GetPlayerName() << " Out card: ";
-            CTest test;
-            test.PrintCard(out_card);
-            cout << endl;
-            //****************************//
-
-            if (out_card.GetAction() & 0xF)
-            {
-                this->FunctionCardAction(out_card);
-            }
-            else
-            {
-                ;
-            }
-            allow_out = false;
-        }
-
-        //玩家摸牌
-        else
-        {
-            CCardInfo add_card;
-            CCardBox::IterBox it_not_box = this->m_box_notopen.GetItBegin();
-            if (this->m_box_notopen.IsEmpty())
-            {
-                this->RecycleOpenBox();;
-            }
-            add_card = *it_not_box;
-            pplayer->AddCard(add_card);
-            this->m_box_notopen.RemoveCard(add_card);
-
-            //*********** 测试 ************//
-            cout << pplayer->GetPlayerName() << " In card: ";
-            CTest test;
-            test.PrintCard(add_card);
-            cout << endl;
-            //****************************//
-        }
-
-        //设置下一玩家
+        //**3.设置下一玩家
         this->m_current += this->m_toward;
 
         if (this->m_current > this->m_player_count - 1)
@@ -221,7 +157,7 @@ void CGameLoop::GameLoop()
 
     }while(true);
 
-    //统计玩家分数
+    //**4.统计玩家分数
     int score = 0;
     for (int index = 0; index < this->m_player_count; ++index)
     {
@@ -242,6 +178,170 @@ void CGameLoop::GameOver()
     {
         CPlayer player = this->m_players[index];
         cout << player.GetPlayerName() << " : " << player.GetPlayerScore() << endl;
+    }
+}
+
+void CGameLoop::MyRound(CPlayer *pplayer)
+{
+    CCardBox::IterBox it_box;
+    CCardInfo out_card;
+    CTest test;
+    int number = 0;
+    int choice = 0;
+
+    cout << "-------------------------------" << endl;
+    cout << "Now you have " << pplayer->GetSize() << " cards: " << endl;
+
+    for (it_box = pplayer->GetItBegin(); it_box != pplayer->GetItEnd(); ++it_box)
+    {
+        cout << number << " : ";
+        test.PrintCard(*it_box);
+        ++number;
+    }
+
+    cout << endl << "The end card is: " ;
+    test.PrintCard(this->m_endcard);
+    cout << endl << "Which one you want out? (No card out, put in 111)";
+    cin >> choice;
+    do
+    {
+        it_box = pplayer->GetItBegin();
+        for (int index = 0; index < choice; ++index)
+        {
+            ++it_box;
+        }
+
+        out_card = *it_box;
+
+        //牌可出，出牌
+        if ( (out_card.GetColor() & this->m_endcard.GetColor())
+             ||(out_card.GetId() == this->m_endcard.GetId()))
+        {
+            //已出牌库加牌
+            this->m_box_hasopen.AddCard(out_card);
+
+            //设置底牌
+            this->m_endcard.SetAction(out_card.GetAction());
+            this->m_endcard.SetColor(out_card.GetColor());
+            this->m_endcard.SetId(out_card.GetId());
+
+            //我出牌
+            pplayer->RemoveCard(out_card);
+
+            //执行功能牌
+            if (out_card.GetAction() & 0xF)
+            {
+                this->FunctionCardAction(out_card);
+            }
+            else
+            {
+                ;
+            }
+
+            break;
+        }
+        //选择不出，摸牌
+        else if (number == 111)
+        {
+            CCardInfo add_card;
+            CCardBox::IterBox it_not_box = this->m_box_notopen.GetItBegin();
+            if (this->m_box_notopen.IsEmpty())
+            {
+                this->RecycleOpenBox();;
+            }
+            add_card = *it_not_box;
+            pplayer->AddCard(add_card);
+            this->m_box_notopen.RemoveCard(add_card);
+            break;
+        }
+        //牌不可出，重新选
+        else
+        {
+            cout << "This card cann't out";
+        }
+
+        cout << "Which one you want out? (No card out, put in 111)";
+        cin >> choice;
+
+    }while(number != 111);
+}
+
+void CGameLoop::OtherRound(CPlayer *pplayer)
+{
+    CCardBox::IterBox it_box;
+    CCardInfo out_card;
+    CCardInfo index_card;
+    bool allow_out = false;
+
+    //查询电脑牌库
+    for (it_box = pplayer->GetItBegin(); it_box != pplayer->GetItEnd(); ++it_box)
+    {
+        index_card = *it_box;
+
+        if ( (index_card.GetColor() & this->m_endcard.GetColor())
+             ||(index_card.GetId() == this->m_endcard.GetId()))
+        {
+            allow_out = true;
+            out_card = index_card;
+            break;
+        }
+        else
+        {
+            ;
+        }
+    }
+
+    //电脑出牌
+    if (allow_out)
+    {
+        //已出牌库加牌
+        this->m_box_hasopen.AddCard(out_card);
+
+        //变换底牌
+        this->m_endcard.SetAction(out_card.GetAction());
+        this->m_endcard.SetColor(out_card.GetColor());
+        this->m_endcard.SetId(out_card.GetId());
+
+        //玩家牌库减牌
+        pplayer->RemoveCard(out_card);
+
+        //*********** 测试 ************//
+        cout << pplayer->GetPlayerName() << " Out card: ";
+        CTest test;
+        test.PrintCard(out_card);
+        cout << endl;
+        //****************************//
+
+        if (out_card.GetAction() & 0xF)
+        {
+            this->FunctionCardAction(out_card);
+        }
+        else
+        {
+            ;
+        }
+        allow_out = false;
+    }
+
+    //电脑摸牌
+    else
+    {
+        CCardInfo add_card;
+        CCardBox::IterBox it_not_box = this->m_box_notopen.GetItBegin();
+        if (this->m_box_notopen.IsEmpty())
+        {
+            this->RecycleOpenBox();;
+        }
+        add_card = *it_not_box;
+        pplayer->AddCard(add_card);
+        this->m_box_notopen.RemoveCard(add_card);
+
+        //*********** 测试 ************//
+        cout << pplayer->GetPlayerName() << " In card: ";
+        CTest test;
+        test.PrintCard(add_card);
+        cout << endl;
+        //****************************//
     }
 }
 
