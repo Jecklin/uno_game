@@ -15,10 +15,7 @@ CWidget::CWidget(QWidget *parent)
 {
     this->m_mainWidget = new Ui::CWidget();
     this->m_mainWidget->setupUi(this);
-    
-    this->m_topListWidget = new Ui::CTopList();
-    this->m_topListWidget->setupUi(this);
-    
+   
     this->m_gameLoop = new CGameLoop;
   
     //Game loop
@@ -90,7 +87,9 @@ void CWidget::showListWidgets()
         texts += "\n";
     }
     
+    this->m_topListWidget = new Ui::CTopList();
     this->m_topListWidget->textBrowser->setText(texts);
+    this->m_topListWidget->setupUi(this);
 
 }
 
