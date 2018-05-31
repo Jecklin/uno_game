@@ -30,10 +30,6 @@ SOURCES += \
     CCardInfoEnd.cpp \
     CPlayer.cpp \
     CGameLoop.cpp \
-    CCardInfo.cpp \
-    CCardInfoEnd.cpp \
-    CGameLoop.cpp \
-    CPlayer.cpp \
     CStateAdd.cpp \
     CStateEnd.cpp \
     CStateMy.cpp \
@@ -41,7 +37,6 @@ SOURCES += \
     CStateStart.cpp \
     CStateSub.cpp \
     CStateWait.cpp \
-    CWidget.cpp \
     FSM.cpp \
     CStateError.cpp
 
@@ -53,10 +48,6 @@ HEADERS += \
     CPlayer.h \
     CGameLoop.h \
     CAbState.h \
-    CCardInfo.h \
-    CCardInfoEnd.h \
-    CGameLoop.h \
-    CPlayer.h \
     CStateAdd.h \
     CStateEnd.h \
     CStateMy.h \
@@ -64,13 +55,9 @@ HEADERS += \
     CStateStart.h \
     CStateSub.h \
     CStateWait.h \
-    CWidget.h \
-    datatypedefine.h \
     FSM.h \
     CStateError.h
 
 FORMS += \
         CWidget.ui \
     CTopList.ui \
-    ctoplist.ui \
-    CWidget.ui
