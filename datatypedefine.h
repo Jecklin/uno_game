@@ -1,6 +1,5 @@
 #ifndef DATATYPEDEFINE_H
 #define DATATYPEDEFINE_H
-
 enum ECardAction
 {
     ECA_Invalid     =   -1,

@@ -1,6 +1,6 @@
 #-------------------------------------------------
 #
-# Project created by QtCreator 2018-04-28T15:10:05
+# Project created by QtCreator 2018-05-18T13:15:14
 #
 #-------------------------------------------------
 
@@ -25,19 +25,52 @@ DEFINES += QT_DEPRECATED_WARNINGS
 
 SOURCES += \
         main.cpp \
-        MainWindow.cpp \
+        CWidget.cpp \
     CCardInfo.cpp \
-    CCardBox.cpp \
+    CCardInfoEnd.cpp \
     CPlayer.cpp \
-    CGameLoop.cpp
+    CGameLoop.cpp \
+    CCardInfo.cpp \
+    CCardInfoEnd.cpp \
+    CGameLoop.cpp \
+    CPlayer.cpp \
+    CStateAdd.cpp \
+    CStateEnd.cpp \
+    CStateMy.cpp \
+    CStateOther.cpp \
+    CStateStart.cpp \
+    CStateSub.cpp \
+    CStateWait.cpp \
+    CWidget.cpp \
+    FSM.cpp \
+    CStateError.cpp
 
 HEADERS += \
-        MainWindow.h \
+        CWidget.h \
     datatypedefine.h \
     CCardInfo.h \
-    CCardBox.h \
+    CCardInfoEnd.h \
     CPlayer.h \
-    CGameLoop.h
+    CGameLoop.h \
+    CAbState.h \
+    CCardInfo.h \
+    CCardInfoEnd.h \
+    CGameLoop.h \
+    CPlayer.h \
+    CStateAdd.h \
+    CStateEnd.h \
+    CStateMy.h \
+    CStateOther.h \
+    CStateStart.h \
+    CStateSub.h \
+    CStateWait.h \
+    CWidget.h \
+    datatypedefine.h \
+    FSM.h \
+    CStateError.h
 
 FORMS += \
-        MainWindow.ui
+        CWidget.ui \
+    CTopList.ui \
+    ctoplist.ui \
+    CWidget.ui

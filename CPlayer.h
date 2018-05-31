@@ -1,27 +1,56 @@
 #ifndef CPLAYER_H
 #define CPLAYER_H
 
-#include "CCardBox.h"
 #include <string>
 
-class CPlayer:public CCardBox
+#include <list>
+#include "CCardInfo.h"
+
+class CPlayer
 {
 public:
     CPlayer();
     ~CPlayer();
-
     CPlayer(const CPlayer &other);
     CPlayer& operator =(const CPlayer &other);
 
 public:
-    int GetPlayerScore() const;
-    void SetPlayerScore(int score);
+    typedef std::list<CCardInfo> CBox;
 
-    std::string GetPlayerName() const;
-    void SetPlayerName(const std::string &name);
+    //Score
+    int             playerGetScore() const;
+    void            playerAddScore();
+    void            playerSubScore();
+
+    //Name
+    std::string     playerGetName() const;
+    void            playerSetName(const std::string &name);
+
+    //Action
+    bool            isAllowOut(const CCardInfo &card);
+    bool            isAllowOut(const CCardInfo &my_card, const CCardInfo &end_card);
+    CCardInfo       getOutCard();
+    void            playerOutCard(const CCardInfo &card);
+    void            playerInCard(const CCardInfo &card);
+//    CCardInfo       getSimilarCard(const CCardInfo &card);
+    CCardInfo&      getNumCard(int num);
+
+    //Loop
+    ECardColor      getChangeColor() const;
+    int             getBoxSize() const;
+
+//    //Test
+//    void            printPlayer();
+//    void            printCard(const CCardInfo &card);
+    
+//    //UI
+//    std::string     getPlayerInfo();
+//    std::string     getCardInfo(const CCardInfo &card);
 
 private:
-    int             m_player_score;
-    std::string     m_player_name;
+    int             m_score;
+    std::string     m_name;
+    CBox            m_box;
+    CCardInfo       m_outcard;
 };
 #endif // CPLAYER_H

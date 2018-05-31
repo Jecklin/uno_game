@@ -1,41 +1,41 @@
 #ifndef CGAMELOOP_H
 #define CGAMELOOP_H
+#include <QWidget>
+#include "FSM.h"
+#include "CAbState.h"
 
-#include "datatypedefine.h"
-#include "CPlayer.h"
-#include "CCardInfoEnd.h"
-
-class CGameLoop
+class CGameLoop: public QWidget
 {
+    Q_OBJECT
+    
 public:
     CGameLoop();
     ~CGameLoop();
-    void GameStart();
+    void            gameStart();
+    CPlayer         getPlayer(int num);
+    CCardInfo       getEndCard();
+    int             getCurrent();
+    void            setChoice(int choice);
+    int             getChoice();
+    
+    
+signals:
+    void            playerChanged();
+    void            endCardChanged();
+    void            scoreChanged();
+    void            myRound();
+    void            error();
+    void            gameOver();
 
-private:
-    void GameMenu();
-    void GameInit();
-    void GameLoop();
-    void GameOver();
-
-    void FunctionCardAction(const CCardInfo &card);
-    void ActionCardIn(int num);
-    void ActionCardStop();
-    void ActionCardReverse();
-    void ActionCardChangeColor();
-    void RecycleOpenBox();
-
-private:
-    int          m_player_count;                 //玩家人数
-    int          m_toward;                       //出牌方向标识
-    int          m_current;                      //当前出牌玩家位置
-    CCardBox     m_box_notopen;                  //未起牌库
-    CCardBox     m_box_hasopen;                  //已出牌库
-    CCardInfoEnd m_endcard;                      //底牌
-    CPlayer      m_players[4];                   //玩家数组
-    CPlayer      m_winner;                       //赢家
-    CPlayer      m_banker;                       //庄家
-
+private:    
+    FSM             *m_fsm;
+    CAbState        *m_stateWait;
+    CAbState        *m_stateStart;
+    CAbState        *m_stateMy;
+    CAbState        *m_stateOther;
+    CAbState        *m_stateAdd;
+    CAbState        *m_stateSub;
+    CAbState        *m_stateEnd;
+    CAbState        *m_stateError;
 };
-
 #endif // CGAMELOOP_H
