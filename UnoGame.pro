@@ -61,5 +61,3 @@ HEADERS += \
 FORMS += \
         CWidget.ui \
     CTopList.ui \
-    ctoplist.ui
-
