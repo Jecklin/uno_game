@@ -11,26 +11,29 @@ CWidget::CWidget(QWidget *parent)
     ,m_mainWidget(nullptr)
     ,m_topListWidget(nullptr)
     ,m_gameLoop(nullptr)
+    ,m_choice(-1)
 {
     this->m_mainWidget = new Ui::CWidget();
     this->m_mainWidget->setupUi(this);
+    
+    this->m_topListWidget = new Ui::CTopList();
+    this->m_topListWidget->setupUi(this);
+    
     this->m_gameLoop = new CGameLoop;
-
+  
     //Game loop
     connect(m_gameLoop,SIGNAL(playerChanged()),this,SLOT(onPlayerChange()));    
     connect(m_gameLoop,SIGNAL(endCardChanged()),this,SLOT(onEndCardChange()));
     connect(m_gameLoop,SIGNAL(scoreChanged()),this,SLOT(onScoreChange()));
+    connect(m_gameLoop,SIGNAL(firstRound()),this,SLOT(onFirstRound()));
     connect(m_gameLoop,SIGNAL(myRound()),this,SLOT(onMyRound()));    
     connect(m_gameLoop,SIGNAL(error()),this,SLOT(onError()));
     
     //Ui
+    connect(m_mainWidget->pushButtonStart,SIGNAL(clicked(bool)),this,SLOT(onGameStart()));
     connect(m_mainWidget->pushButtonGiveUp,SIGNAL(clicked(bool)),this,SLOT(onGiveUp()));
     connect(m_mainWidget->pushButtonOutCard,SIGNAL(clicked(bool)),this,SLOT(onOutCard()));
 
-    
-
-    //Init
-    this->m_gameLoop->gameStart();
     
 }
 
@@ -45,6 +48,16 @@ CWidget::~CWidget()
         delete this->m_gameLoop;
         this->m_gameLoop = nullptr;
     }
+    
+    if (nullptr == this->m_topListWidget)
+    {
+        ;
+    }
+    else
+    {
+        delete this->m_topListWidget;
+        this->m_topListWidget = nullptr;
+    }
 
     if (nullptr == this->m_mainWidget)
     {
@@ -52,31 +65,20 @@ CWidget::~CWidget()
     }
     else
     {
-        this->destroyListWidgets();
         delete this->m_mainWidget;
         this->m_mainWidget = nullptr;
     }
-
+    
 }
 
-void CWidget::createListWidgets()
-{
-    if (nullptr == this->m_topListWidget)
-    {
-        QWidget *buff = new QWidget(this);
-        this->m_topListWidget = new Ui::CTopList();
-        this->m_topListWidget->setupUi(buff);
-    }
-    else
-    {
-        ;
-    }
-    
+
+void CWidget::showListWidgets()
+{ 
     QString texts;
     QString scores;
     CPlayer player;
     QString name;
-    //QString qstr2 = QString::fromStdString(s);
+
     for (int i = 0; i < 4; ++i)
     {
         player = this->m_gameLoop->getPlayer(i);
@@ -90,19 +92,6 @@ void CWidget::createListWidgets()
     
     this->m_topListWidget->textBrowser->setText(texts);
 
-}
-
-void CWidget::destroyListWidgets()
-{
-    if (nullptr == this->m_topListWidget)
-    {
-        ;
-    }
-    else
-    {
-        delete this->m_topListWidget;
-        this->m_topListWidget = nullptr;
-    }
 }
 
 QString CWidget::dbColor(ECardColor color)
@@ -226,6 +215,40 @@ void CWidget::onScoreChange()
     
 }
 
+void CWidget::onFirstRound()
+{
+    CPlayer         cur_player;
+    CCardInfo       card;
+    QString         num[4];
+    QString         texts[4];
+   
+    for (int i = 0; i < 4; ++i)
+    {
+        cur_player = this->m_gameLoop->getPlayer(i);
+        num[i] = QString::number(cur_player.getBoxSize(), 10);
+        for (int j = 0; j < cur_player.getBoxSize(); ++j)
+        {
+            card = cur_player.getNumCard(i);
+            texts[i] += this->dbColor(card.getColor()) + this->dbId(card.getId()) + "\n";
+        }
+        
+    }
+    
+    // 更新 browser
+    this->m_mainWidget->labelNumLow->setText(num[0]);
+    this->m_mainWidget->textBrowserLow->setText(texts[0]);
+    
+    this->m_mainWidget->labelNumLeft->setText(num[1]);
+    this->m_mainWidget->textBrowserLeft->setText(texts[1]);
+    
+    this->m_mainWidget->labelNumTop->setText(num[2]);
+    this->m_mainWidget->textBrowserTop->setText(texts[2]);
+    
+    this->m_mainWidget->labelNumRight->setText(num[3]);
+    this->m_mainWidget->textBrowserRight->setText(texts[3]);
+
+}
+
 void CWidget::onMyRound()
 {
     this->m_gameLoop->setChoice(this->m_choice);
@@ -251,7 +274,12 @@ void CWidget::onError()
 
 void CWidget::onGameOver()
 {
-    this->createListWidgets();
+    this->showListWidgets();
+}
+
+void CWidget::onGameStart()
+{    
+    this->m_gameLoop->gameStart();
 }
 
 

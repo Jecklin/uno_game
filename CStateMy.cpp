@@ -18,6 +18,7 @@ void CStateMy::onStateTick()
 //    可以设置定时器，暂未添加
     
     //Choice changed
+    
     if (m_pfsm->getChoice() != -1)
     {
         bool is_giveup = m_pfsm->curPlayerGiveUp(m_pfsm->getChoice());
@@ -40,7 +41,7 @@ void CStateMy::onStateTick()
     }
     else
     {
-        ;
+        m_pfsm->transState(m_pfsm->State_My);
     }
 
 }

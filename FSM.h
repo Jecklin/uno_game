@@ -23,7 +23,7 @@ public: //Game loop
     bool        registerState(int e, CAbState *pState);
     bool        transState(int newState);
     void        tick();
-    bool        endState();
+//    bool        endState();
     
 public: //UI
     CPlayer     getPlayer(int num);
@@ -34,6 +34,9 @@ public: //State
     bool        hasWinner();
     void        toNext();
     bool        curIsMy(); 
+    bool        curStateIsMy();
+    bool        curStateIsError();
+    bool        curStateIsEnd();
     bool        curPlayerGiveUp(int choice);
     bool        curPlayerAllowOut();
     bool        curPlayerAllowOut(int number);

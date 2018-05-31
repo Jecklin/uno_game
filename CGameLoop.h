@@ -23,6 +23,7 @@ signals:
     void            playerChanged();
     void            endCardChanged();
     void            scoreChanged();
+    void            firstRound();
     void            myRound();
     void            error();
     void            gameOver();

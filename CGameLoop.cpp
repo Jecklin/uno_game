@@ -53,6 +53,7 @@ CGameLoop::~CGameLoop()
     delete this->m_stateAdd;
     delete this->m_stateSub;
     delete this->m_stateEnd;
+    delete this->m_stateError;
   
     this->m_fsm         = nullptr;
     this->m_stateWait   = nullptr;
@@ -62,16 +63,19 @@ CGameLoop::~CGameLoop()
     this->m_stateAdd    = nullptr;
     this->m_stateSub    = nullptr;
     this->m_stateEnd    = nullptr;
+    this->m_stateError  = nullptr;
 
 }
 
 void CGameLoop::gameStart()
-{
+{       
+    emit firstRound();
+    
     do
     {
         this->m_fsm->tick();
         
-        if (this->m_fsm->curIsMy())
+        if (this->m_fsm->curStateIsMy())
         {
             emit myRound();
         }
@@ -79,18 +83,18 @@ void CGameLoop::gameStart()
         {
             ;
         }
-        if (this->m_fsm->State_Error)
+        if (this->m_fsm->curStateIsError())
         {
             emit error();
         }
         
+
         emit playerChanged();
         emit endCardChanged();
-        emit scoreChanged();
+        emit scoreChanged();  
+//        sleep(5);
         
-        sleep(10);
-        
-    }while(!this->m_fsm->endState());
+    }while(!this->m_fsm->curStateIsEnd());
 
     emit gameOver();
 }

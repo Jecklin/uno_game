@@ -67,19 +67,19 @@ void FSM::tick()
     m_states[m_curState]->onStateTick();
 }
 
-bool FSM::endState()
-{
-    bool result = false;
-    if (this->m_curState == State_End)
-    {
-        result = true;
-    }
-    else
-    {
-        ;
-    } 
-    return result;
-}
+//bool FSM::endState()
+//{
+//    bool result = false;
+//    if (this->m_curState == State_End)
+//    {
+//        result = true;
+//    }
+//    else
+//    {
+//        ;
+//    } 
+//    return result;
+//}
 
 CPlayer FSM::getPlayer(int num)
 {
@@ -127,6 +127,48 @@ bool FSM::curIsMy()
         ;
     }
     return is_my;
+}
+
+bool FSM::curStateIsMy()
+{
+    bool is_my_state = false;
+    if (this->m_curState == State_My)
+    {
+        is_my_state = true;
+    }
+    else
+    {
+        ;
+    }
+    return is_my_state;
+}
+
+bool FSM::curStateIsError()
+{
+    bool is_error = false;
+    if (this->m_curState == State_Error)
+    {
+        is_error = true;
+    }
+    else
+    {
+        ;
+    }
+    return is_error;
+}
+
+bool FSM::curStateIsEnd()
+{
+    bool is_end = false;
+    if (this->m_curState == State_End)
+    {
+        is_end = true;
+    }
+    else
+    {
+        ;
+    }
+    return is_end;
 }
 
 

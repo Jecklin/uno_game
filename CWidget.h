@@ -16,23 +16,24 @@ class CWidget : public QWidget
 public:
     explicit CWidget(QWidget *parent = nullptr);
     ~CWidget();
-
-private:
-    static QString dbColor(ECardColor color);
-    static QString dbId(ECardId id);
-
-    void createListWidgets();
-    void destroyListWidgets();
-
-private slots:
+    
+public slots:
     void onPlayerChange(); 
     void onEndCardChange();
     void onScoreChange();
+    void onFirstRound();
     void onMyRound();
     void onGiveUp();
     void onOutCard();
     void onError();
     void onGameOver();
+    void onGameStart();
+
+private:
+    static QString dbColor(ECardColor color);
+    static QString dbId(ECardId id);
+
+    void showListWidgets();
     
 private:
     Ui::CWidget         *m_mainWidget;
