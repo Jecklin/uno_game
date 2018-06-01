@@ -1,11 +1,13 @@
 #ifndef FSM_H
 #define FSM_H
+#include <unordered_map>
+#include <functional>
+#include <unistd.h>
 
 #include "CAbState.h"
 #include "CPlayer.h"
 #include "CCardInfoEnd.h"
 #include <vector>
-#include <map>
 
 
 class CAbState;
@@ -16,35 +18,35 @@ public:
     FSM();
     ~FSM();
     
-public: 
-    
-//Game loop
-    void        initFSM(int s);
+public: //Game loop
+    void        InitState(int s);
     bool        registerState(int e, CAbState *pState);
     bool        transState(int newState);
     void        tick();
-    bool        curStateIsMy();
-    bool        curStateIsError();
-    bool        curStateIsEnd();
-    void        setChoice(int choice);
-    int         getChoice();
+//    bool        endState();
     
-//UI
+public: //UI
     CPlayer     getPlayer(int num);
     CCardInfo   getEndCard();
     int         getCurrent();
-        
-//State
-    void        curAdd();                           //CStateWait
-    bool        curIsMy();                          //CStateStart
-    bool        curPlayerGiveUp(int choice);        //CStateMy
-    bool        curPlayerAllowOut(int number);      //CStateMy
-    bool        curPlayerAllowOut();                //CStateOther
-    void        curPlayerInCard();                  //CStateAdd
-    void        curPlayerOutCard();                 //CStateSub
-    bool        hasWinner();                        //CStateSub
-    void        setAllScores();                     //CStateEnd
     
+public: //State
+    bool        hasWinner();
+    void        toNext();
+    bool        curIsMy(); 
+    bool        curStateIsMy();
+    bool        curStateIsError();
+    bool        curStateIsEnd();
+    bool        curPlayerGiveUp(int choice);
+    bool        curPlayerAllowOut();
+    bool        curPlayerAllowOut(int number);
+    void        curPlayerInCard();
+    void        curPlayerOutCard();
+    void        setAllScores();
+    void        setChoice(int choice);
+    int         getChoice();
+
+ 
 public:    
     const int   State_Wait    = 1;
     const int   State_Start   = 2;
@@ -69,12 +71,11 @@ private:
     void        actReverse();
     void        actChangeColor();
     
-    //Change member
     int         getNextLocation();
     void        closeBoxReset();
     
 private:
-    std::map<int, CAbState*>            m_states;                       //游戏状态
+    std::unordered_map<int, CAbState*>  m_states;                       //游戏状态
     int                                 m_curState;                     //当前状态
     std::list<CCardInfo>                m_box_close;                    //未起牌库
     std::list<CCardInfo>                m_box_open;                     //已出牌库
@@ -84,7 +85,6 @@ private:
     int                                 m_toward;                       //出牌方向标识
     int                                 m_current;                      //当前出牌玩家位置
     int                                 m_choice;
-
 };
 
 #endif // FSM_H

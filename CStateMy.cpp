@@ -14,42 +14,35 @@ void CStateMy::onStateEnter()
 
 void CStateMy::onStateTick()
 {
+//    test_counter++;
+//    可以设置定时器，暂未添加
     
     //Choice changed
-    do
-    { 
-        if (m_pfsm->getChoice() != -1)
+    
+    if (m_pfsm->getChoice() != -1)
+    {
+        bool is_giveup = m_pfsm->curPlayerGiveUp(m_pfsm->getChoice());
+        if (is_giveup)
         {
-            bool is_giveup = m_pfsm->curPlayerGiveUp(m_pfsm->getChoice());
-            if (is_giveup)
-            {
-                m_pfsm->transState(m_pfsm->State_Add);
-                break;
-            }
-            else
-            {
-                bool is_allow = m_pfsm->curPlayerAllowOut(m_pfsm->getChoice());
-                if (is_allow)
-                {
-                    m_pfsm->transState(m_pfsm->State_Sub);
-                    break;
-                }
-                else
-                {
-                    m_pfsm->transState(m_pfsm->State_Error);
-                    break;
-                }
-            }
+            m_pfsm->transState(m_pfsm->State_Add);
         }
         else
         {
-            ;
+            bool is_allow = m_pfsm->curPlayerAllowOut(m_pfsm->getChoice());
+            if (is_allow)
+            {
+                m_pfsm->transState(m_pfsm->State_Sub);
+            }
+            else
+            {
+                m_pfsm->transState(m_pfsm->State_Error);
+            }
         }
-
-        
-    }while(false);
-    
- 
+    }
+    else
+    {
+        m_pfsm->transState(m_pfsm->State_My);
+    }
 
 }
 

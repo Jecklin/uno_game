@@ -14,7 +14,6 @@ public:
     
 private:
     int test_counter = 0;
-    int choice = -1;
 };
 
 #endif // CSTATEMY_H

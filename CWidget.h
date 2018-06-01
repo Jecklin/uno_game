@@ -4,9 +4,9 @@
 #include <QWidget>
 #include "CGameLoop.h"
 
-
 namespace Ui {
 class CWidget;
+class CTopList;
 }
 
 class CWidget : public QWidget
@@ -17,31 +17,27 @@ public:
     explicit CWidget(QWidget *parent = nullptr);
     ~CWidget();
     
-signals:
-    void choiced();
-
-    
 public slots:
-    void onPlayerChange(int current); 
+    void onPlayerChange(); 
     void onEndCardChange();
-    void onGiveUpChoice();
-    void onOutCardChoice();
+    void onScoreChange();
+    void onFirstRound();
+    void onMyRound();
+    void onGiveUp();
+    void onOutCard();
     void onError();
     void onGameOver();
     void onGameStart();
-    void onChoice();
-    void onCurPlayerFlash();
-    void onCurPlayerFiashOver();
 
 private:
     static QString dbColor(ECardColor color);
     static QString dbId(ECardId id);
-    
-    void upDateBrowser(int current,const QString &texts);
-    void upDateLabelNum(int current,const QString &num);
+
+    void showListWidgets();
     
 private:
     Ui::CWidget         *m_mainWidget;
+    Ui::CTopList        *m_topListWidget;
     CGameLoop           *m_gameLoop;
     int                 m_choice;
 };
