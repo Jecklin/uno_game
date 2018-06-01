@@ -19,6 +19,7 @@ CGameLoop::CGameLoop()
     ,m_stateAdd(nullptr)
     ,m_stateSub(nullptr)
     ,m_stateEnd(nullptr)
+    ,m_stateError(nullptr)
 {
     this->m_fsm         = new FSM();
     this->m_stateWait   = new CStateWait(this->m_fsm);
@@ -30,17 +31,7 @@ CGameLoop::CGameLoop()
     this->m_stateEnd    = new CStateEnd(this->m_fsm);
     this->m_stateError  = new CStateError(this->m_fsm);
     
-    this->m_fsm->registerState(m_fsm->State_Wait, this->m_stateWait);
-    this->m_fsm->registerState(m_fsm->State_Start, this->m_stateStart);
-    this->m_fsm->registerState(m_fsm->State_My, this->m_stateMy);
-    this->m_fsm->registerState(m_fsm->State_Other, this->m_stateOther);
-    this->m_fsm->registerState(m_fsm->State_Add, this->m_stateAdd);
-    this->m_fsm->registerState(m_fsm->State_Sub, this->m_stateSub);
-    this->m_fsm->registerState(m_fsm->State_End, this->m_stateEnd);
-    this->m_fsm->registerState(m_fsm->State_Error, this->m_stateError);
-    
-    //Init State = wait;
-    this->m_fsm->InitState(m_fsm->State_Wait);
+    this->inItFSM();
 }
 
 CGameLoop::~CGameLoop()
@@ -64,40 +55,87 @@ CGameLoop::~CGameLoop()
     this->m_stateSub    = nullptr;
     this->m_stateEnd    = nullptr;
     this->m_stateError  = nullptr;
-
-}
-
-void CGameLoop::gameStart()
-{       
-    emit firstRound();
     
-    do
-    {
-        this->m_fsm->tick();
-        
-        if (this->m_fsm->curStateIsMy())
-        {
-            emit myRound();
-        }
-        else
-        {
-            ;
-        }
-        if (this->m_fsm->curStateIsError())
-        {
-            emit error();
-        }
-        
-
-        emit playerChanged();
-        emit endCardChanged();
-        emit scoreChanged();  
-//        sleep(5);
-        
-    }while(!this->m_fsm->curStateIsEnd());
-
-    emit gameOver();
 }
+
+void CGameLoop::gameRound(bool is_my)
+{
+    
+    //My round
+    if (is_my)
+    {
+        emit curPlayerFlash();
+        
+        do
+        {
+            this->m_fsm->tick();
+            
+            if (this->m_fsm->curStateIsError())
+            {
+                emit error();
+                break;
+            }
+            
+            emit playerChanged(this->m_fsm->getCurrent());
+            emit endCardChanged();
+    
+            if (this->m_fsm->curStateIsEnd())
+            {
+                emit gameOver();
+                break;
+            }
+            else
+            {
+                ;
+            }
+            
+            
+        }while(this->m_fsm->curStateIsMy());
+        
+        emit curPlayerFlash();
+        
+    }
+    
+    //Other round
+    else
+    {
+
+        do
+        {
+            emit curPlayerFlash();
+            
+            this->m_fsm->tick();
+            
+            emit playerChanged(this->m_fsm->getCurrent());
+            emit endCardChanged();
+            
+            if (this->m_fsm->curStateIsEnd())
+            {
+                emit gameOver();
+                break;
+            }
+            else
+            {
+                ;
+            }
+            
+            emit curPlayerFlashOver();
+            
+        }while(!this->m_fsm->curStateIsMy());
+        
+
+    }
+    
+   
+    
+}
+
+bool CGameLoop::curIsMy()
+{
+    return this->m_fsm->curIsMy();
+}
+
+
 
 CPlayer CGameLoop::getPlayer(int num)
 {
@@ -122,6 +160,23 @@ void CGameLoop::setChoice(int choice)
 int CGameLoop::getChoice()
 {
     return this->m_fsm->getChoice();
+}
+
+void CGameLoop::inItFSM()
+{
+    this->m_fsm->registerState(m_fsm->State_Wait, this->m_stateWait);
+    this->m_fsm->registerState(m_fsm->State_Start, this->m_stateStart);
+    this->m_fsm->registerState(m_fsm->State_My, this->m_stateMy);
+    this->m_fsm->registerState(m_fsm->State_Other, this->m_stateOther);
+    this->m_fsm->registerState(m_fsm->State_Add, this->m_stateAdd);
+    this->m_fsm->registerState(m_fsm->State_Sub, this->m_stateSub);
+    this->m_fsm->registerState(m_fsm->State_End, this->m_stateEnd);
+    this->m_fsm->registerState(m_fsm->State_Error, this->m_stateError);
+    
+    //Init State = wait;
+    this->m_fsm->initFSM(m_fsm->State_Wait);
+
+    
 }
 
 

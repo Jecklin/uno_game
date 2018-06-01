@@ -11,22 +11,25 @@ class CGameLoop: public QWidget
 public:
     CGameLoop();
     ~CGameLoop();
-    void            gameStart();
+    
+    void            gameRound(bool is_my);
+    bool            curIsMy();
     CPlayer         getPlayer(int num);
     CCardInfo       getEndCard();
     int             getCurrent();
     void            setChoice(int choice);
     int             getChoice();
-    
-    
+  
 signals:
-    void            playerChanged();
+    void            playerChanged(int current);
     void            endCardChanged();
-    void            scoreChanged();
-    void            firstRound();
-    void            myRound();
     void            error();
     void            gameOver();
+    void            curPlayerFlash();
+    void            curPlayerFlashOver();
+    
+private:
+    void            inItFSM();
 
 private:    
     FSM             *m_fsm;

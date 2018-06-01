@@ -37,9 +37,8 @@ bool FSM::transState(int newState)
     return true;
 }
 
-void FSM::InitState(int s)
+void FSM::initFSM(int s)
 {
-    std::cout << "**** Begin **** Begin **** Begin **** Begin **** Begin ****" << std::endl << std::endl;
     //InitCurState
     m_curState = s;
     
@@ -59,27 +58,13 @@ void FSM::InitState(int s)
 
     //RoundOne
     this->initOneRound();
-
+    
 }
 
 void FSM::tick()
 {
     m_states[m_curState]->onStateTick();
 }
-
-//bool FSM::endState()
-//{
-//    bool result = false;
-//    if (this->m_curState == State_End)
-//    {
-//        result = true;
-//    }
-//    else
-//    {
-//        ;
-//    } 
-//    return result;
-//}
 
 CPlayer FSM::getPlayer(int num)
 {
@@ -110,7 +95,7 @@ bool FSM::hasWinner()
     return has_winner;
 }
 
-void FSM::toNext()
+void FSM::curAdd()
 {
     this->m_current = this->getNextLocation();
 }
@@ -341,16 +326,16 @@ void FSM::initPlayersName()
 {
     CPlayer   *gi_player;
     gi_player = &(this->m_players[0]);
-    gi_player->playerSetName("*Zero*");
+    gi_player->playerSetName("*Lili*");
 
     gi_player = &(this->m_players[1]);
-    gi_player->playerSetName("*One*");
+    gi_player->playerSetName("*Jack*");
 
     gi_player = &(this->m_players[2]);
-    gi_player->playerSetName("*Two*");
+    gi_player->playerSetName("*Anna*");
 
     gi_player = &(this->m_players[3]);
-    gi_player->playerSetName("*Three*");
+    gi_player->playerSetName("*Tom*");
 }
 
 void FSM::initCloseBox()
@@ -562,7 +547,7 @@ void FSM::actInCard(int num)
 
 void FSM::actStop()
 {
-    this->toNext();
+    this->curAdd();
 }
 
 void FSM::actReverse()

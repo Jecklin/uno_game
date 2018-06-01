@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>1000</width>
-    <height>1000</height>
+    <width>1500</width>
+    <height>1300</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -176,22 +176,15 @@
         <string>EndCard</string>
        </property>
        <layout class="QGridLayout" name="gridLayout_5">
-        <item row="0" column="0">
-         <widget class="QTextBrowser" name="textBrowserEndCard"/>
-        </item>
         <item row="1" column="0">
-         <widget class="QPushButton" name="pushButtonPlayerAction">
-          <property name="text">
-           <string>Action</string>
-          </property>
-         </widget>
-        </item>
-        <item row="2" column="0">
          <widget class="QPushButton" name="pushButtonStart">
           <property name="text">
            <string>Game Start</string>
           </property>
          </widget>
+        </item>
+        <item row="0" column="0">
+         <widget class="QTextBrowser" name="textBrowserEndCard"/>
         </item>
        </layout>
       </widget>

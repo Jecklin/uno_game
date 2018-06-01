@@ -11,6 +11,7 @@ public:
     void onStateEnter();
     void onStateTick();
     void onStateExit();
+    
 };
 
 #endif // CSTATEWAIT_H
