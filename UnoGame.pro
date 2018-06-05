@@ -63,3 +63,4 @@ HEADERS += \
 FORMS += \
         CWidget.ui \
     COverDialog.ui
+# 瓜兮兮的小媛媛
