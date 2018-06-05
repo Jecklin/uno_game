@@ -380,6 +380,9 @@
         <item row="4" column="0">
          <widget class="QTextBrowser" name="textBrowserLow"/>
         </item>
+        <item row="5" column="0">
+         <layout class="QHBoxLayout" name="layoutLow"/>
+        </item>
        </layout>
       </widget>
      </item>

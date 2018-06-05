@@ -23,12 +23,46 @@ public: //Game loop
     bool        registerState(int e, CAbState *pState);
     bool        transState(int newState);
     void        tick();
+<<<<<<< Updated upstream
 //    bool        endState();
+=======
+    bool        curStateIsMy();
+    bool        curStateIsError();
+    bool        curStateIsEnd();
+    bool        curStateIsOut();
+    bool        curStateIsIn();
+    void        setChoiceOfNum(int choice);
+    int         getChoiceOfNum();
+    
+    CCardInfo   getOutCard() const;
+    CCardInfo   getInCard() const;
+    void        setOurCard(const CCardInfo &card);
+    void        setInCard(const CCardInfo &card);
+    
+    void        setIsChoiced(bool choiced);
+    bool        getIsChoiced() const;
+
+>>>>>>> Stashed changes
     
 public: //UI
     CPlayer     getPlayer(int num);
     CCardInfo   getEndCard();
     int         getCurrent();
+<<<<<<< Updated upstream
+=======
+        
+//State
+    void        curAdd();                           //CStateWait
+    bool        curIsMy();                          //CStateStart
+    bool        curPlayerGiveUp(int choice);        //CStateMy
+    bool        curPlayerAllowOut(int number);      //CStateMy
+    bool        curPlayerAllowOut();                //CStateOther
+    bool        cardAllowOut(const CCardInfo &card);
+    void        curPlayerInCard();                  //CStateAdd
+    void        curPlayerOutCard();                 //CStateSub
+    bool        hasWinner();                        //CStateSub
+    void        setAllScores();                     //CStateEnd
+>>>>>>> Stashed changes
     
 public: //State
     bool        hasWinner();
@@ -85,6 +119,12 @@ private:
     int                                 m_toward;                       //出牌方向标识
     int                                 m_current;                      //当前出牌玩家位置
     int                                 m_choice;
+<<<<<<< Updated upstream
+=======
+    CCardInfo                           m_outCard;
+    CCardInfo                           m_inCard;
+    bool                                m_is_choiced;
+>>>>>>> Stashed changes
 };
 
 #endif // FSM_H

@@ -18,7 +18,16 @@ public:
     void            setChoice(int choice);
     int             getChoice();
     
+<<<<<<< Updated upstream
     
+=======
+    CCardInfo       getOutCard() const;
+    CCardInfo       getInCard() const;
+    void            setOutCard(const CCardInfo &card);
+    void            setInCard(const CCardInfo &card);
+    void            setIsChoiced(bool choiced);
+  
+>>>>>>> Stashed changes
 signals:
     void            playerChanged();
     void            endCardChanged();
@@ -27,6 +36,18 @@ signals:
     void            myRound();
     void            error();
     void            gameOver();
+<<<<<<< Updated upstream
+=======
+    void            curPlayerFlash();
+    void            curPlayerFlashOver();
+    
+    //push button action
+    void            outCard(const CCardInfo &card);
+    void            inCard();
+    
+private:
+    void            inItFSM();
+>>>>>>> Stashed changes
 
 private:    
     FSM             *m_fsm;
@@ -38,5 +59,6 @@ private:
     CAbState        *m_stateSub;
     CAbState        *m_stateEnd;
     CAbState        *m_stateError;
+
 };
 #endif // CGAMELOOP_H

@@ -77,9 +77,54 @@ void CGameLoop::gameStart()
         
         if (this->m_fsm->curStateIsMy())
         {
+<<<<<<< Updated upstream
             emit myRound();
         }
         else
+=======
+            this->m_fsm->tick();
+            
+            if (this->m_fsm->curStateIsError())
+            {
+                emit error();
+                break;
+            }
+            else if (this->m_fsm->curStateIsIn())
+            {
+                emit inCard();
+                break;
+            }
+            else if (this->m_fsm->curStateIsOut())
+            {
+                emit outCard(this->m_fsm->getOutCard());
+                break;
+            }
+            else if (this->m_fsm->curStateIsEnd())
+            {
+                emit gameOver();
+                break;
+            }
+            else
+            {
+                ;
+            }
+            
+            emit playerChanged(this->m_fsm->getCurrent());
+            emit endCardChanged();
+    
+            
+        }while(this->m_fsm->curStateIsMy());
+        
+        emit curPlayerFlash();
+        
+    }
+    
+    //Other round
+    else
+    {
+
+        do
+>>>>>>> Stashed changes
         {
             ;
         }
@@ -116,14 +161,60 @@ int CGameLoop::getCurrent()
 
 void CGameLoop::setChoice(int choice)
 {
-    this->m_fsm->setChoice(choice);
+    this->m_fsm->setChoiceOfNum(choice);
 }
 
 int CGameLoop::getChoice()
 {
-    return this->m_fsm->getChoice();
+    return this->m_fsm->getChoiceOfNum();
 }
 
+CCardInfo CGameLoop::getOutCard() const
+{
+    return this->m_fsm->getOutCard();
+}
+
+CCardInfo CGameLoop::getInCard() const
+{
+    return this->m_fsm->getInCard();
+}
+
+void CGameLoop::setOutCard(const CCardInfo &card)
+{
+    this->m_fsm->setOurCard(card);
+}
+
+<<<<<<< Updated upstream
+=======
+void CGameLoop::setInCard(const CCardInfo &card)
+{
+    this->m_fsm->setInCard(card);
+}
+
+void CGameLoop::setIsChoiced(bool choiced)
+{
+    this->m_fsm->setIsChoiced(choiced);
+}
+
+
+void CGameLoop::inItFSM()
+{
+    this->m_fsm->registerState(m_fsm->State_Wait, this->m_stateWait);
+    this->m_fsm->registerState(m_fsm->State_Start, this->m_stateStart);
+    this->m_fsm->registerState(m_fsm->State_My, this->m_stateMy);
+    this->m_fsm->registerState(m_fsm->State_Other, this->m_stateOther);
+    this->m_fsm->registerState(m_fsm->State_Add, this->m_stateAdd);
+    this->m_fsm->registerState(m_fsm->State_Sub, this->m_stateSub);
+    this->m_fsm->registerState(m_fsm->State_End, this->m_stateEnd);
+    this->m_fsm->registerState(m_fsm->State_Error, this->m_stateError);
+    
+    //Init State = wait;
+    this->m_fsm->initFSM(m_fsm->State_Wait);
+
+    
+}
+
+>>>>>>> Stashed changes
 
 
 

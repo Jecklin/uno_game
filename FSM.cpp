@@ -14,6 +14,7 @@ FSM::FSM()
     ,m_toward(1)
     ,m_current(0)
     ,m_choice(-1)
+    ,m_is_choiced(false)
 {
     
 }
@@ -171,6 +172,35 @@ bool FSM::curStateIsEnd()
     return is_end;
 }
 
+bool FSM::curStateIsOut()
+{
+    bool is_out = false;
+    if (this->m_curState == State_Sub)
+    {
+        is_out = true;
+    }
+    else
+    {
+        ;
+    }
+    return is_out;
+    
+}
+
+bool FSM::curStateIsIn()
+{
+    bool is_in = false;
+    if (this->m_curState == State_Add)
+    {
+        is_in = true;
+    }
+    else
+    {
+        ;
+    }
+    return is_in;
+}
+
 
 bool FSM::curPlayerGiveUp(int choice)
 {
@@ -193,6 +223,23 @@ bool FSM::curPlayerAllowOut()
     bool is_allow = false;
     CPlayer *pplayer = &(this->m_players[this->m_current]);
     if (pplayer->isAllowOut(this->m_endcard))
+    {
+        is_allow = true;
+    }
+    else
+    {
+        ;
+    }
+    
+    return is_allow;
+}
+
+
+bool FSM::cardAllowOut(const CCardInfo &card)
+{
+    bool is_allow = false;
+    CPlayer *pplayer = &(this->m_players[this->m_current]);
+    if (pplayer->isAllowOut(card, this->m_endcard))
     {
         is_allow = true;
     }
@@ -240,10 +287,11 @@ void FSM::curPlayerInCard()
     //Open box resicle
     else
     {
-        std::list<CCardInfo>::iterator iter_close = this->m_box_close.end();
-        CCardInfo card_touch                      = *(--iter_close);
         CPlayer *pplayer                          = &(this->m_players[this->m_current]);
-        pplayer->playerInCard(card_touch);
+        std::list<CCardInfo>::iterator iter_close = this->m_box_close.end();
+        this->m_inCard                           = *(--iter_close);
+        
+        pplayer->playerInCard(m_inCard);
         this->m_box_close.pop_back();
     }
     
@@ -253,11 +301,11 @@ void FSM::curPlayerOutCard()
 {
     //Player out card
     CPlayer     *pplayer = &(this->m_players[this->m_current]);
-    CCardInfo   out_card = pplayer->getOutCard();
+    this->m_outCard = pplayer->getOutCard();
 
-    this->m_box_open.push_back(out_card);
-    this->m_endcard.setCard(out_card);
-    pplayer->playerOutCard(out_card);
+    this->m_box_open.push_back(m_outCard);
+    this->m_endcard.setCard(m_outCard);
+    pplayer->playerOutCard(m_outCard);
     
     //Set winner
     if (pplayer->getBoxSize() == 0)
@@ -270,7 +318,7 @@ void FSM::curPlayerOutCard()
     }
     
     //Do action card
-    if (out_card.isFunctionCard())
+    if (m_outCard.isFunctionCard())
     {
         if (this->m_endcard.getId() == ECI_AddTwo)
         {
@@ -324,14 +372,44 @@ void FSM::setAllScores()
 
 }
 
-void FSM::setChoice(int choice)
+void FSM::setChoiceOfNum(int choice)
 {
     this->m_choice = choice;
 }
 
-int FSM::getChoice()
+int FSM::getChoiceOfNum()
 {
     return this->m_choice;
+}
+
+CCardInfo FSM::getOutCard() const
+{
+    return this->m_outCard;
+}
+
+CCardInfo FSM::getInCard() const
+{
+    return this->m_inCard;
+}
+
+void FSM::setOurCard(const CCardInfo &card)
+{
+    this->m_outCard = card;
+}
+
+void FSM::setInCard(const CCardInfo &card)
+{
+    this->m_inCard = card;
+}
+
+void FSM::setIsChoiced(bool choiced)
+{
+    this->m_is_choiced = choiced;
+}
+
+bool FSM::getIsChoiced() const
+{
+    return this->m_is_choiced;
 }
 
 
