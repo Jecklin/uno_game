@@ -1,8 +1,6 @@
 #ifndef CGAMELOOP_H
 #define CGAMELOOP_H
 #include <QWidget>
-#include "FSM.h"
-#include "CAbState.h"
 #include "CDeskBox.h"
 #include "CCardInfoEnd.h"
 #include "CPlayer.h"
@@ -56,11 +54,6 @@ private:
     unsigned int    getNextLocation();
     void            setAllScores(); 
     
-
-    
-//private:
-//    void            inItFSM();
-
 private:
     std::vector<CPlayer>                m_players;              //玩家数组
     CCardInfoEnd                        m_endcard;              //底牌
@@ -69,32 +62,7 @@ private:
     int                                 m_toward;               //出牌方向标识
     int                                 m_current;              //当前出牌玩家位置
 
-    FSM             *m_fsm;
-    CAbState        *m_stateWait;
-    CAbState        *m_stateStart;
-    CAbState        *m_stateMy;
-    CAbState        *m_stateOther;
-    CAbState        *m_stateAdd;
-    CAbState        *m_stateSub;
-    CAbState        *m_stateEnd;
-    CAbState        *m_stateError;
-
 };
-
-//signals:
-//    void            playerChanged(int current);
-//    void            endCardChanged();
-//    void            error();
-//    void            gameOver();
-//    void            curPlayerFlash();
-//    void            curPlayerFlashOver();
-
-
-
-
-
-
-
 
 
 #endif // CGAMELOOP_H

@@ -26,43 +26,48 @@ DEFINES += QT_DEPRECATED_WARNINGS
 SOURCES += \
         main.cpp \
         CWidget.cpp \
-    CCardInfo.cpp \
-    CCardInfoEnd.cpp \
-    CPlayer.cpp \
-    CGameLoop.cpp \
-    CStateAdd.cpp \
-    CStateEnd.cpp \
-    CStateMy.cpp \
-    CStateOther.cpp \
-    CStateStart.cpp \
-    CStateSub.cpp \
-    CStateWait.cpp \
-    FSM.cpp \
-    CStateError.cpp \
-    COverDialog.cpp \
-    CDeskBox.cpp \
-    CTranslation.cpp
+    CStateMachine/CState.cpp \
+    CStateMachine/CStateMachine.cpp \
+    CStateMachine/CTFAddToWait.cpp \
+    CStateMachine/CTFMyToAdd.cpp \
+    CStateMachine/CTFMyToError.cpp \
+    CStateMachine/CTFMyToSub.cpp \
+    CStateMachine/CTFOtherToAdd.cpp \
+    CStateMachine/CTFOtherToSub.cpp \
+    CStateMachine/CTFStartToWait.cpp \
+    CStateMachine/CTFSubToEnd.cpp \
+    CStateMachine/CTFSubToWait.cpp \
+    CStateMachine/CTFWaitToMy.cpp \
+    CStateMachine/CTFWaitToOther.cpp \
+    CGame/CCardInfo.cpp \
+    CGame/CCardInfoEnd.cpp \
+    CGame/CDeskBox.cpp \
+    CGame/CGameLoop.cpp \
+    CGame/CPlayer.cpp
 
 HEADERS += \
         CWidget.h \
-    datatypedefine.h \
-    CCardInfo.h \
-    CCardInfoEnd.h \
-    CPlayer.h \
-    CGameLoop.h \
-    CAbState.h \
-    CStateAdd.h \
-    CStateEnd.h \
-    CStateMy.h \
-    CStateOther.h \
-    CStateStart.h \
-    CStateSub.h \
-    CStateWait.h \
-    FSM.h \
-    CStateError.h \
-    COverDialog.h \
-    CDeskBox.h \
-    CTranslation.h
+    CStateMachine/CAbstractState.h \
+    CStateMachine/CAbstractTransform.h \
+    CStateMachine/CState.h \
+    CStateMachine/CStateMachine.h \
+    CStateMachine/CTFAddToWait.h \
+    CStateMachine/CTFMyToAdd.h \
+    CStateMachine/CTFMyToError.h \
+    CStateMachine/CTFMyToSub.h \
+    CStateMachine/CTFOtherToAdd.h \
+    CStateMachine/CTFOtherToSub.h \
+    CStateMachine/CTFStartToWait.h \
+    CStateMachine/CTFSubToEnd.h \
+    CStateMachine/CTFSubToWait.h \
+    CStateMachine/CTFWaitToMy.h \
+    CStateMachine/CTFWaitToOther.h \
+    CGame/CCardInfo.h \
+    CGame/CCardInfoEnd.h \
+    CGame/CDeskBox.h \
+    CGame/CGameLoop.h \
+    CGame/CPlayer.h \
+    CGame/datatypedefine.h
 
 FORMS += \
         CWidget.ui \

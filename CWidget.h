@@ -3,7 +3,7 @@
 
 #include <QWidget>
 #include <QPushButton>
-#include "CGameLoop.h"
+#include "CGame/CGameLoop.h"
 
 namespace Ui {
 class CWidget;

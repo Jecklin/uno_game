@@ -48,8 +48,8 @@ enum ECardId
 
 enum EGameState
 {
+    State_Start   = 0,
     State_Wait    = 1,
-    State_Start   =  ,
     State_My      =  ,
     State_Other   =  ,
     State_Add     =  ,
