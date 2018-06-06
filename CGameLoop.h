@@ -3,6 +3,9 @@
 #include <QWidget>
 #include "FSM.h"
 #include "CAbState.h"
+#include "CDeskBox.h"
+#include "CCardInfoEnd.h"
+#include "CPlayer.h"
 
 class CGameLoop: public QWidget
 {
@@ -11,45 +14,61 @@ class CGameLoop: public QWidget
 public:
     CGameLoop();
     ~CGameLoop();
-    void            gameStart();
-    CPlayer         getPlayer(int num);
-    CCardInfo       getEndCard();
-    int             getCurrent();
-    void            setChoice(int choice);
-    int             getChoice();
     
-<<<<<<< Updated upstream
+    //StateWait
+    void            startGame();                          
+    void            initGame();                           
+    void            curToNext();                      
     
-=======
-    CCardInfo       getOutCard() const;
-    CCardInfo       getInCard() const;
-    void            setOutCard(const CCardInfo &card);
-    void            setInCard(const CCardInfo &card);
-    void            setIsChoiced(bool choiced);
-  
->>>>>>> Stashed changes
-signals:
-    void            playerChanged();
-    void            endCardChanged();
-    void            scoreChanged();
-    void            firstRound();
-    void            myRound();
-    void            error();
-    void            gameOver();
-<<<<<<< Updated upstream
-=======
-    void            curPlayerFlash();
-    void            curPlayerFlashOver();
+    //StateStart
+    bool            curPlayerIsMy();
     
-    //push button action
-    void            outCard(const CCardInfo &card);
-    void            inCard();
+    //StateMy
+    bool            curPlayerIsGiveUp();
+    void            curPlayerChangeToGiveUp();
+    bool            curPlayerAllowOut(const CCardInfo &out_card);     
     
-private:
-    void            inItFSM();
->>>>>>> Stashed changes
+    //StateOther
+    bool            curPlayerAllowOut();                              
+    
+    //StateAdd
+    void            curPlayerInCard();                              
+    
+    //StateSub
+    void            curPlayerOutCard();   
+    void            doPunish(const CCardInfo &punish_card); //执行惩罚
+    void            changeToward() const;                   //改变出牌方向
+    
+    
+    //StateEnd
+    
+    
+    //StateError
+    
+ 
 
-private:    
+private:
+    //Do punish
+    void            actNextAddCard(int num);
+    void            actStop();
+    void            actReverse();
+    void            actChangeColor(); 
+    unsigned int    getNextLocation();
+    void            setAllScores(); 
+    
+
+    
+//private:
+//    void            inItFSM();
+
+private:
+    std::vector<CPlayer>                m_players;              //玩家数组
+    CCardInfoEnd                        m_endcard;              //底牌
+    CDeskBox                            m_open_box;             //已出牌库
+    CDeskBox                            m_close_box;            //未起牌库
+    int                                 m_toward;               //出牌方向标识
+    int                                 m_current;              //当前出牌玩家位置
+
     FSM             *m_fsm;
     CAbState        *m_stateWait;
     CAbState        *m_stateStart;
@@ -61,4 +80,21 @@ private:
     CAbState        *m_stateError;
 
 };
+
+//signals:
+//    void            playerChanged(int current);
+//    void            endCardChanged();
+//    void            error();
+//    void            gameOver();
+//    void            curPlayerFlash();
+//    void            curPlayerFlashOver();
+
+
+
+
+
+
+
+
+
 #endif // CGAMELOOP_H

@@ -20,6 +20,9 @@ public:
     ECardId      getId()     const;
     ECardAction  getAction() const;
     bool         isFunctionCard();
+    bool         isSameColor(const CCardInfo &card);
+    bool         isSameId(const CCardInfo &card);
+    bool         isSimilarColor(const CCardInfo &card);
 
 protected:
     ECardColor   m_color;

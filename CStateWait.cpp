@@ -1,25 +1,36 @@
 #include "CStateWait.h"
 
-CStateWait::CStateWait(FSM *fsm):CAbState(fsm)
+CStateWait::CStateWait(FSM *fsm, EGameState state):CAbState(fsm, state)
 {
     ;
 }
 
-void CStateWait::onStateEnter()
+EGameState CStateWait::getCurState()
 {
-    ;
+    return this->m_curState;
 }
 
-void CStateWait::onStateTick()
+void CStateWait::toNextState(EGameState state)
 {
-    //从这里进入
-    m_pfsm->toNext();
-    m_pfsm->transState(m_pfsm->State_Start);
     
 }
 
-void CStateWait::onStateExit()
-{
-    ;
-}
+//void CStateWait::onStateEnter()
+//{
+//    ;
+//}
+
+//void CStateWait::onStateTick()
+//{
+//    //从这里进入
+//    m_pfsm->transState(m_pfsm->State_Start);
+    
+//}
+
+//void CStateWait::onStateExit()
+//{
+//    ;
+//}
+
+
 

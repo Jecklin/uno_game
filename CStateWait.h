@@ -6,11 +6,14 @@
 class CStateWait:public CAbState
 {
 public:
-    CStateWait(FSM *fsm);
+    CStateWait(FSM *fsm, EGameState state);
 
-    void onStateEnter();
-    void onStateTick();
-    void onStateExit();
+//    void onStateEnter();
+//    void onStateTick();
+//    void onStateExit();
+    virtual EGameState      getCurState();
+    virtual void            toNextState(EGameState state);
+    
 };
 
 #endif // CSTATEWAIT_H

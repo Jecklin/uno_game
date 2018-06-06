@@ -333,7 +333,24 @@ void CWidget::onError()
 
 void CWidget::onGameOver()
 {
-    this->showListWidgets();
+    QString      texts;
+    QString      scores;
+    CPlayer      player;
+    QString      name;
+    
+    texts = QString::fromUtf8("*****  Game Over  ****\n");
+    for (int i = 0; i < 4; ++i)
+    {
+        player = this->m_gameLoop->getPlayer(i);
+        scores = QString::number(player.getPlayerScore(),10);
+        name = QString::fromStdString(player.getPlayerName());
+        texts += name + ": " + scores + "\n";
+    }
+    
+    COverDialog over_dialog;
+    over_dialog.setBrowser(texts);
+    over_dialog.exec();  
+
 }
 
 void CWidget::onGameStart()

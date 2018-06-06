@@ -2,7 +2,6 @@
 #define CPLAYER_H
 
 #include <string>
-
 #include <list>
 #include "CCardInfo.h"
 
@@ -18,39 +17,29 @@ public:
     typedef std::list<CCardInfo> CBox;
 
     //Score
-    int             playerGetScore() const;
-    void            playerAddScore();
-    void            playerSubScore();
+    int             getPlayerScore() const;
+    void            setPlayerScore(int score);
 
     //Name
-    std::string     playerGetName() const;
-    void            playerSetName(const std::string &name);
-
-    //Action
-    bool            isAllowOut(const CCardInfo &card);
-    bool            isAllowOut(const CCardInfo &my_card, const CCardInfo &end_card);
-    CCardInfo       getOutCard();
-    void            playerOutCard(const CCardInfo &card);
-    void            playerInCard(const CCardInfo &card);
-//    CCardInfo       getSimilarCard(const CCardInfo &card);
-    CCardInfo&      getNumCard(int num);
-
-    //Loop
-    ECardColor      getChangeColor() const;
-    int             getBoxSize() const;
-
-//    //Test
-//    void            printPlayer();
-//    void            printCard(const CCardInfo &card);
+    std::string     getPlayerName() const;
+    void            setPlayerName(const std::string &name);
     
-//    //UI
-//    std::string     getPlayerInfo();
-//    std::string     getCardInfo(const CCardInfo &card);
+    //Box
+    void            playerSubCard(const CCardInfo &card);
+    void            playerAddCard(const CCardInfo &card);
+    int             getBoxSize() const;
+    ECardColor      getMaxColor() const;    
+    
+    //Judge
+    bool            isAllowOut(const CCardInfo &card);                                  //Other round
+    bool            isAllowOut(const CCardInfo &my_card, const CCardInfo &end_card);    //my round
+    bool            isGiveUp() const;
+    void            changeToGiveUp() const;
 
 private:
     int             m_score;
     std::string     m_name;
     CBox            m_box;
-    CCardInfo       m_outcard;
+    bool            m_giveup;
 };
 #endif // CPLAYER_H

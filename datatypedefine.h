@@ -45,4 +45,16 @@ enum ECardId
     ECI_Black             ,
     ECI_BlackFour
 };
+
+enum EGameState
+{
+    State_Wait    = 1,
+    State_Start   =  ,
+    State_My      =  ,
+    State_Other   =  ,
+    State_Add     =  ,
+    State_Sub     =  ,
+    State_End     =  ,
+    State_Error   =  
+};
 #endif // DATATYPEDEFINE_H

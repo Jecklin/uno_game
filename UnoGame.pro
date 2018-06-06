@@ -38,7 +38,10 @@ SOURCES += \
     CStateSub.cpp \
     CStateWait.cpp \
     FSM.cpp \
-    CStateError.cpp
+    CStateError.cpp \
+    COverDialog.cpp \
+    CDeskBox.cpp \
+    CTranslation.cpp
 
 HEADERS += \
         CWidget.h \
@@ -56,7 +59,10 @@ HEADERS += \
     CStateSub.h \
     CStateWait.h \
     FSM.h \
-    CStateError.h
+    CStateError.h \
+    COverDialog.h \
+    CDeskBox.h \
+    CTranslation.h
 
 FORMS += \
         CWidget.ui \

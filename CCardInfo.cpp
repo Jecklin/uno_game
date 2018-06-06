@@ -63,6 +63,50 @@ bool CCardInfo::isFunctionCard()
     return (this->getAction() & 0xF);
 }
 
+bool CCardInfo::isSameColor(const CCardInfo &card)
+{
+    bool is_same = false;
+    if (this->m_color == card.getColor())
+    {
+        is_same = true;
+    }
+    else
+    {
+        ;
+    }
+    return is_same;
+}
+
+bool CCardInfo::isSameId(const CCardInfo &card)
+{
+    bool is_same = false;
+    if (this->m_id == card.getId())
+    {
+        is_same = true;
+    }
+    else
+    {
+        ;
+    }
+    return is_same;
+}
+
+bool CCardInfo::isSimilarColor(const CCardInfo &card)
+{
+    bool is_similar = false;
+    if (this->m_color & card.getColor())
+    {
+        is_similar = true;
+    }
+    else
+    {
+        ;
+    }
+    return is_similar;
+}
+
+
+
 ECardColor CCardInfo::getColor() const
 {
     return this->m_color;
