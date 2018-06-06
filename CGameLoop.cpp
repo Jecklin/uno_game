@@ -296,6 +296,264 @@ void CGameLoop::setAllScores()
 //    pplayer->playerAddScore();
 }
 
+void CGameLoop::startGame()
+{
+    this->initGame();
+    this->m_fsm->tick();
+}
+
+void CGameLoop::initGame()
+{
+    CPlayer   *gi_player;
+    CCardInfo card_index;
+    
+    //Init players name
+    gi_player = &(this->m_players[0]);
+    gi_player->setPlayerName("*Lili*");
+
+    gi_player = &(this->m_players[1]);
+    gi_player->setPlayerName("*Jack*");
+
+    gi_player = &(this->m_players[2]);
+    gi_player->setPlayerName("*Anna*");
+
+    gi_player = &(this->m_players[3]);
+    gi_player->setPlayerName("*Tom*");
+    
+    //Init close box
+    this->m_close_box.initBox();
+    this->m_close_box.randomBox();
+    
+    //Init end card
+    card_index = this->m_close_box.getRandomCard();
+    this->m_endcard.setCard(card_index);
+    this->m_close_box.subCard(card_index);
+    
+    //Init one round
+    for (int round = 0; round < 7; ++round)
+    {
+        for (unsigned int i = 0; i < this->m_players.size(); ++i)
+        {
+            gi_player = &(this->m_players[i]);
+            card_index = this->m_close_box.getEndCard();
+            gi_player->playerAddCard(card_index);
+            this->m_close_box.subCard(card_index);
+        }
+    }
+        
+}
+
+
+void CGameLoop::doPunish(const CCardInfo &punish_card)
+{
+    if (punish_card.isFunctionCard())
+    {
+        if (punish_card.getId() == ECI_AddTwo)
+        {
+            this->actInCard(2);
+            this->actStop();
+        }
+        else if (punish_card.getId() == ECI_Resverse)
+        {
+            this->actReverse();
+        }
+        else if (punish_card.getId() == ECI_Stop)
+        {
+            this->actStop();
+        }
+        else if (punish_card.getId() == ECI_Black)
+        {
+            this->actChangeColor();
+            this->actStop();
+        }
+        else if (punish_card.getId() == ECI_BlackFour)
+        {
+            this->actChangeColor();
+            this->actInCard(4);
+            this->actStop();
+        }
+        else
+        {
+            ;
+        }
+    }
+    else
+    {
+        ;
+    }
+}
+
+void CGameLoop::changeToward() const
+{
+    if (this->m_toward == 1)
+    {
+        this->m_toward = -1;
+    }
+    else if (this->m_toward == -1)
+    {
+        this->m_toward = 1;
+    }
+    else
+    {
+        ;
+    }
+}
+
+void CGameLoop::curToNext()
+{
+    this->m_current = this->getNextLocation();
+}
+
+bool CGameLoop::curPlayerAllowOut(const CCardInfo &out_card)
+{
+    bool is_allow = false;
+    CPlayer *pplayer = &(this->m_players[this->m_current]);
+    
+    if (pplayer->isAllowOut(out_card, this->m_endcard))
+    {
+        is_allow = true;
+    }
+    else
+    {
+        ;
+    }
+        
+    return is_allow;
+}
+
+bool CGameLoop::curPlayerAllowOut()
+{
+    bool is_allow = false;
+    CPlayer *pplayer = &(this->m_players[this->m_current]);
+    if (pplayer->isAllowOut(this->m_endcard))
+    {
+        is_allow = true;
+    }
+    else
+    {
+        ;
+    }
+    
+    return is_allow;
+}
+
+void CGameLoop::curPlayerInCard()
+{
+    //Player touch card
+    if (this->m_close_box.isEmpty())
+    {
+        this->m_close_box.removeBox(this->m_open_box);
+    }
+    
+    //Open box resicle
+    else
+    {
+        CCardInfo card_index = this->m_close_box.getEndCard();
+        CPlayer *pplayer = &(this->m_players[this->m_current]);
+        pplayer->playerAddCard(card_index);
+        this->m_close_box.subCard(card_index);
+    }
+    
+}
+
+void CGameLoop::curPlayerOutCard()
+{
+    //Player out card
+    CPlayer     *pplayer = &(this->m_players[this->m_current]);
+    CCardInfo   out_card = pplayer->getOutCard();
+
+    this->m_box_open.push_back(out_card);
+    this->m_endcard.setCard(out_card);
+    pplayer->playerSubCard(out_card);
+    
+    //Set winner
+    if (pplayer->getBoxSize() == 0)
+    {
+        this->m_winner = this->m_current;
+    }
+    else
+    {
+        ;
+    }
+    
+    //Do action card
+}
+
+void CGameLoop::actNextAddCard(int num)
+{
+    int                             next          = this->getNextLocation();
+    CPlayer                         *pplayer_next = &(m_players[next]);
+    CCardInfo                       card_index;
+    
+    for (int touch = 0; touch < num; ++touch)
+    {
+        if (this->m_close_box.isEmpty())
+        {
+            this->m_close_box.removeBox(this->m_open_box);
+        }
+        else
+        {
+            ;
+        }
+        
+        card_index = this->m_close_box.getEndCard();
+        pplayer_next->playerAddCard(card_index);
+        this->m_close_box.subCard(card_index);
+    }
+}
+
+void CGameLoop::actStop()
+{
+    this->m_current = this->getNextLocation();
+}
+
+void CGameLoop::actReverse()
+{
+    this->changeToward();
+}
+
+void CGameLoop::actChangeColor()
+{
+    CPlayer *pplayer_cur = &(this->m_players[this->m_current]);
+    this->m_endcard.setColor(pplayer_cur->getMaxColor());
+}
+
+unsigned int CGameLoop::getNextLocation()
+{
+    unsigned int next = m_current + m_toward;
+    if (next > m_players.size() - 1)
+    {
+        next -= m_players.size();
+    }
+    else if (next < 0)
+    {
+        next += m_players.size();
+    }
+    else
+    {
+        ;
+    }
+    return next;
+}
+
+void CGameLoop::setAllScores()
+{
+    CPlayer *pplayer    = nullptr;
+    int     num         = 0;
+
+    //other player sub score
+    for (unsigned int index = 0; index < this->m_players.size(); ++index)
+    {
+        pplayer = &(this->m_players[index]);
+        num = pplayer->getBoxSize();
+        pplayer->setPlayerScore(num);
+    }
+
+//    //winner add score
+//    pplayer = &(this->m_players[this->m_winner]);
+//    pplayer->playerAddScore();
+}
+
 void CGameLoop::gameRound(bool is_my)
 {
     
