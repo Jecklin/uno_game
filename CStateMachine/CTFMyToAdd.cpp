@@ -1,8 +1,8 @@
 #include "CTFMyToAdd.h"
 
 CTFMyToAdd::CTFMyToAdd(CGameLoop *gameloop)
-    :m_src(State_Start)
-    ,m_tar(State_Wait)
+    :m_src(State_My)
+    ,m_tar(State_Add)
     ,m_gameloop(gameloop)
 {
     
@@ -22,7 +22,16 @@ CTFMyToAdd::~CTFMyToAdd()
 
 bool CTFMyToAdd::transForm()
 {
-    return true;
+    bool is_ok = false;
+    if (this->m_gameloop->curPlayerIsGiveUp())
+    {
+        is_ok = true;
+    }
+    else
+    {
+        ;
+    }
+    return is_ok;
 }
 
 int CTFMyToAdd::srcState()

@@ -10,6 +10,7 @@ CGameLoop::CGameLoop()
     ,m_close_box()
     ,m_toward(1)
     ,m_current(0)
+    ,m_state_machine(*this)
 {
     
 }
@@ -40,8 +41,12 @@ CGameLoop::~CGameLoop()
 
 void CGameLoop::startGame()
 {
-    this->initGame();
-    this->m_fsm->tick();
+    do
+    {
+        this->m_state_machine.toNextState();
+        
+    }while(!this->m_state_machine.isEndState());
+    
 }
 
 void CGameLoop::initGame()
@@ -82,6 +87,9 @@ void CGameLoop::initGame()
             this->m_close_box.subCard(card_index);
         }
     }
+    
+    //Init state machine
+    this->m_state_machine.init();
         
 }
 
@@ -344,8 +352,10 @@ void CGameLoop::initGame()
 }
 
 
-void CGameLoop::doPunish(const CCardInfo &punish_card)
+void CGameLoop::doPunish()
 {
+    CPlayer *pplayer_cur = &(this->m_players[this->m_current]);
+    CCardInfo punish_card = pplayer_cur->getOutCard();
     if (punish_card.isFunctionCard())
     {
         if (punish_card.getId() == ECI_AddTwo)
@@ -383,20 +393,20 @@ void CGameLoop::doPunish(const CCardInfo &punish_card)
     }
 }
 
-void CGameLoop::changeToward() const
+
+bool CGameLoop::curPlayerIsWinner() const
 {
-    if (this->m_toward == 1)
+    bool is_winner = false;
+    CPlayer     *pplayer = &(this->m_players[this->m_current]);
+    if (pplayer->getBoxSize() == 0)
     {
-        this->m_toward = -1;
-    }
-    else if (this->m_toward == -1)
-    {
-        this->m_toward = 1;
+        is_winner = true;
     }
     else
     {
         ;
     }
+    return is_winner;
 }
 
 void CGameLoop::curToNext()
@@ -404,12 +414,48 @@ void CGameLoop::curToNext()
     this->m_current = this->getNextLocation();
 }
 
-bool CGameLoop::curPlayerAllowOut(const CCardInfo &out_card)
+bool CGameLoop::curPlayerIsMy()
+{
+    bool is_my = false;
+    if (this->m_current == 0)
+    {
+        is_my = true;
+    }
+    else
+    {
+        ;
+    }
+    return is_my;
+}
+
+bool CGameLoop::curPlayerIsGiveUp()
+{
+    bool is_giveup = false;
+    CPlayer *pplayer = &(this->m_players[this->m_current]);
+    if (pplayer->isGiveUp())
+    {
+        is_giveup = true;
+    }
+    else
+    {
+        ;
+    }
+    return is_giveup;
+    
+}
+
+void CGameLoop::curPlayerChangeToGiveUp()
+{
+    CPlayer *pplayer = &(this->m_players[this->m_current]);
+    pplayer->changeToGiveUp();
+}
+
+bool CGameLoop::myAllowOut()
 {
     bool is_allow = false;
     CPlayer *pplayer = &(this->m_players[this->m_current]);
     
-    if (pplayer->isAllowOut(out_card, this->m_endcard))
+    if (pplayer->cardIsAllowOut(this->m_endcard))
     {
         is_allow = true;
     }
@@ -421,7 +467,13 @@ bool CGameLoop::curPlayerAllowOut(const CCardInfo &out_card)
     return is_allow;
 }
 
-bool CGameLoop::curPlayerAllowOut()
+void CGameLoop::showNotAllow()
+{
+    ;
+}
+
+
+bool CGameLoop::otherAllowOut()
 {
     bool is_allow = false;
     CPlayer *pplayer = &(this->m_players[this->m_current]);
@@ -509,7 +561,18 @@ void CGameLoop::actStop()
 
 void CGameLoop::actReverse()
 {
-    this->changeToward();
+    if (this->m_toward == 1)
+    {
+        this->m_toward = -1;
+    }
+    else if (this->m_toward == -1)
+    {
+        this->m_toward = 1;
+    }
+    else
+    {
+        ;
+    }
 }
 
 void CGameLoop::actChangeColor()

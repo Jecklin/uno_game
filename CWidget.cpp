@@ -50,7 +50,7 @@ CWidget::~CWidget()
         this->m_gameLoop = nullptr;
     }
     
-<<<<<<< Updated upstream
+
     if (nullptr == this->m_topListWidget)
     {
         ;
@@ -59,13 +59,13 @@ CWidget::~CWidget()
     {
         delete this->m_topListWidget;
         this->m_topListWidget = nullptr;
-=======
+
     //delete cardButton
     QLayoutItem *child;
     while ((child = this->m_mainWidget->layoutLow->takeAt(0)) != 0) 
     {
         delete child;
->>>>>>> Stashed changes
+
     }
 
     //delete mainWidget
@@ -81,9 +81,8 @@ CWidget::~CWidget()
     
 }
 
-
 void CWidget::showListWidgets()
-{ 
+{
     QString texts;
     QString scores;
     CPlayer player;
@@ -146,9 +145,9 @@ QString CWidget::dbId(ECardId id)
     return cardIds.value(id);
 }
 
-<<<<<<< Updated upstream
+
 void CWidget::onPlayerChange()
-=======
+
 ECardColor CWidget::dbColorToCard(QString color)
 {
     typedef QMap<QString, ECardColor>CardColor;
@@ -193,7 +192,7 @@ ECardId CWidget::dbIdToCard(QString id)
 }
 
 void CWidget::upDateBrowser(int current,const QString &texts)
->>>>>>> Stashed changes
+
 {
     CPlayer         cur_player;
     CCardInfo       card;
@@ -355,7 +354,7 @@ void CWidget::onGameOver()
 
 void CWidget::onGameStart()
 {    
-    this->m_gameLoop->gameStart();
+    this->m_gameLoop->startGame();
 }
 
 void CWidget::onOutCard(const CCardInfo &card)

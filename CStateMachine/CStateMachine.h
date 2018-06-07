@@ -20,6 +20,7 @@ public:
 public:
     void                    init();
     void                    unInit();
+    bool                    isEndState();
     
 private:
     std::list<CState>       m_states;

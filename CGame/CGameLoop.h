@@ -4,6 +4,7 @@
 #include "CDeskBox.h"
 #include "CCardInfoEnd.h"
 #include "CPlayer.h"
+#include "CStateMachine/CStateMachine.h"
 
 class CGameLoop: public QWidget
 {
@@ -13,36 +14,37 @@ public:
     CGameLoop();
     ~CGameLoop();
     
-    //StateWait
+    //StateStart
     void            startGame();                          
     void            initGame();                           
-    void            curToNext();                      
+                     
     
-    //StateStart
+    //StateWait
     bool            curPlayerIsMy();
     
     //StateMy
     bool            curPlayerIsGiveUp();
     void            curPlayerChangeToGiveUp();
-    bool            curPlayerAllowOut(const CCardInfo &out_card);     
+    bool            myAllowOut();
+
     
-    //StateOther
-    bool            curPlayerAllowOut();                              
+    //StateOther                            
+    bool            otherAllowOut();
     
     //StateAdd
     void            curPlayerInCard();                              
     
     //StateSub
     void            curPlayerOutCard();   
-    void            doPunish(const CCardInfo &punish_card); //执行惩罚
-    void            changeToward() const;                   //改变出牌方向
-    
+    void            doPunish();                             //执行惩罚
+    bool            curPlayerIsWinner() const;
+    void            curToNext(); 
     
     //StateEnd
     
     
     //StateError
-    
+    void            showNotAllow();
  
 
 private:
@@ -61,7 +63,7 @@ private:
     CDeskBox                            m_close_box;            //未起牌库
     int                                 m_toward;               //出牌方向标识
     int                                 m_current;              //当前出牌玩家位置
-
+    CStateMachine                       m_state_machine;
 };
 
 

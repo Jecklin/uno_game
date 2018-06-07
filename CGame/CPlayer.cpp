@@ -6,6 +6,7 @@ CPlayer::CPlayer()
     ,m_name()
     ,m_box()
     ,m_giveup(false)
+    ,m_outcard()
 {
     ;
 }
@@ -95,9 +96,9 @@ int CPlayer::getBoxSize() const
 
 ECardColor CPlayer::getMaxColor() const
 {
-    std::list<CCardInfo>::const_iterator iter;
-    CCardInfo   index_card;
-    ECardColor  return_color;
+    std::list<CCardInfo>::const_iterator    iter;
+    CCardInfo                               index_card;
+    ECardColor                              return_color;
 
     int         sum_red    = 0;
     int         sum_yellow = 0;
@@ -161,21 +162,19 @@ ECardColor CPlayer::getMaxColor() const
     return return_color;
 }
 
-
-//Action
-bool CPlayer::isAllowOut(const CCardInfo &card)
+bool CPlayer::boxIsAllowOut(const CCardInfo &end_card)
 {
-    bool is_allow = false;
-    CCardInfo card_index;
-    std::list<CCardInfo>::iterator iter;
+    bool                            is_allow = false;
+    CCardInfo                       card_index;
+    std::list<CCardInfo>::iterator  iter;
 
     //end card is black
-    if ((card.getId() == ECI_Black) || (card.getId() == ECI_BlackFour))
+    if ((end_card.getId() == ECI_Black) || (end_card.getId() == ECI_BlackFour))
     {
         for (iter = this->m_box.begin(); iter != this->m_box.end(); ++iter)
         {
             card_index = *iter;
-            if (card_index.isSameColor(card))
+            if (card_index.isSameColor(end_card))
             {
                 is_allow = true;
             }
@@ -193,7 +192,7 @@ bool CPlayer::isAllowOut(const CCardInfo &card)
         for (iter = this->m_box.begin(); iter != this->m_box.end(); ++iter)
         {
             card_index = *iter;
-            if ((card_index.isSameId(card)) || (card_index.isSimilarColor(card)))
+            if ((card_index.isSameId(end_card)) || (card_index.isSimilarColor(end_card)))
             {
                 is_allow = true;
             }
@@ -206,13 +205,13 @@ bool CPlayer::isAllowOut(const CCardInfo &card)
     return is_allow;
 }
 
-bool CPlayer::isAllowOut(const CCardInfo &my_card, const CCardInfo &end_card)
+bool CPlayer::cardIsAllowOut(const CCardInfo &end_card)
 {
     bool is_allow = false;
     //end card is black
     if ((end_card.getId() == ECI_Black) || (end_card.getId() == ECI_BlackFour))
     {
-        if (my_card.isSameColor(end_card))
+        if (this->m_outcard.isSameColor(end_card))
         {
             is_allow = true;
         }
@@ -225,7 +224,7 @@ bool CPlayer::isAllowOut(const CCardInfo &my_card, const CCardInfo &end_card)
     //end card is normal
     else
     {
-        if ((my_card.isSameId(end_card)) || (my_card.isSimilarColor(end_card)))
+        if ((this->m_outcard.isSameId(end_card)) || (this->m_outcard.isSimilarColor(end_card)))
         {
             is_allow = true;
         }
@@ -236,6 +235,7 @@ bool CPlayer::isAllowOut(const CCardInfo &my_card, const CCardInfo &end_card)
     }
     return is_allow;
 }
+
 
 bool CPlayer::isGiveUp() const
 {
@@ -245,6 +245,16 @@ bool CPlayer::isGiveUp() const
 void CPlayer::changeToGiveUp() const
 {
     this->m_giveup = true;
+}
+
+CCardInfo CPlayer::getOutCard() const
+{
+    return this->m_outcard;
+}
+
+void CPlayer::setOutCard(const CCardInfo &card)
+{
+    this->m_outcard = card;
 }
 
 

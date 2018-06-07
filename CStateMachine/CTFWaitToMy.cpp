@@ -1,8 +1,8 @@
 #include "CTFWaitToMy.h"
 
 CTFWaitToMy::CTFWaitToMy(CGameLoop *gameloop)
-    :m_src(State_Start)
-    ,m_tar(State_Wait)
+    :m_src(State_Wait)
+    ,m_tar(State_My)
     ,m_gameloop(gameloop)
 {
     
@@ -22,7 +22,16 @@ CTFWaitToMy::~CTFWaitToMy()
 
 bool CTFWaitToMy::transForm()
 {
-    return true;
+    bool is_ok = false;
+    if (this->m_gameloop->curPlayerIsMy())
+    {
+        is_ok = true;
+    }
+    else
+    {
+        ;
+    }
+    return is_ok;
 }
 
 int CTFWaitToMy::srcState()

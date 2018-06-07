@@ -22,6 +22,7 @@ CTFStartToWait::~CTFStartToWait()
 
 bool CTFStartToWait::transForm()
 {
+    this->m_gameloop->initGame();
     return true;
 }
 

@@ -1,8 +1,8 @@
 #include "CTFMyToError.h"
 
 CTFMyToError::CTFMyToError(CGameLoop *gameloop)
-    :m_src(State_Start)
-    ,m_tar(State_Wait)
+    :m_src(State_My)
+    ,m_tar(State_Error)
     ,m_gameloop(gameloop)
 {
     
@@ -22,7 +22,24 @@ CTFMyToError::~CTFMyToError()
 
 bool CTFMyToError::transForm()
 {
-    return true;
+    bool is_ok = false;
+    if (this->m_gameloop->curPlayerIsGiveUp())
+    {
+        ;
+    }
+    else
+    {
+        if (this->m_gameloop->myAllowOut())
+        {
+            ;
+        }
+        else
+        {
+            is_ok = ture;
+        }
+    }
+
+    return is_ok;
 }
 
 int CTFMyToError::srcState()

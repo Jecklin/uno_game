@@ -1,8 +1,8 @@
 #include "CTFMyToSub.h"
 
 CTFMyToSub::CTFMyToSub(CGameLoop *gameloop)
-    :m_src(State_Start)
-    ,m_tar(State_Wait)
+    :m_src(State_My)
+    ,m_tar(State_Sub)
     ,m_gameloop(gameloop)
 {
     
@@ -22,7 +22,23 @@ CTFMyToSub::~CTFMyToSub()
 
 bool CTFMyToSub::transForm()
 {
-    return true;
+    bool is_ok = false;
+    if (this->m_gameloop->curPlayerIsGiveUp())
+    {
+        ;
+    }
+    else
+    {
+        if (this->m_gameloop->myAllowOut())
+        {
+            is_ok = true;
+        }
+        else
+        {
+            ;
+        }
+    }
+    return is_ok;
 }
 
 int CTFMyToSub::srcState()

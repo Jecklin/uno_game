@@ -43,7 +43,8 @@ SOURCES += \
     CGame/CCardInfoEnd.cpp \
     CGame/CDeskBox.cpp \
     CGame/CGameLoop.cpp \
-    CGame/CPlayer.cpp
+    CGame/CPlayer.cpp \
+    CStateMachine/CTFErrorToMy.cpp
 
 HEADERS += \
         CWidget.h \
@@ -67,7 +68,8 @@ HEADERS += \
     CGame/CDeskBox.h \
     CGame/CGameLoop.h \
     CGame/CPlayer.h \
-    CGame/datatypedefine.h
+    CGame/datatypedefine.h \
+    CStateMachine/CTFErrorToMy.h
 
 FORMS += \
         CWidget.ui \

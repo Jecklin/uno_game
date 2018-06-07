@@ -1,7 +1,7 @@
 #include "CTFSubToWait.h"
 
 CTFSubToWait::CTFSubToWait(CGameLoop *gameloop)
-    :m_src(State_Start)
+    :m_src(State_Sub)
     ,m_tar(State_Wait)
     ,m_gameloop(gameloop)
 {
@@ -22,7 +22,20 @@ CTFSubToWait::~CTFSubToWait()
 
 bool CTFSubToWait::transForm()
 {
-    return true;
+    this->m_gameloop->curPlayerOutCard();
+    this->m_gameloop->doPunish();
+    this->m_gameloop->curToNext();
+    
+    bool is_ok = false;
+    if (this->m_gameloop->curPlayerIsWinner())
+    {
+        ;
+    }
+    else
+    {
+        is_ok = true;
+    }
+    return is_ok;
 }
 
 int CTFSubToWait::srcState()

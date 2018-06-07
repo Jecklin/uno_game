@@ -20,7 +20,7 @@ int CState::getCurState() const
 
 int CState::toNextState()
 {
-    int return_state;
+    int return_state = this->m_state;
     std::list<CAbstractTransform*>::iterator iter = this->m_transforms.begin();
     for (iter; iter != this->m_transforms.end(); ++iter)
     {
@@ -32,7 +32,7 @@ int CState::toNextState()
         }
         else
         {
-            return_state = this->m_state;
+            ;
         }
         
     }

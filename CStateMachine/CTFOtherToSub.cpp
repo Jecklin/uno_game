@@ -1,8 +1,8 @@
 #include "CTFOtherToSub.h"
 
 CTFOtherToSub::CTFOtherToSub(CGameLoop *gameloop)
-    :m_src(State_Start)
-    ,m_tar(State_Wait)
+    :m_src(State_Other)
+    ,m_tar(State_Sub)
     ,m_gameloop(gameloop)
 {
     
@@ -22,7 +22,16 @@ CTFOtherToSub::~CTFOtherToSub()
 
 bool CTFOtherToSub::transForm()
 {
-    return true;
+    bool is_ok = false;
+    if (this->m_gameloop->otherAllowOut())
+    {
+        is_ok = true;
+    }
+    else
+    {
+        ;
+    }
+    return is_ok;
 }
 
 int CTFOtherToSub::srcState()

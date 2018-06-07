@@ -31,15 +31,20 @@ public:
     ECardColor      getMaxColor() const;    
     
     //Judge
-    bool            isAllowOut(const CCardInfo &card);                                  //Other round
-    bool            isAllowOut(const CCardInfo &my_card, const CCardInfo &end_card);    //my round
+    bool            boxIsAllowOut(const CCardInfo &end_card);     //Other round
+    bool            cardIsAllowOut(const CCardInfo &end_card);    //my round
     bool            isGiveUp() const;
     void            changeToGiveUp() const;
+    
+    //Out card
+    CCardInfo       getOutCard() const;
+    void            setOutCard(const CCardInfo &card);
 
 private:
     int             m_score;
     std::string     m_name;
     CBox            m_box;
     bool            m_giveup;
+    CCardInfo       m_outcard;
 };
 #endif // CPLAYER_H
