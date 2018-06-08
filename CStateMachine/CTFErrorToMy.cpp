@@ -22,16 +22,15 @@ CTFErrorToMy::~CTFErrorToMy()
 
 bool CTFErrorToMy::transForm()
 {
-    this->m_gameloop->showNotAllow();
     return true;
 }
 
-int CTFErrorToMy::srcState()
+int CTFErrorToMy::srcState() const
 {
     return this->m_src;
 }
 
-int CTFErrorToMy::tarState()
+int CTFErrorToMy::tarState() const
 {
     return this->m_tar;
 }

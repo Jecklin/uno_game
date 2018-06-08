@@ -1,4 +1,5 @@
 #include "CWidget.h"
+#include "CGameOverDialog.h"
 #include "ui_CWidget.h"
 #include "ui_CTopList.h"
 
@@ -9,31 +10,25 @@
 CWidget::CWidget(QWidget *parent)
     :QWidget(parent)
     ,m_mainWidget(nullptr)
-    ,m_topListWidget(nullptr)
     ,m_gameLoop(nullptr)
-    ,m_choice(-1)
+    ,m_choice(false)
+    ,m_size()
 {
     this->m_mainWidget = new Ui::CWidget();
     this->m_mainWidget->setupUi(this);
    
     this->m_gameLoop = new CGameLoop;
-  
-    //Game loop
-    connect(m_gameLoop,SIGNAL(playerChanged()),this,SLOT(onPlayerChange()));    
-    connect(m_gameLoop,SIGNAL(endCardChanged()),this,SLOT(onEndCardChange()));
-    connect(m_gameLoop,SIGNAL(scoreChanged()),this,SLOT(onScoreChange()));
-    connect(m_gameLoop,SIGNAL(firstRound()),this,SLOT(onFirstRound()));
-    connect(m_gameLoop,SIGNAL(myRound()),this,SLOT(onMyRound()));    
-    connect(m_gameLoop,SIGNAL(error()),this,SLOT(onError()));
     
-    connect(m_gameLoop,SIGNAL(outCard(const CCardInfo &card)),this,SLOT(onOutCard(const CCardInfo &card)));
-    connect(m_gameLoop,SIGNAL(inCard()),this,SLOT(onInCard()));
+    //Game loop
+    connect(m_gameLoop,SIGNAL(playerInCard(CCardInfo,int)),this,SLOT(onPlayerInCard(CCardInfo,int)));
+    connect(m_gameLoop,SIGNAL(playerOutCard(CCardInfo,int)),this,SLOT(onPlayerOutCard(CCardInfo,int)));
+    connect(m_gameLoop,SIGNAL(endCardChanged(CCardInfo)),this,SLOT(onEndCardChanged(CCardInfo)));
+    connect(m_gameLoop,SIGNAL(gameOver()),this,SLOT(onGameOver()));
     
     //Ui
-    connect(m_mainWidget->pushButtonStart,SIGNAL(clicked(bool)),this,SLOT(onGameStart()));
-    connect(m_mainWidget->pushButtonGiveUp,SIGNAL(clicked(bool)),this,SLOT(onGiveUp()));
-    connect(m_mainWidget->pushButtonOutCard,SIGNAL(clicked(bool)),this,SLOT(onOutCard()));
-
+    connect(m_mainWidget->pushButtonStart,SIGNAL(clicked(bool)),this,SLOT(onGameStart()));   
+    connect(m_mainWidget->pushButtonGiveUp,SIGNAL(clicked(bool)),this,SLOT(onChoiceGiveUp()));    
+    connect(this,SIGNAL(choiced()),this,SLOT(onChoiced())); 
     
 }
 
@@ -50,24 +45,15 @@ CWidget::~CWidget()
         this->m_gameLoop = nullptr;
     }
     
-
-    if (nullptr == this->m_topListWidget)
-    {
-        ;
-    }
-    else
-    {
-        delete this->m_topListWidget;
-        this->m_topListWidget = nullptr;
-
+    
     //delete cardButton
     QLayoutItem *child;
     while ((child = this->m_mainWidget->layoutLow->takeAt(0)) != 0) 
     {
         delete child;
-
+        
     }
-
+    
     //delete mainWidget
     if (nullptr == this->m_mainWidget)
     {
@@ -78,34 +64,239 @@ CWidget::~CWidget()
         delete this->m_mainWidget;
         this->m_mainWidget = nullptr;
     }
+}
+    
+    
+
+void CWidget::onGameStart()
+{    
+    this->m_gameLoop->startGame();
+}
+
+void CWidget::onPlayerInCard(CCardInfo in_card, int current)
+{
+    QString         card_info;
+    QString         str_num;
+    card_info = this->dbColorToString(in_card.getColor()) 
+              + " "
+              + this->dbIdToString(in_card.getId())
+              + " "
+              + this->dbActionToString(in_card.getAction());
+    
+    QPushButton *button = new QPushButton;
+    connect(button,SIGNAL(clicked(bool)),this,SLOT(onChoiceOutCard(in_card)));
+    button->setProperty("cardInfo", card_info);
+    button->setText(card_info);
+    button->resize(QSize(100, 300));
+    
+    //更新底部browser
+    if (current == 0)
+    {
+        m_size[0]++;
+        str_num = QString::number(m_size[0], 10);
+        this->m_mainWidget->labelNumLow->setText(str_num);
+        this->m_mainWidget->layoutLow->addWidget(button);   
+    }
+
+    //更新左侧browser
+    else if (current == 1)
+    {
+        m_size[1]++;
+        str_num = QString::number(m_size[1], 10);
+        this->m_mainWidget->labelNumLeft->setText(str_num);
+        this->m_mainWidget->layoutLeft->addWidget(button);  
+    }
+
+    //更新顶部browser
+    else if (current == 2)
+    {
+        m_size[2]++;
+        str_num = QString::number(m_size[2], 10);
+        this->m_mainWidget->labelNumTop->setText(str_num);
+        this->m_mainWidget->layoutTop->addWidget(button);
+    }
+
+    //更新右边browser
+    else if (current == 3)
+    {
+        m_size[3]++;
+        str_num = QString::number(m_size[3], 10);
+        this->m_mainWidget->labelNumRight->setText(str_num);
+        this->m_mainWidget->layoutRight->addWidget(button);
+    }
+    else
+    {
+        ;
+    } 
+    
+    button->show();
     
 }
 
-void CWidget::showListWidgets()
+void CWidget::onPlayerOutCard(CCardInfo out_card, int current)
 {
-    QString texts;
-    QString scores;
-    CPlayer player;
-    QString name;
+    QString cardInfo = this->dbColorToString(out_card.getColor())
+                     + " " 
+                     + this->dbIdToString(out_card.getId())             
+                     + " "
+                     + this->dbActionToString(out_card.getAction());
+    QString str_num;
+    
+    if (current == 0)
+    {
+        for (int i = this->m_mainWidget->layoutLow->count() - 1 ; i >= 0; --i)
+        {
+            QLayoutItem *it = this->m_mainWidget->layoutLow->itemAt(i);
+            QPushButton *button = qobject_cast<QPushButton *>(it->widget());
+            if (button != nullptr)
+            {
+                if (button->property("cardInfo") == cardInfo)
+                {
+                    this->m_mainWidget->layoutLow->removeWidget(button);
+                    break;
+                }
+                else
+                {
+                    ;
+                }
+            }
+        }
+        
+        m_size[0]--;
+        str_num = QString::number(m_size[0], 10);
+        this->m_mainWidget->labelNumLow->setText(str_num);
+    }
+    else if (current == 1)
+    {
+        for (int i = this->m_mainWidget->layoutLeft->count() - 1 ; i >= 0; --i)
+        {
+            QLayoutItem *it = this->m_mainWidget->layoutLeft->itemAt(i);
+            QPushButton *button = qobject_cast<QPushButton *>(it->widget());
+            if (button != nullptr)
+            {
+                if (button->property("cardInfo") == cardInfo)
+                {
+                    this->m_mainWidget->layoutLeft->removeWidget(button);
+                    break;
+                }
+                else
+                {
+                    ;
+                }
+            }
+        }
+        
+        m_size[1]--;
+        str_num = QString::number(m_size[1], 10);
+        this->m_mainWidget->labelNumLeft->setText(str_num);
+    }
+    else if (current == 2)
+    {
+        for (int i = this->m_mainWidget->layoutTop->count() - 1 ; i >= 0; --i)
+        {
+            QLayoutItem *it = this->m_mainWidget->layoutTop->itemAt(i);
+            QPushButton *button = qobject_cast<QPushButton *>(it->widget());
+            if (button != nullptr)
+            {
+                if (button->property("cardInfo") == cardInfo)
+                {
+                    this->m_mainWidget->layoutTop->removeWidget(button);
+                    break;
+                }
+                else
+                {
+                    ;
+                }
+            }
+        }
+        
+        m_size[2]--;
+        str_num = QString::number(m_size[2], 10);
+        this->m_mainWidget->labelNumTop->setText(str_num);
+    }
+    else if (current == 3)
+    {
+        for (int i = this->m_mainWidget->layoutRight->count() - 1 ; i >= 0; --i)
+        {
+            QLayoutItem *it = this->m_mainWidget->layoutRight->itemAt(i);
+            QPushButton *button = qobject_cast<QPushButton *>(it->widget());
+            if (button != nullptr)
+            {
+                if (button->property("cardInfo") == cardInfo)
+                {
+                    this->m_mainWidget->layoutRight->removeWidget(button);
+                    break;
+                }
+                else
+                {
+                    ;
+                }
+            }
+        }
+        
+        m_size[3]--;
+        str_num = QString::number(m_size[3], 10);
+        this->m_mainWidget->labelNumRight->setText(str_num);
+    }
+    else
+    {
+        
+    }
+}
 
+void CWidget::onEndCardChanged(CCardInfo end_card)
+{
+    QString       texts;
+    texts = this->dbColorToString(end_card.getColor()) + this->dbIdToString(end_card.getId());
+    this->m_mainWidget->textBrowserEndCard->setText(texts);
+}
+
+void CWidget::onNotAllowOut()
+{
+    QString error = "Choice Error, not allow out";
+    this->m_mainWidget->labelPrompt->setText(error);
+}
+
+void CWidget::onGameOver()
+{
+    QString      texts;
+    QString      scores;
+    CPlayer      player;
+    QString      name;
+    
+    texts = QString::fromUtf8("*****  Game Over  ****\n");
     for (int i = 0; i < 4; ++i)
     {
         player = this->m_gameLoop->getPlayer(i);
-        scores = QString::number(player.playerGetScore(),10);
-        name = QString::fromStdString(player.playerGetName());
-        texts += name;
-        texts += ": ";
-        texts += scores;
-        texts += "\n";
+        scores = QString::number(player.getPlayerScore(),10);
+        name = QString::fromStdString(player.getPlayerName());
+        texts += name + ": " + scores + "\n";
     }
     
-    this->m_topListWidget = new Ui::CTopList();
-    this->m_topListWidget->textBrowser->setText(texts);
-    this->m_topListWidget->setupUi(this);
-
+    CGameOverDialog dialog;
+    dialog.setTextBrowser(texts);
+    dialog.exec();
+    
 }
 
-QString CWidget::dbColor(ECardColor color)
+void CWidget::onChoiceGiveUp()
+{
+    this->m_gameLoop->curPlayerChangeToGiveUp();
+    emit choiced();
+}
+
+void CWidget::onChoiceOutCard(CCardInfo card)
+{
+    this->m_gameLoop->curPlayerChangeOutCard(card);
+    emit choiced();
+}
+
+void CWidget::onChoiced()
+{
+    this->m_gameLoop->myRound();
+}
+
+QString CWidget::dbColorToString(ECardColor color)
 {
     typedef QMap<ECardColor, QString>CardColor;
     static CardColor cardColors;
@@ -120,7 +311,7 @@ QString CWidget::dbColor(ECardColor color)
     return cardColors.value(color);
 }
 
-QString CWidget::dbId(ECardId id)
+QString CWidget::dbIdToString(ECardId id)
 {
     typedef QMap<ECardId,QString>CardId;
     static CardId cardIds;
@@ -145,8 +336,25 @@ QString CWidget::dbId(ECardId id)
     return cardIds.value(id);
 }
 
+QString CWidget::dbActionToString(ECardAction action)
+{
+    typedef QMap<ECardAction,QString>CardAction;
+    static CardAction cardActions;
+    if (cardActions.isEmpty())
+    {
+        cardActions.insert(ECardAction::ECA_None, QString::fromUtf8("None"));
+        cardActions.insert(ECardAction::ECA_Reverse, QString::fromUtf8("Reverse"));
+        cardActions.insert(ECardAction::ECA_Stop, QString::fromUtf8("Stop"));
+        cardActions.insert(ECardAction::ECA_ChangeColor, QString::fromUtf8("ChangeColor"));
+        cardActions.insert(ECardAction::ECA_ActionTwo, QString::fromUtf8("ActionTwo"));
+        cardActions.insert(ECardAction::ECA_Black, QString::fromUtf8("Black"));
+        cardActions.insert(ECardAction::ECA_BlackFour, QString::fromUtf8("BlackFour"));
 
-void CWidget::onPlayerChange()
+    }
+    return cardActions.value(action);
+}
+
+
 
 ECardColor CWidget::dbColorToCard(QString color)
 {
@@ -191,263 +399,44 @@ ECardId CWidget::dbIdToCard(QString id)
     return cardIds.value(id);
 }
 
-void CWidget::upDateBrowser(int current,const QString &texts)
-
+ECardAction CWidget::dbActionToCard(QString action)
 {
-    CPlayer         cur_player;
-    CCardInfo       card;
-    QString         num;
-    QString         texts;
-
-    //获取当前玩家信息
-    int current = this->m_gameLoop->getCurrent();
-    cur_player  = this->m_gameLoop->getPlayer(current);
-
-    num = QString::number(cur_player.getBoxSize(), 10);
-
-    for (int i = 0; i < cur_player.getBoxSize(); ++i)
+    typedef QMap<QString,ECardAction>CardAction;
+    static CardAction cardActions;
+    if (cardActions.isEmpty())
     {
-        card = cur_player.getNumCard(i);
-        texts += this->dbColor(card.getColor()) + this->dbId(card.getId()) + "\n";
-    }
+        cardActions.insert("None", ECardAction::ECA_None);
+        cardActions.insert("Reverse", ECardAction::ECA_Reverse);
+        cardActions.insert("Stop", ECardAction::ECA_Stop);
+        cardActions.insert("ChangeColor", ECardAction::ECA_ChangeColor);
+        cardActions.insert("ActionTwo", ECardAction::ECA_ActionTwo);
+        cardActions.insert("Black", ECardAction::ECA_Black);
+        cardActions.insert("BlackFour", ECardAction::ECA_BlackFour);
 
-    //更新底部browser
-    if (current == 0)
-    {
-        this->m_mainWidget->labelNumLow->setText(num);
-        this->m_mainWidget->textBrowserLow->setText(texts);
     }
-
-    //更新左侧browser
-    else if (current == 1)
-    {
-        this->m_mainWidget->labelNumLeft->setText(num);
-        this->m_mainWidget->textBrowserLeft->setText(texts);
-    }
-
-    //更新顶部browser
-    else if (current == 2)
-    {
-        this->m_mainWidget->labelNumTop->setText(num);
-        this->m_mainWidget->textBrowserTop->setText(texts);
-    }
-
-    //更新右边browser
-    else if (current == 3)
-    {
-        this->m_mainWidget->labelNumRight->setText(num);
-        this->m_mainWidget->textBrowserRight->setText(texts);
-    }
-    else
-    {
-        ;
-    }
+    return cardActions.value(action);
 }
 
-void CWidget::onEndCardChange()
+void CWidget::showPlayerScores()
 {
-    QString       texts;
-    CCardInfo     card = this->m_gameLoop->getEndCard();
-    texts = this->dbColor(card.getColor()) + this->dbId(card.getId());
-    this->m_mainWidget->textBrowserEndCard->setText(texts);
+    QString str_score;
+    int     score;
+    score       = this->m_gameLoop->getPlayerScore(0);
+    str_score   = QString::number(score, 10);
+    this->m_mainWidget->labelScoreLow->setText(str_score);
+    
+    score       = this->m_gameLoop->getPlayerScore(1);
+    str_score   = QString::number(score, 10);
+    this->m_mainWidget->labelScoreLeft->setText(str_score);
+    
+    score       = this->m_gameLoop->getPlayerScore(2);
+    str_score   = QString::number(score, 10);
+    this->m_mainWidget->labelScoreTop->setText(str_score);
+    
+    score       = this->m_gameLoop->getPlayerScore(3);
+    str_score   = QString::number(score, 10);
+    this->m_mainWidget->labelScoreRight->setText(str_score);
 }
-
-void CWidget::onScoreChange()
-{
-    QString       score;
-    CPlayer       player = this->m_gameLoop->getPlayer(0);
-    score = QString::number(player.playerGetScore(),10);
-    this->m_mainWidget->labelScoreLow->setText(score);
-
-    player = this->m_gameLoop->getPlayer(1);
-    score = QString::number(player.playerGetScore(),10);
-    this->m_mainWidget->labelScoreLeft->setText(score);
-
-    player = this->m_gameLoop->getPlayer(2);
-    score = QString::number(player.playerGetScore(),10);
-    this->m_mainWidget->labelScoreTop->setText(score);
-
-    player = this->m_gameLoop->getPlayer(3);
-    score = QString::number(player.playerGetScore(),10);
-    this->m_mainWidget->labelScoreRight->setText(score);
-    
-}
-
-void CWidget::onFirstRound()
-{
-    CPlayer         cur_player;
-    CCardInfo       card;
-    QString         num[4];
-    QString         texts[4];
-   
-    for (int i = 0; i < 4; ++i)
-    {
-        cur_player = this->m_gameLoop->getPlayer(i);
-        num[i] = QString::number(cur_player.getBoxSize(), 10);
-        for (int j = 0; j < cur_player.getBoxSize(); ++j)
-        {
-            card = cur_player.getNumCard(i);
-            texts[i] += this->dbColor(card.getColor()) + this->dbId(card.getId()) + "\n";
-        }
-        
-    }
-    
-    // 更新 browser
-    this->m_mainWidget->labelNumLow->setText(num[0]);
-    this->m_mainWidget->textBrowserLow->setText(texts[0]);
-    
-    this->m_mainWidget->labelNumLeft->setText(num[1]);
-    this->m_mainWidget->textBrowserLeft->setText(texts[1]);
-    
-    this->m_mainWidget->labelNumTop->setText(num[2]);
-    this->m_mainWidget->textBrowserTop->setText(texts[2]);
-    
-    this->m_mainWidget->labelNumRight->setText(num[3]);
-    this->m_mainWidget->textBrowserRight->setText(texts[3]);
-
-}
-
-void CWidget::onMyRound()
-{
-    this->m_gameLoop->setChoice(this->m_choice);
-}
-
-void CWidget::onGiveUp()
-{
-    this->m_choice = 111;
-}
-
-void CWidget::onOutCard()
-{
-    QString texts;
-    texts   = this->m_mainWidget->lineEditChoice->text();
-    this->m_choice  = texts.toInt();
-}
-
-void CWidget::onError()
-{
-    QString error = "Choice Error";
-    this->m_mainWidget->labelPrompt->setText(error);
-}
-
-void CWidget::onGameOver()
-{
-    QString      texts;
-    QString      scores;
-    CPlayer      player;
-    QString      name;
-    
-    texts = QString::fromUtf8("*****  Game Over  ****\n");
-    for (int i = 0; i < 4; ++i)
-    {
-        player = this->m_gameLoop->getPlayer(i);
-        scores = QString::number(player.getPlayerScore(),10);
-        name = QString::fromStdString(player.getPlayerName());
-        texts += name + ": " + scores + "\n";
-    }
-    
-    COverDialog over_dialog;
-    over_dialog.setBrowser(texts);
-    over_dialog.exec();  
-
-}
-
-void CWidget::onGameStart()
-{    
-    this->m_gameLoop->startGame();
-}
-
-void CWidget::onOutCard(const CCardInfo &card)
-{
-    CPlayer cur_player;
-    int current = this->m_gameLoop->getCurrent();
-    QString num;
-    //get current player info
-    cur_player  = this->m_gameLoop->getPlayer(current);
-    
-    //num label
-    num = QString::number(cur_player.getBoxSize(), 10);
-    this->upDateLabelNum(current, num);
-    
-    QString cardInfo;
-    
-    for (int i = this->m_mainWidget->layoutLow->count() - 1 ; i >= 0; --i)
-    {
-        QLayoutItem *it = this->m_mainWidget->layoutLow->itemAt(i);
-        QPushButton *button = qobject_cast<QPushButton *>(it->widget());
-        if (button != nullptr)
-        {
-            cardInfo = this->dbColor(card.getColor())
-                     + " " + this->dbId(card.getId());
-            if (button->property("cardInfo") == cardInfo)
-            {
-                this->m_mainWidget->layoutLow->removeWidget(button);
-                break;
-            }
-            else
-            {
-                ;
-            }
-        }
-    }
-        
-}
-
-void CWidget::onSetOutCard()
-{
-    QObject *sender = this->sender();
-    QString cardInfo;
-    if (nullptr == sender)
-    {
-        ;
-    }
-    else
-    {
-        cardInfo = sender->property("cardInfo").toString();
-    }
-    
-    if (cardInfo.isEmpty())
-    {
-        ;
-    }
-    else
-    {
-        //这里获得那张牌被选择了
-        QString color = cardInfo.section(' ', 0, 0);
-        QString id    = cardInfo.section(' ', 1, 1);
-        CCardInfo card(color, id, );
-        this->m_gameLoop->setOutCard(card);
-        this->m_gameLoop->setIsChoiced(true);
-        
-    }
-}
-
-void CWidget::onInCard()
-{    
-    CPlayer         cur_player;
-    QString         num;
-    QString         cardInfo;
-
-    //get current player info
-    cur_player  = this->m_gameLoop->getPlayer(current);
-    
-    //num label
-    num = QString::number(cur_player.getBoxSize(), 10);
-    this->upDateLabelNum(current, num);
-    
-    //add card button
-    cardInfo = this->dbColor(this->m_gameLoop->getInCard().getColor())
-             + " " + this->dbId(this->m_gameLoop->getInCard().getId());
-    
-    QPushButton *button = new QPushButton;
-    button->setProperty("cardInfo", cardInfo);
-    button->resize(QSize(100, 300));
-    this->m_mainWidget->layoutLow->addWidget(button);
-    button->show();
-    
-    
-}
-
 
 
 

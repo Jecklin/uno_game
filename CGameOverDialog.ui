@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ui version="4.0">
- <class>CTopList</class>
- <widget class="QWidget" name="CTopList">
+ <class>CGameOverDialog</class>
+ <widget class="QDialog" name="CGameOverDialog">
   <property name="geometry">
    <rect>
     <x>0</x>
@@ -11,15 +11,15 @@
    </rect>
   </property>
   <property name="windowTitle">
-   <string>Form</string>
+   <string>Dialog</string>
   </property>
   <widget class="QTextBrowser" name="textBrowser">
    <property name="geometry">
     <rect>
-     <x>50</x>
-     <y>30</y>
-     <width>301</width>
-     <height>241</height>
+     <x>7</x>
+     <y>7</y>
+     <width>256</width>
+     <height>192</height>
     </rect>
    </property>
   </widget>

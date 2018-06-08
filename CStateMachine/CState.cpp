@@ -10,7 +10,20 @@ CState::CState(int state)
 
 CState::~CState()
 {
-    
+    std::list<CAbstractTransform*>::iterator iter;
+    do
+    {
+        if (this->m_transforms.empty())
+        {
+            break;
+        }
+        else
+        {
+            iter = this->m_transforms.begin();
+            m_transforms.erase(iter);
+        }
+        
+    }while(true);
 }
 
 int CState::getCurState() const
@@ -21,8 +34,8 @@ int CState::getCurState() const
 int CState::toNextState()
 {
     int return_state = this->m_state;
-    std::list<CAbstractTransform*>::iterator iter = this->m_transforms.begin();
-    for (iter; iter != this->m_transforms.end(); ++iter)
+    std::list<CAbstractTransform*>::iterator iter;
+    for (iter = this->m_transforms.begin(); iter != this->m_transforms.end(); ++iter)
     {
         CAbstractTransform *ptran = *iter;
         if (ptran->transForm())
@@ -47,8 +60,8 @@ void CState::addTransform(CAbstractTransform *transform)
 
 void CState::removeTransform(CAbstractTransform *transform)
 {
-    std::list<CAbstractTransform*>::iterator iter = this->m_transforms.begin();
-    for (iter; iter != this->m_transforms.end(); ++iter)
+    std::list<CAbstractTransform*>::iterator iter;
+    for (iter = this->m_transforms.begin(); iter != this->m_transforms.end(); ++iter)
     {
         CAbstractTransform *ptran = *iter;
         if (ptran == transform)
@@ -59,4 +72,5 @@ void CState::removeTransform(CAbstractTransform *transform)
         {
             ;
         }   
+    }
 }

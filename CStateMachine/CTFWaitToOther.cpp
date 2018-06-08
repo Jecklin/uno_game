@@ -34,12 +34,12 @@ bool CTFWaitToOther::transForm()
     return is_ok;
 }
 
-int CTFWaitToOther::srcState()
+int CTFWaitToOther::srcState() const
 {
     return this->m_src;
 }
 
-int CTFWaitToOther::tarState()
+int CTFWaitToOther::tarState() const
 {
     return this->m_tar;
 }

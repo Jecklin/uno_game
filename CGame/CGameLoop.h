@@ -16,45 +16,55 @@ public:
     
     //StateStart
     void            startGame();                          
-    void            initGame();                           
-                     
-    
+    void            initGame();
+    void            changeEndCard(const CCardInfo &card);
+    int             getPlayerScore(int current);
+    void            myRound();
+    void            otherRound();
+                      
     //StateWait
     bool            curPlayerIsMy();
     
     //StateMy
     bool            curPlayerIsGiveUp();
     void            curPlayerChangeToGiveUp();
+    void            curPlayerChangeOutCard(const CCardInfo &card);
     bool            myAllowOut();
-
     
     //StateOther                            
     bool            otherAllowOut();
     
     //StateAdd
     void            curPlayerInCard();                              
+    void            playerTouchCard(int player_num);
     
     //StateSub
-    void            curPlayerOutCard();   
+    void            curPlayerOutCard();
+    bool            curPlayerIsWinner();
     void            doPunish();                             //执行惩罚
-    bool            curPlayerIsWinner() const;
     void            curToNext(); 
-    
-    //StateEnd
-    
-    
+  
     //StateError
-    void            showNotAllow();
  
-
+    //StateEnd
+    void            setAllScores(); 
+    CPlayer         getPlayer(int num);
+    
+signals:
+    void            playerInCard(CCardInfo in_card, int current);
+    void            playerOutCard(CCardInfo out_card, int current);
+    void            endCardChanged(CCardInfo end_card);
+    void            notAllowOut();
+    void            gameOver();
+    
 private:
-    //Do punish
+    //Do punish   
     void            actNextAddCard(int num);
     void            actStop();
     void            actReverse();
     void            actChangeColor(); 
-    unsigned int    getNextLocation();
-    void            setAllScores(); 
+    int             getNextLocation();
+
     
 private:
     std::vector<CPlayer>                m_players;              //玩家数组
@@ -63,7 +73,7 @@ private:
     CDeskBox                            m_close_box;            //未起牌库
     int                                 m_toward;               //出牌方向标识
     int                                 m_current;              //当前出牌玩家位置
-    CStateMachine                       m_state_machine;
+    CStateMachine                       *m_state_machine;
 };
 
 

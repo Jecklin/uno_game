@@ -34,7 +34,7 @@ public:
     bool            boxIsAllowOut(const CCardInfo &end_card);     //Other round
     bool            cardIsAllowOut(const CCardInfo &end_card);    //my round
     bool            isGiveUp() const;
-    void            changeToGiveUp() const;
+    void            changeToGiveUp();
     
     //Out card
     CCardInfo       getOutCard() const;

@@ -38,12 +38,12 @@ bool CTFSubToWait::transForm()
     return is_ok;
 }
 
-int CTFSubToWait::srcState()
+int CTFSubToWait::srcState() const
 {
     return this->m_src;
 }
 
-int CTFSubToWait::tarState()
+int CTFSubToWait::tarState() const
 {
     return this->m_tar;
 }

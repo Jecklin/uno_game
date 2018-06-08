@@ -34,12 +34,12 @@ bool CTFOtherToSub::transForm()
     return is_ok;
 }
 
-int CTFOtherToSub::srcState()
+int CTFOtherToSub::srcState() const
 {
     return this->m_src;
 }
 
-int CTFOtherToSub::tarState()
+int CTFOtherToSub::tarState() const
 {
     return this->m_tar;
 }

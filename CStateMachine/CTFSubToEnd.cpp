@@ -27,6 +27,7 @@ bool CTFSubToEnd::transForm()
     bool is_ok = false;
     if (this->m_gameloop->curPlayerIsWinner())
     {
+        this->m_gameloop->setAllScores();
         is_ok = true;
     }
     else
@@ -37,12 +38,12 @@ bool CTFSubToEnd::transForm()
     return is_ok;
 }
 
-int CTFSubToEnd::srcState()
+int CTFSubToEnd::srcState() const
 {
     return this->m_src;
 }
 
-int CTFSubToEnd::tarState()
+int CTFSubToEnd::tarState() const
 {
     return this->m_tar;
 }

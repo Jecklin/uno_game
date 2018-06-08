@@ -242,7 +242,7 @@ bool CPlayer::isGiveUp() const
     return this->m_giveup;
 }
 
-void CPlayer::changeToGiveUp() const
+void CPlayer::changeToGiveUp()
 {
     this->m_giveup = true;
 }

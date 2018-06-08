@@ -10,13 +10,13 @@ public:
     CDeskBox();
     ~CDeskBox();
     
-    void        addCard(const CCardInfo &card) const;
-    void        subCard(const CCardInfo &card) const;
+    void        addCard(const CCardInfo &card);
+    void        subCard(const CCardInfo &card);
     CCardInfo   getRandomCard();
     CCardInfo   getEndCard();
-    void        initBox() const;
-    void        randomBox() const;
-    void        removeBox(const CDeskBox &sou);
+    void        initBox();
+    void        randomBox();
+    void        removeBox(CDeskBox &sou);
     bool        isEmpty();
     
 private:

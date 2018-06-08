@@ -26,12 +26,12 @@ bool CTFAddToWait::transForm()
     return true;
 }
 
-int CTFAddToWait::srcState()
+int CTFAddToWait::srcState() const
 {
     return this->m_src;
 }
 
-int CTFAddToWait::tarState()
+int CTFAddToWait::tarState() const
 {
     return this->m_tar;
 }

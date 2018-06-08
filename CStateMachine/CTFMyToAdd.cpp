@@ -34,12 +34,12 @@ bool CTFMyToAdd::transForm()
     return is_ok;
 }
 
-int CTFMyToAdd::srcState()
+int CTFMyToAdd::srcState() const
 {
     return this->m_src;
 }
 
-int CTFMyToAdd::tarState()
+int CTFMyToAdd::tarState() const
 {
     return this->m_tar;
 }

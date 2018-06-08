@@ -11,8 +11,8 @@ public:
 
 public:
     virtual bool        transForm();
-    virtual int         srcState();
-    virtual int         tarState();
+    virtual int         srcState() const;
+    virtual int         tarState() const;
     
 private:
     int                 m_src;

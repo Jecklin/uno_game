@@ -41,12 +41,12 @@ bool CTFMyToSub::transForm()
     return is_ok;
 }
 
-int CTFMyToSub::srcState()
+int CTFMyToSub::srcState() const
 {
     return this->m_src;
 }
 
-int CTFMyToSub::tarState()
+int CTFMyToSub::tarState() const
 {
     return this->m_tar;
 }

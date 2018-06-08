@@ -1,6 +1,5 @@
 #include "CStateMachine.h"
 #include "CGame/CGameLoop.h"
-#include "CState.h"
 #include "CTFStartToWait.h"
 #include "CTFWaitToMy.h"
 #include "CTFWaitToOther.h"
@@ -15,11 +14,11 @@
 #include "CTFErrorToMy.h"
 
 CStateMachine::CStateMachine(CGameLoop *loop)
-    :m_states()
-    ,m_gameloop(loop)
-    ,m_cur_state(0)
+    :m_gameloop(loop)
+    ,m_states()
+    ,m_curstate(nullptr)
 {
-    this->init();
+    this->initMachine();
 }
 
 CStateMachine::~CStateMachine()
@@ -29,93 +28,93 @@ CStateMachine::~CStateMachine()
 
 int CStateMachine::getCurState() const
 {
-    CState *pstate = this->m_states[this->m_cur_state];
-    return *pstate;
+    return this->m_curstate->getCurState();
 }
 
 int CStateMachine::toNextState()
 {
-    CState *pstate = this->m_states[this->m_cur_state];
-    this->m_cur_state = pstate->toNextState();
+    int next = this->m_curstate->toNextState();
+    auto iter = this->m_states.find(next);
+    if (iter == m_states.end())
+    {
+        ;
+    }
+    else
+    {
+        this->m_curstate = iter->second;
+    }
+    
+    return next;
 }
 
-void CStateMachine::init()
-{
-     //State start
-    CState          state_start(0);
-    CTFStartToWait  start_to_wait(this->m_gameloop);
-    state_start.addTransform(start_to_wait);
-    this->m_states.push_back(state_start);
-       
+void CStateMachine::initMachine()
+{ 
+    //State start
+    CState  *pstate = nullptr;
+    pstate = new CState(0);
+    
+    this->m_curstate = pstate;
+    
+    CAbstractTransform *start_to_wait = new CTFStartToWait(this->m_gameloop);
+    pstate->addTransform(start_to_wait);
+    this->m_states.insert(StateMap::value_type(0, pstate));
+
+    
     //State wait
-    CState          state_wait(1);
-    CTFWaitToMy     wait_to_my(this->m_gameloop);
-    CTFWaitToOther  wait_to_other(this->m_gameloop);
-    state_wait.addTransform(wait_to_my);
-    state_wait.addTransform(wait_to_other);
-    this->m_states.push_back(state_wait);
+    pstate = new CState(1);
+    CAbstractTransform *wait_to_my = new CTFWaitToMy(this->m_gameloop);
+    CAbstractTransform *wait_to_other = new CTFWaitToOther(this->m_gameloop);
+    pstate->addTransform(wait_to_my);
+    pstate->addTransform(wait_to_other);
+    this->m_states.insert(StateMap::value_type(1, pstate));
     
     //State my
-    CState          state_my(2);
-    CTFMyToAdd      my_to_add(this->m_gameloop);
-    CTFMyToError    my_to_error(this->m_gameloop);
-    CTFMyToSub      my_to_sub(this->m_gameloop);
-    state_my.addTransform(my_to_add);
-    state_my.addTransform(my_to_error);
-    state_my.addTransform(my_to_sub);
-    this->m_states.push_back(state_my);
+    pstate = new CState(2);
+    CAbstractTransform *my_to_add = new CTFMyToAdd(this->m_gameloop);
+    CAbstractTransform *my_to_error = new CTFMyToError(this->m_gameloop);
+    CAbstractTransform *my_to_sub = new CTFMyToSub(this->m_gameloop);
+    pstate->addTransform(my_to_add);
+    pstate->addTransform(my_to_error);
+    pstate->addTransform(my_to_sub);
+    this->m_states.insert(StateMap::value_type(2, pstate));
     
     //State other
-    CState          state_other(3);
-    CTFOtherToAdd   other_to_add(this->m_gameloop);
-    CTFOtherToSub   other_to_sub(this->m_gameloop);
-    state_other.addTransform(other_to_add);
-    state_other.addTransform(other_to_sub);
-    this->m_states.push_back(state_other);
+    pstate = new CState(3);
+    CAbstractTransform *other_to_add = new CTFOtherToAdd(this->m_gameloop);
+    CAbstractTransform *other_to_sub = new CTFOtherToSub(this->m_gameloop);
+    pstate->addTransform(other_to_add);
+    pstate->addTransform(other_to_sub);
+    this->m_states.insert(StateMap::value_type(3, pstate));
     
     //State add
-    CState          state_add(4);
-    CTFAddToWait    add_to_wait(this->m_gameloop);
-    state_add.addTransform(add_to_wait);
-    this->m_states.push_back(state_add);
+    pstate = new CState(4);
+    CAbstractTransform *add_to_wait = new CTFAddToWait(this->m_gameloop);
+    pstate->addTransform(add_to_wait);
+    this->m_states.insert(StateMap::value_type(4, pstate));
     
     //State sub
-    CState          state_sub(5);
-    CTFSubToEnd     sub_to_end(this->m_gameloop);
-    CTFSubToWait    sub_to_wait(this->m_gameloop);
-    state_sub.addTransform(sub_to_end);
-    state_sub.addTransform(sub_to_wait);
-    this->m_states.push_back(state_sub);
+    pstate = new CState(5);
+    CAbstractTransform *sub_to_end = new CTFSubToEnd(this->m_gameloop);
+    CAbstractTransform *sub_to_wait = new CTFSubToWait(this->m_gameloop);
+    pstate->addTransform(sub_to_end);
+    pstate->addTransform(sub_to_wait);
+    this->m_states.insert(StateMap::value_type(5, pstate));
     
     //State end
-    CState          state_end(6);
-    this->m_states.push_back(state_end);
+    pstate = new CState(6);
+    this->m_states.insert(StateMap::value_type(6, pstate));
     
     //State error
-    CState          state_error(7);
-    CTFErrorToMy    error_to_my(this->m_gameloop);
-    state_error.addTransform(error_to_my);
-    this->m_states.push_back(state_error);
+    pstate = new CState(7);
+    CAbstractTransform *error_to_my = new CTFErrorToMy(this->m_gameloop);
+    pstate->addTransform(error_to_my);
+    this->m_states.insert(StateMap::value_type(7, pstate));
     
-    this->m_gameloop->initGame();
 }
 
 void CStateMachine::unInit()
 {
-    
+    ;
 }
 
-bool CStateMachine::isEndState()
-{
-    bool is_end = false;
-    if (this->m_cur_state == 6)
-    {
-        is_end = true;
-    }
-    else
-    {
-        ;
-    }
-    return is_end;
-    
-}
+

@@ -44,7 +44,8 @@ SOURCES += \
     CGame/CDeskBox.cpp \
     CGame/CGameLoop.cpp \
     CGame/CPlayer.cpp \
-    CStateMachine/CTFErrorToMy.cpp
+    CStateMachine/CTFErrorToMy.cpp \
+    CGameOverDialog.cpp
 
 HEADERS += \
         CWidget.h \
@@ -69,8 +70,9 @@ HEADERS += \
     CGame/CGameLoop.h \
     CGame/CPlayer.h \
     CGame/datatypedefine.h \
-    CStateMachine/CTFErrorToMy.h
+    CStateMachine/CTFErrorToMy.h \
+    CGameOverDialog.h
 
 FORMS += \
         CWidget.ui \
-    CTopList.ui \
+    CGameOverDialog.ui

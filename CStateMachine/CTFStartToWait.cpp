@@ -22,16 +22,15 @@ CTFStartToWait::~CTFStartToWait()
 
 bool CTFStartToWait::transForm()
 {
-    this->m_gameloop->initGame();
     return true;
 }
 
-int CTFStartToWait::srcState()
+int CTFStartToWait::srcState() const
 {
     return this->m_src;
 }
 
-int CTFStartToWait::tarState()
+int CTFStartToWait::tarState() const
 {
     return this->m_tar;
 }

@@ -35,19 +35,19 @@ bool CTFMyToError::transForm()
         }
         else
         {
-            is_ok = ture;
+            is_ok = true;
         }
     }
 
     return is_ok;
 }
 
-int CTFMyToError::srcState()
+int CTFMyToError::srcState() const
 {
     return this->m_src;
 }
 
-int CTFMyToError::tarState()
+int CTFMyToError::tarState() const
 {
     return this->m_tar;
 }

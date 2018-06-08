@@ -1,4 +1,6 @@
 #include "CDeskBox.h"
+#include <cstdlib>
+#include <time.h>
 
 CDeskBox::CDeskBox()
     :m_box()
@@ -11,12 +13,12 @@ CDeskBox::~CDeskBox()
     
 }
 
-void CDeskBox::addCard(const CCardInfo &card) const
+void CDeskBox::addCard(const CCardInfo &card)
 {
     this->m_box.push_back(card);
 }
 
-void CDeskBox::subCard(const CCardInfo &card) const
+void CDeskBox::subCard(const CCardInfo &card)
 {
     std::list<CCardInfo>::iterator iter;
     CCardInfo card_index;
@@ -46,7 +48,7 @@ CCardInfo CDeskBox::getRandomCard()
         //Get srand card
         iter = this->m_box.begin();
         srand((unsigned int)time(nullptr));
-        sround = rand() % (this->m_box_close.size() - 1);
+        sround = rand() % (this->m_box.size() - 1);
         for (unsigned int move = 0; move < sround; ++ move)
         {            
             ++iter;
@@ -77,7 +79,7 @@ CCardInfo CDeskBox::getEndCard()
     return card;
 }
 
-void CDeskBox::initBox() const
+void CDeskBox::initBox()
 {
     //初始化数字牌
     for (int index_eci = ECI_Zero; index_eci != ECI_Nine + 1; ++index_eci)      //id
@@ -166,7 +168,7 @@ void CDeskBox::initBox() const
     this->m_box.push_back(index_bfcard);
 }
 
-void CDeskBox::randomBox() const
+void CDeskBox::randomBox()
 {
     std::list<CCardInfo>::iterator iter_one;
     std::list<CCardInfo>::iterator iter_two;
@@ -200,7 +202,7 @@ void CDeskBox::randomBox() const
     }
 }
 
-void CDeskBox::removeBox(const CDeskBox &sou)
+void CDeskBox::removeBox(CDeskBox &sou)
 {
     CCardInfo   card;
     do

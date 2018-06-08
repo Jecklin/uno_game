@@ -7,7 +7,6 @@
 
 namespace Ui {
 class CWidget;
-class CTopList;
 }
 
 class CWidget : public QWidget
@@ -17,49 +16,39 @@ class CWidget : public QWidget
 public:
     explicit CWidget(QWidget *parent = nullptr);
     ~CWidget();
+
+signals:
+    void    choiced();
     
 public slots:
-    void onPlayerChange(); 
-    void onEndCardChange();
-    void onScoreChange();
-    void onFirstRound();
-    void onMyRound();
-    void onGiveUp();
-    void onOutCard();
-    void onError();
-    void onGameOver();
-    void onGameStart();
-
-    void onChoice();
-    void onCurPlayerFlash();
-    void onCurPlayerFiashOver();
+    void    onGameStart();
+    void    onPlayerInCard(CCardInfo in_card, int current);
+    void    onPlayerOutCard(CCardInfo out_card, int current);
+    void    onEndCardChanged(CCardInfo end_card);
+    void    onNotAllowOut();
+    void    onGameOver();
     
-    //push button action
-    void onOutCard(const CCardInfo &card);
-    void onSetOutCard();
-    void onInCard();
-
+    void    onChoiceGiveUp();
+    void    onChoiceOutCard(CCardInfo);
+    void    onChoiced();
+    
 
 private:
-    static QString dbColor(ECardColor color);
-    static QString dbId(ECardId id);
-
-
-    void showListWidgets();
-
+    static QString      dbColorToString(ECardColor color);
+    static QString      dbIdToString(ECardId id);
+    static QString      dbActionToString(ECardAction action);
     
-    static ECardColor dbColorToCard(QString color);
-    static ECardId    dbIdToCard(QString id);
+    static ECardColor   dbColorToCard(QString color);
+    static ECardId      dbIdToCard(QString id);
+    static ECardAction  dbActionToCard(QString action);
     
-    void upDateBrowser(int current,const QString &texts);
-    void upDateLabelNum(int current,const QString &num);
-
+    void                showPlayerScores();
     
 private:
     Ui::CWidget         *m_mainWidget;
-    Ui::CTopList        *m_topListWidget;
     CGameLoop           *m_gameLoop;
-    int                 m_choice;
+    bool                m_choice;
+    int                 m_size[4];
 };
 
 #endif // CWIDGET_H

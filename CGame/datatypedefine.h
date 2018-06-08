@@ -48,13 +48,13 @@ enum ECardId
 
 enum EGameState
 {
-    State_Start   = 0,
-    State_Wait    = 1,
-    State_My      =  ,
-    State_Other   =  ,
-    State_Add     =  ,
-    State_Sub     =  ,
-    State_End     =  ,
-    State_Error   =  
+    State_Start   = 0   ,
+    State_Wait    = 1   ,
+    State_My            ,
+    State_Other         ,
+    State_Add           ,
+    State_Sub           ,
+    State_End           ,
+    State_Error  
 };
 #endif // DATATYPEDEFINE_H
