@@ -28,7 +28,11 @@ public:
     //StateMy
     bool            curPlayerIsGiveUp();
     void            curPlayerChangeToGiveUp();
+    void            resetGiveUp();
+    
+    bool            curPlayerIsChoicedCard();
     void            curPlayerChangeOutCard(const CCardInfo &card);
+    void            resetChoicedCard();
     bool            myAllowOut();
     
     //StateOther                            
@@ -45,6 +49,7 @@ public:
     void            curToNext(); 
   
     //StateError
+    void            errorPromt();
  
     //StateEnd
     void            setAllScores(); 
@@ -74,6 +79,8 @@ private:
     int                                 m_toward;               //出牌方向标识
     int                                 m_current;              //当前出牌玩家位置
     CStateMachine                       *m_state_machine;
+    bool                                m_is_giveup;
+    bool                                m_is_choiced_card;
 };
 
 

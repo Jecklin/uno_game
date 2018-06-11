@@ -27,7 +27,7 @@ bool CTFMyToError::transForm()
     {
         ;
     }
-    else
+    else if (this->m_gameloop->curPlayerIsChoicedCard())
     {
         if (this->m_gameloop->myAllowOut())
         {
@@ -36,7 +36,12 @@ bool CTFMyToError::transForm()
         else
         {
             is_ok = true;
+            this->m_gameloop->errorPromt(); 
         }
+    }
+    else
+    {
+        ;
     }
 
     return is_ok;

@@ -26,6 +26,7 @@ bool CTFMyToAdd::transForm()
     if (this->m_gameloop->curPlayerIsGiveUp())
     {
         is_ok = true;
+        this->m_gameloop->curPlayerInCard();
     }
     else
     {

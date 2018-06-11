@@ -73,6 +73,7 @@ void CPlayer::playerSubCard(const CCardInfo &card)
         card_index = *iter;
         if (card == card_index)
         {
+            this->m_outcard = card_index;
             this->m_box.erase(iter);
             break;
         }
@@ -177,6 +178,7 @@ bool CPlayer::boxIsAllowOut(const CCardInfo &end_card)
             if (card_index.isSameColor(end_card))
             {
                 is_allow = true;
+                this->m_outcard = card_index;
             }
             else
             {
@@ -195,6 +197,7 @@ bool CPlayer::boxIsAllowOut(const CCardInfo &end_card)
             if ((card_index.isSameId(end_card)) || (card_index.isSimilarColor(end_card)))
             {
                 is_allow = true;
+                this->m_outcard = card_index;
             }
             else
             {

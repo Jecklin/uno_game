@@ -26,6 +26,7 @@ bool CTFOtherToSub::transForm()
     if (this->m_gameloop->otherAllowOut())
     {
         is_ok = true;
+        this->m_gameloop->curPlayerOutCard();
     }
     else
     {

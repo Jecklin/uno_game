@@ -22,7 +22,7 @@ CTFAddToWait::~CTFAddToWait()
 
 bool CTFAddToWait::transForm()
 {
-    this->m_gameloop->curPlayerInCard();
+    this->m_gameloop->curToNext();
     return true;
 }
 

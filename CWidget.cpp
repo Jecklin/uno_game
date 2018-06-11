@@ -24,6 +24,7 @@ CWidget::CWidget(QWidget *parent)
     connect(m_gameLoop,SIGNAL(playerOutCard(CCardInfo,int)),this,SLOT(onPlayerOutCard(CCardInfo,int)));
     connect(m_gameLoop,SIGNAL(endCardChanged(CCardInfo)),this,SLOT(onEndCardChanged(CCardInfo)));
     connect(m_gameLoop,SIGNAL(gameOver()),this,SLOT(onGameOver()));
+    connect(m_gameLoop,SIGNAL(notAllowOut()),this,SLOT(onErrorPromt()));
     
     //Ui
     connect(m_mainWidget->pushButtonStart,SIGNAL(clicked(bool)),this,SLOT(onGameStart()));   
@@ -48,11 +49,13 @@ CWidget::~CWidget()
     
     //delete cardButton
     QLayoutItem *child;
-    while ((child = this->m_mainWidget->layoutLow->takeAt(0)) != 0) 
+    do
     {
+        child = this->m_mainWidget->layoutLow->takeAt(0);
         delete child;
         
-    }
+    }while(child != nullptr);
+    
     
     //delete mainWidget
     if (nullptr == this->m_mainWidget)
@@ -76,6 +79,7 @@ void CWidget::onGameStart()
 void CWidget::onPlayerInCard(CCardInfo in_card, int current)
 {
     QString         card_info;
+    QString         card_info2;
     QString         str_num;
     card_info = this->dbColorToString(in_card.getColor()) 
               + " "
@@ -83,46 +87,73 @@ void CWidget::onPlayerInCard(CCardInfo in_card, int current)
               + " "
               + this->dbActionToString(in_card.getAction());
     
-    QPushButton *button = new QPushButton;
-    connect(button,SIGNAL(clicked(bool)),this,SLOT(onChoiceOutCard(in_card)));
+    card_info2 = this->dbColorToString(in_card.getColor()) 
+               + "\n"
+               + this->dbIdToString(in_card.getId())
+               + "\n"
+               + this->dbActionToString(in_card.getAction());
+    
+    QPushButton *button = new QPushButton(this);
+    connect(button,SIGNAL(clicked(bool)),this,SLOT(onChoiceOutCard()));
     button->setProperty("cardInfo", card_info);
-    button->setText(card_info);
-    button->resize(QSize(100, 300));
+    
     
     //更新底部browser
     if (current == 0)
     {
+        //button
+        button->setText(card_info2);
+        button->resize(QSize(50, 200));
+        this->m_mainWidget->layoutLow->addWidget(button); 
+        
+        //score
         m_size[0]++;
         str_num = QString::number(m_size[0], 10);
         this->m_mainWidget->labelNumLow->setText(str_num);
-        this->m_mainWidget->layoutLow->addWidget(button);   
+        
     }
 
     //更新左侧browser
     else if (current == 1)
     {
+        //button
+        button->setText(card_info);
+        this->m_mainWidget->layoutLeft->addWidget(button);
+        
+        //score
         m_size[1]++;
         str_num = QString::number(m_size[1], 10);
         this->m_mainWidget->labelNumLeft->setText(str_num);
-        this->m_mainWidget->layoutLeft->addWidget(button);  
+          
     }
 
     //更新顶部browser
     else if (current == 2)
     {
+        //button
+        button->setText(card_info2);
+        button->resize(QSize(50, 200));
+        this->m_mainWidget->layoutTop->addWidget(button);
+        
+        //score
         m_size[2]++;
         str_num = QString::number(m_size[2], 10);
         this->m_mainWidget->labelNumTop->setText(str_num);
-        this->m_mainWidget->layoutTop->addWidget(button);
+        
     }
 
     //更新右边browser
     else if (current == 3)
     {
+        //button
+        button->setText(card_info);
+        this->m_mainWidget->layoutRight->addWidget(button);
+        
+        //score
         m_size[3]++;
         str_num = QString::number(m_size[3], 10);
         this->m_mainWidget->labelNumRight->setText(str_num);
-        this->m_mainWidget->layoutRight->addWidget(button);
+        
     }
     else
     {
@@ -130,20 +161,23 @@ void CWidget::onPlayerInCard(CCardInfo in_card, int current)
     } 
     
     button->show();
+    button->repaint();
     
 }
 
 void CWidget::onPlayerOutCard(CCardInfo out_card, int current)
 {
-    QString cardInfo = this->dbColorToString(out_card.getColor())
-                     + " " 
-                     + this->dbIdToString(out_card.getId())             
-                     + " "
-                     + this->dbActionToString(out_card.getAction());
+    QString cardInfo;
+    cardInfo = this->dbColorToString(out_card.getColor())
+             + " " 
+             + this->dbIdToString(out_card.getId())             
+             + " "
+             + this->dbActionToString(out_card.getAction());
     QString str_num;
     
     if (current == 0)
     {
+        //button
         for (int i = this->m_mainWidget->layoutLow->count() - 1 ; i >= 0; --i)
         {
             QLayoutItem *it = this->m_mainWidget->layoutLow->itemAt(i);
@@ -153,6 +187,7 @@ void CWidget::onPlayerOutCard(CCardInfo out_card, int current)
                 if (button->property("cardInfo") == cardInfo)
                 {
                     this->m_mainWidget->layoutLow->removeWidget(button);
+                    delete button;
                     break;
                 }
                 else
@@ -162,12 +197,15 @@ void CWidget::onPlayerOutCard(CCardInfo out_card, int current)
             }
         }
         
+        //score
         m_size[0]--;
         str_num = QString::number(m_size[0], 10);
         this->m_mainWidget->labelNumLow->setText(str_num);
+        this->m_mainWidget->labelNumLow->repaint();
     }
     else if (current == 1)
     {
+        //button
         for (int i = this->m_mainWidget->layoutLeft->count() - 1 ; i >= 0; --i)
         {
             QLayoutItem *it = this->m_mainWidget->layoutLeft->itemAt(i);
@@ -177,6 +215,7 @@ void CWidget::onPlayerOutCard(CCardInfo out_card, int current)
                 if (button->property("cardInfo") == cardInfo)
                 {
                     this->m_mainWidget->layoutLeft->removeWidget(button);
+                    delete button;
                     break;
                 }
                 else
@@ -186,12 +225,15 @@ void CWidget::onPlayerOutCard(CCardInfo out_card, int current)
             }
         }
         
+        //score
         m_size[1]--;
         str_num = QString::number(m_size[1], 10);
         this->m_mainWidget->labelNumLeft->setText(str_num);
+        this->m_mainWidget->labelNumLeft->repaint();
     }
     else if (current == 2)
     {
+        //button
         for (int i = this->m_mainWidget->layoutTop->count() - 1 ; i >= 0; --i)
         {
             QLayoutItem *it = this->m_mainWidget->layoutTop->itemAt(i);
@@ -201,6 +243,7 @@ void CWidget::onPlayerOutCard(CCardInfo out_card, int current)
                 if (button->property("cardInfo") == cardInfo)
                 {
                     this->m_mainWidget->layoutTop->removeWidget(button);
+                    delete button;
                     break;
                 }
                 else
@@ -210,12 +253,15 @@ void CWidget::onPlayerOutCard(CCardInfo out_card, int current)
             }
         }
         
+        //score
         m_size[2]--;
         str_num = QString::number(m_size[2], 10);
         this->m_mainWidget->labelNumTop->setText(str_num);
+        this->m_mainWidget->labelNumTop->repaint();
     }
     else if (current == 3)
     {
+        //button
         for (int i = this->m_mainWidget->layoutRight->count() - 1 ; i >= 0; --i)
         {
             QLayoutItem *it = this->m_mainWidget->layoutRight->itemAt(i);
@@ -225,6 +271,7 @@ void CWidget::onPlayerOutCard(CCardInfo out_card, int current)
                 if (button->property("cardInfo") == cardInfo)
                 {
                     this->m_mainWidget->layoutRight->removeWidget(button);
+                    delete button;
                     break;
                 }
                 else
@@ -234,9 +281,11 @@ void CWidget::onPlayerOutCard(CCardInfo out_card, int current)
             }
         }
         
+        //score
         m_size[3]--;
         str_num = QString::number(m_size[3], 10);
         this->m_mainWidget->labelNumRight->setText(str_num);
+        this->m_mainWidget->labelNumRight->repaint();
     }
     else
     {
@@ -285,15 +334,52 @@ void CWidget::onChoiceGiveUp()
     emit choiced();
 }
 
-void CWidget::onChoiceOutCard(CCardInfo card)
+void CWidget::onChoiceOutCard()
 {
-    this->m_gameLoop->curPlayerChangeOutCard(card);
-    emit choiced();
+    QObject *sender = this->sender();
+    QString cardInfo;
+    if (nullptr == sender)
+    {
+        ;
+    }
+    else
+    {
+        cardInfo = sender->property("cardInfo").toString();
+    }
+    
+    if (cardInfo.isEmpty())
+    {
+        ;
+    }
+    else
+    {
+        int          first_space    = cardInfo.indexOf(" ");
+        
+        QString     str_color       = cardInfo.left(first_space);
+        QString     str_id          = cardInfo.section(' ',1, 1).trimmed();
+        QString     str_action      = cardInfo.section(' ',2, 2).trimmed();
+        
+        ECardColor   color          = this->dbColorToCard(str_color);
+        ECardId      id             = this->dbIdToCard(str_id);
+        ECardAction  action         = this->dbActionToCard(str_action);
+        
+        CCardInfo   card(color,id,action);
+        this->m_gameLoop->curPlayerChangeOutCard(card);
+        emit choiced();
+    }
+    
+
 }
 
 void CWidget::onChoiced()
 {
     this->m_gameLoop->myRound();
+    
+}
+
+void CWidget::onErrorPromt()
+{
+    this->m_mainWidget->labelPrompt->setText(QString::fromUtf8("choiced error"));
 }
 
 QString CWidget::dbColorToString(ECardColor color)

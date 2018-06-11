@@ -11,14 +11,13 @@
 #include "CTFAddToWait.h"
 #include "CTFSubToEnd.h"
 #include "CTFSubToWait.h"
-#include "CTFErrorToMy.h"
 
 CStateMachine::CStateMachine(CGameLoop *loop)
     :m_gameloop(loop)
     ,m_states()
     ,m_curstate(nullptr)
 {
-    this->initMachine();
+    ;
 }
 
 CStateMachine::~CStateMachine()
@@ -49,11 +48,20 @@ int CStateMachine::toNextState()
 
 void CStateMachine::initMachine()
 { 
-    //State start
+    if (this->m_states.empty())
+    {
+        ;
+    }
+    else
+    {
+        this->unInit();
+    }
+        
     CState  *pstate = nullptr;
-    pstate = new CState(0);
     
-    this->m_curstate = pstate;
+    //State start
+    pstate = new CState(0);    
+    this->m_curstate = pstate;      //Init curstate
     
     CAbstractTransform *start_to_wait = new CTFStartToWait(this->m_gameloop);
     pstate->addTransform(start_to_wait);
@@ -104,17 +112,35 @@ void CStateMachine::initMachine()
     pstate = new CState(6);
     this->m_states.insert(StateMap::value_type(6, pstate));
     
-    //State error
-    pstate = new CState(7);
-    CAbstractTransform *error_to_my = new CTFErrorToMy(this->m_gameloop);
-    pstate->addTransform(error_to_my);
-    this->m_states.insert(StateMap::value_type(7, pstate));
     
 }
 
 void CStateMachine::unInit()
-{
-    ;
+{ 
+    if (this->m_states.empty())
+    {
+        ;
+    }
+    else
+    {
+        for (int i = this->m_states.size() - 1; i >= 0; --i)
+        {
+            CState *ptr = nullptr;
+            auto iter = this->m_states.find(i);
+            if (iter == this->m_states.end())
+            {
+                ;
+            }
+            else
+            {
+                ptr = iter->second;
+                delete ptr;
+                ptr = nullptr;
+                this->m_states.erase(iter);
+            }
+        }
+    }
+
 }
 
 

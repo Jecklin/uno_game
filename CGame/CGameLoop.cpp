@@ -11,6 +11,8 @@ CGameLoop::CGameLoop()
     ,m_toward(1)
     ,m_current(0)
     ,m_state_machine(nullptr)
+    ,m_is_giveup(false)
+    ,m_is_choiced_card(false)
 {
     this->m_state_machine = new CStateMachine(this);
 }
@@ -32,12 +34,17 @@ void CGameLoop::startGame()
 {
     //Init
     this->initGame();
+    
+    //Round
     this->otherRound();
     
 }
 
 void CGameLoop::initGame()
 {
+    //Init machine
+    this->m_state_machine->initMachine();
+    
     //Init players name
     CPlayer player_index;
     player_index.setPlayerName("*Lili*");
@@ -63,6 +70,11 @@ void CGameLoop::initGame()
     this->changeEndCard(card_index);
     
     this->m_close_box.subCard(card_index);
+    
+    //Init current
+    srand((unsigned int)time(nullptr));
+    int sround = rand() % (3);
+    this->m_current = sround;
     
     //Init one round
     for (int round = 0; round < ( 7 * 4 ); ++round)
@@ -91,27 +103,29 @@ void CGameLoop::myRound()
     do
     {
         this->m_state_machine->toNextState();
+        
+        //reset choiced
+        this->resetChoicedCard();
+        this->resetGiveUp();
+        
         if (this->m_state_machine->getCurState() == State_End)
         {
             emit gameOver();
-            break;
         }
-        else if (this->m_state_machine->getCurState() == State_Error)
-        {
-            emit notAllowOut();
-            break;
-        }
-        else if (this->m_state_machine->getCurState() == State_Wait)
+        else if (this->m_state_machine->getCurState() == State_Add)
         {
             this->otherRound();
-            break;
+        }
+        else if (this->m_state_machine->getCurState() == State_Sub)
+        {
+            this->otherRound();
         }
         else
         {
             ;
         }
         
-    }while(this->m_state_machine->getCurState() == State_My);
+    }while(false);
 }
 
 void CGameLoop::otherRound()
@@ -149,30 +163,34 @@ bool CGameLoop::curPlayerIsMy()
 
 bool CGameLoop::curPlayerIsGiveUp()
 {
-    bool is_giveup = false;
-    CPlayer *pplayer = &(this->m_players[this->m_current]);
-    if (pplayer->isGiveUp())
-    {
-        is_giveup = true;
-    }
-    else
-    {
-        ;
-    }
-    return is_giveup;
+    return this->m_is_giveup;
     
 }
-
 void CGameLoop::curPlayerChangeToGiveUp()
 {
-    CPlayer *pplayer = &(this->m_players[this->m_current]);
-    pplayer->changeToGiveUp();
+    this->m_is_giveup = true;
+}
+
+void CGameLoop::resetGiveUp()
+{
+    this->m_is_giveup = false;
+}
+
+bool CGameLoop::curPlayerIsChoicedCard()
+{
+    return this->m_is_choiced_card;
 }
 
 void CGameLoop::curPlayerChangeOutCard(const CCardInfo &card)
 {
     CPlayer *pplayer = &(this->m_players[this->m_current]);
     pplayer->setOutCard(card);
+    this->m_is_choiced_card = true;
+}
+
+void CGameLoop::resetChoicedCard()
+{
+    this->m_is_choiced_card = false;
 }
 
 bool CGameLoop::myAllowOut()
@@ -242,6 +260,7 @@ void CGameLoop::curPlayerOutCard()
 
     this->m_open_box.addCard(out_card);
     this->changeEndCard(out_card);
+
     pplayer->playerSubCard(out_card);
     
     emit playerOutCard(out_card, this->m_current);
@@ -307,6 +326,11 @@ void CGameLoop::doPunish()
 void CGameLoop::curToNext()
 {
     this->m_current = this->getNextLocation();
+}
+
+void CGameLoop::errorPromt()
+{
+    emit notAllowOut();
 }
 
 void CGameLoop::setAllScores()

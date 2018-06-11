@@ -27,17 +27,23 @@ bool CTFMyToSub::transForm()
     {
         ;
     }
-    else
+    else if (this->m_gameloop->curPlayerIsChoicedCard())
     {
         if (this->m_gameloop->myAllowOut())
         {
             is_ok = true;
+            this->m_gameloop->curPlayerOutCard();
         }
         else
         {
             ;
         }
     }
+    else
+    {
+        ;
+    }
+
     return is_ok;
 }
 

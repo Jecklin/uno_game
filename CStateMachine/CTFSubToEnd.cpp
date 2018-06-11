@@ -21,9 +21,7 @@ CTFSubToEnd::~CTFSubToEnd()
 }
 
 bool CTFSubToEnd::transForm()
-{
-    this->m_gameloop->curPlayerOutCard();
-    
+{   
     bool is_ok = false;
     if (this->m_gameloop->curPlayerIsWinner())
     {
@@ -32,8 +30,7 @@ bool CTFSubToEnd::transForm()
     }
     else
     {
-        this->m_gameloop->doPunish();
-        this->m_gameloop->curToNext();
+        ;
     }
     return is_ok;
 }

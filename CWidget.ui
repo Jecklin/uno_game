@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>1000</width>
-    <height>1000</height>
+    <width>1500</width>
+    <height>1500</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -33,14 +33,14 @@
       <widget class="QGroupBox" name="groupBoxTop">
        <property name="minimumSize">
         <size>
-         <width>400</width>
-         <height>0</height>
+         <width>1000</width>
+         <height>500</height>
         </size>
        </property>
        <property name="maximumSize">
         <size>
-         <width>400</width>
-         <height>16777215</height>
+         <width>1000</width>
+         <height>500</height>
         </size>
        </property>
        <property name="title">
@@ -49,13 +49,9 @@
        <layout class="QGridLayout" name="gridLayout">
         <item row="1" column="0">
          <layout class="QHBoxLayout" name="layoutTop">
-          <item>
-           <widget class="QPushButton" name="pushButton_2">
-            <property name="text">
-             <string>PushButton</string>
-            </property>
-           </widget>
-          </item>
+          <property name="sizeConstraint">
+           <enum>QLayout::SetMaximumSize</enum>
+          </property>
          </layout>
         </item>
         <item row="0" column="0">
@@ -132,14 +128,14 @@
       <widget class="QGroupBox" name="groupBoxLeft">
        <property name="minimumSize">
         <size>
-         <width>0</width>
-         <height>400</height>
+         <width>500</width>
+         <height>500</height>
         </size>
        </property>
        <property name="maximumSize">
         <size>
-         <width>16777215</width>
-         <height>400</height>
+         <width>500</width>
+         <height>500</height>
         </size>
        </property>
        <property name="title">
@@ -181,15 +177,7 @@
            </layout>
           </item>
           <item>
-           <layout class="QVBoxLayout" name="layoutLeft">
-            <item>
-             <widget class="QPushButton" name="pushButton_3">
-              <property name="text">
-               <string>PushButton</string>
-              </property>
-             </widget>
-            </item>
-           </layout>
+           <layout class="QVBoxLayout" name="layoutLeft"/>
           </item>
          </layout>
         </item>
@@ -200,14 +188,14 @@
       <widget class="QGroupBox" name="groupBoxMid">
        <property name="minimumSize">
         <size>
-         <width>0</width>
-         <height>400</height>
+         <width>500</width>
+         <height>500</height>
         </size>
        </property>
        <property name="maximumSize">
         <size>
-         <width>400</width>
-         <height>400</height>
+         <width>500</width>
+         <height>500</height>
         </size>
        </property>
        <property name="title">
@@ -218,14 +206,14 @@
          <widget class="QTextBrowser" name="textBrowserEndCard">
           <property name="minimumSize">
            <size>
-            <width>100</width>
-            <height>100</height>
+            <width>200</width>
+            <height>200</height>
            </size>
           </property>
           <property name="maximumSize">
            <size>
-            <width>100</width>
-            <height>100</height>
+            <width>200</width>
+            <height>200</height>
            </size>
           </property>
          </widget>
@@ -244,14 +232,14 @@
       <widget class="QGroupBox" name="groupBoxRight">
        <property name="minimumSize">
         <size>
-         <width>0</width>
-         <height>400</height>
+         <width>500</width>
+         <height>500</height>
         </size>
        </property>
        <property name="maximumSize">
         <size>
-         <width>16777215</width>
-         <height>400</height>
+         <width>500</width>
+         <height>500</height>
         </size>
        </property>
        <property name="title">
@@ -311,22 +299,7 @@
            </layout>
           </item>
           <item>
-           <layout class="QVBoxLayout" name="layoutRight">
-            <item>
-             <widget class="QPushButton" name="pushButton_5">
-              <property name="text">
-               <string>PushButton</string>
-              </property>
-             </widget>
-            </item>
-            <item>
-             <widget class="QPushButton" name="pushButton_6">
-              <property name="text">
-               <string>PushButton</string>
-              </property>
-             </widget>
-            </item>
-           </layout>
+           <layout class="QVBoxLayout" name="layoutRight"/>
           </item>
          </layout>
         </item>
@@ -354,14 +327,14 @@
       <widget class="QGroupBox" name="groupBoxLow">
        <property name="minimumSize">
         <size>
-         <width>400</width>
-         <height>0</height>
+         <width>1000</width>
+         <height>500</height>
         </size>
        </property>
        <property name="maximumSize">
         <size>
-         <width>400</width>
-         <height>16777215</height>
+         <width>1000</width>
+         <height>500</height>
         </size>
        </property>
        <property name="title">
@@ -448,15 +421,7 @@
          </layout>
         </item>
         <item row="4" column="0">
-         <layout class="QHBoxLayout" name="layoutLow">
-          <item>
-           <widget class="QPushButton" name="pushButton">
-            <property name="text">
-             <string>PushButton</string>
-            </property>
-           </widget>
-          </item>
-         </layout>
+         <layout class="QHBoxLayout" name="layoutLow"/>
         </item>
        </layout>
       </widget>

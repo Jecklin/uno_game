@@ -81,6 +81,15 @@ CCardInfo CDeskBox::getEndCard()
 
 void CDeskBox::initBox()
 {
+    if (this->m_box.empty())
+    {
+        ;
+    }
+    else
+    {
+        this->m_box.clear();
+    }
+  
     //初始化数字牌
     for (int index_eci = ECI_Zero; index_eci != ECI_Nine + 1; ++index_eci)      //id
     {

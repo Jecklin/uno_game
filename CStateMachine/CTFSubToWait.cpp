@@ -21,11 +21,7 @@ CTFSubToWait::~CTFSubToWait()
 }
 
 bool CTFSubToWait::transForm()
-{
-    this->m_gameloop->curPlayerOutCard();
-    this->m_gameloop->doPunish();
-    this->m_gameloop->curToNext();
-    
+{    
     bool is_ok = false;
     if (this->m_gameloop->curPlayerIsWinner())
     {
@@ -34,6 +30,9 @@ bool CTFSubToWait::transForm()
     else
     {
         is_ok = true;
+        this->m_gameloop->doPunish();
+        this->m_gameloop->curToNext();
+        
     }
     return is_ok;
 }

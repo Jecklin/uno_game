@@ -29,8 +29,9 @@ public slots:
     void    onGameOver();
     
     void    onChoiceGiveUp();
-    void    onChoiceOutCard(CCardInfo);
+    void    onChoiceOutCard();
     void    onChoiced();
+    void    onErrorPromt();
     
 
 private:

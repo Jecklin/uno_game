@@ -30,6 +30,7 @@ bool CTFOtherToAdd::transForm()
     else
     {
         is_ok = true;
+        this->m_gameloop->curPlayerInCard();
     }
     return is_ok;
 }
