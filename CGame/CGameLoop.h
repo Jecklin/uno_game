@@ -19,8 +19,7 @@ public:
     void            initGame();
     void            changeEndCard(const CCardInfo &card);
     int             getPlayerScore(int current);
-    void            myRound();
-    void            otherRound();
+    void            gameRound();
                       
     //StateWait
     bool            curPlayerIsMy();
@@ -47,6 +46,8 @@ public:
     bool            curPlayerIsWinner();
     void            doPunish();                             //执行惩罚
     void            curToNext(); 
+    void            setChangeColor(ECardColor color);
+    ECardColor      getChangeColor();
   
     //StateError
     void            errorPromt();
@@ -61,6 +62,7 @@ signals:
     void            endCardChanged(CCardInfo end_card);
     void            notAllowOut();
     void            gameOver();
+    void            changeColor(ECardColor color);
     
 private:
     //Do punish   
@@ -69,6 +71,7 @@ private:
     void            actReverse();
     void            actChangeColor(); 
     int             getNextLocation();
+    void            clearPlayerBox(int num);
 
     
 private:
@@ -81,6 +84,7 @@ private:
     CStateMachine                       *m_state_machine;
     bool                                m_is_giveup;
     bool                                m_is_choiced_card;
+    ECardColor                          m_change_color;
 };
 
 

@@ -18,6 +18,7 @@ public:
     void        randomBox();
     void        removeBox(CDeskBox &sou);
     bool        isEmpty();
+    void        clearBox();
     
 private:
     std::list<CCardInfo> m_box;

@@ -16,6 +16,8 @@ class CWidget : public QWidget
 public:
     explicit CWidget(QWidget *parent = nullptr);
     ~CWidget();
+    
+    void    unInitButton();
 
 signals:
     void    choiced();
@@ -32,6 +34,8 @@ public slots:
     void    onChoiceOutCard();
     void    onChoiced();
     void    onErrorPromt();
+    void    onChangeColor(ECardColor color);
+    void    onComboxChoice(int num);
     
 
 private:
@@ -44,11 +48,12 @@ private:
     static ECardAction  dbActionToCard(QString action);
     
     void                showPlayerScores();
+    void                showOutCard(CCardInfo in_card, int current);
     
 private:
     Ui::CWidget         *m_mainWidget;
     CGameLoop           *m_gameLoop;
-    bool                m_choice;
+    bool                m_color_choice;
     int                 m_size[4];
 };
 

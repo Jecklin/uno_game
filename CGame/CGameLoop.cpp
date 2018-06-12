@@ -13,6 +13,7 @@ CGameLoop::CGameLoop()
     ,m_state_machine(nullptr)
     ,m_is_giveup(false)
     ,m_is_choiced_card(false)
+    ,m_change_color()
 {
     this->m_state_machine = new CStateMachine(this);
 }
@@ -35,9 +36,6 @@ void CGameLoop::startGame()
     //Init
     this->initGame();
     
-    //Round
-    this->otherRound();
-    
 }
 
 void CGameLoop::initGame()
@@ -45,26 +43,36 @@ void CGameLoop::initGame()
     //Init machine
     this->m_state_machine->initMachine();
     
+    
     //Init players name
-    CPlayer player_index;
-    player_index.setPlayerName("*Lili*");
-    this->m_players.push_back(player_index);
+    if (this->m_players.empty())
+    {
+        CPlayer player_index;
+        player_index.setPlayerName("*Lili*");
+        this->m_players.push_back(player_index);
+        
+        player_index.setPlayerName("*Jack*");
+        this->m_players.push_back(player_index);    
+        
+        player_index.setPlayerName("*Anna*");
+        this->m_players.push_back(player_index); 
+        
+        player_index.setPlayerName("*Tom*");
+        this->m_players.push_back(player_index);  
+    }
+    else
+    {
+        ;
+    }
+ 
     
-    player_index.setPlayerName("*Jack*");
-    this->m_players.push_back(player_index);    
-    
-    player_index.setPlayerName("*Anna*");
-    this->m_players.push_back(player_index); 
-    
-    player_index.setPlayerName("*Tom*");
-    this->m_players.push_back(player_index);   
-    
-    //Init close box
+    //Init close box    
     this->m_close_box.initBox();
     this->m_close_box.randomBox();
     
     //Init end card
     CCardInfo card_index = this->m_close_box.getRandomCard();
+    this->m_open_box.clearBox();
     this->m_open_box.addCard(card_index);
     
     this->changeEndCard(card_index);
@@ -77,6 +85,11 @@ void CGameLoop::initGame()
     this->m_current = sround;
     
     //Init one round
+    for (int num = 0; num < 4; ++num)
+    {
+        this->clearPlayerBox(num);
+    }
+    
     for (int round = 0; round < ( 7 * 4 ); ++round)
     {
         this->curPlayerInCard();
@@ -98,7 +111,7 @@ int CGameLoop::getPlayerScore(int current)
     return score;
 }
 
-void CGameLoop::myRound()
+void CGameLoop::gameRound()
 {
     do
     {
@@ -111,41 +124,18 @@ void CGameLoop::myRound()
         if (this->m_state_machine->getCurState() == State_End)
         {
             emit gameOver();
-        }
-        else if (this->m_state_machine->getCurState() == State_Add)
-        {
-            this->otherRound();
-        }
-        else if (this->m_state_machine->getCurState() == State_Sub)
-        {
-            this->otherRound();
-        }
-        else
-        {
-            ;
-        }
-        
-    }while(false);
-}
-
-void CGameLoop::otherRound()
-{
-    do
-    {
-        this->m_state_machine->toNextState();
-        if (this->m_state_machine->getCurState() == State_End)
-        {
-            emit gameOver();
             break;
         }
-        else
+        else if (this->m_state_machine->getCurState() == State_My)
         {
-            ;
+            break;
         }
         
-    }while(this->m_state_machine->getCurState() != State_My);
-}
+        
+    }while(true);
+    
 
+}
 
 bool CGameLoop::curPlayerIsMy()
 {
@@ -328,6 +318,16 @@ void CGameLoop::curToNext()
     this->m_current = this->getNextLocation();
 }
 
+void CGameLoop::setChangeColor(ECardColor color)
+{
+    this->m_change_color = color;
+}
+
+ECardColor CGameLoop::getChangeColor()
+{
+    return this->m_change_color;
+}
+
 void CGameLoop::errorPromt()
 {
     emit notAllowOut();
@@ -392,9 +392,18 @@ void CGameLoop::actReverse()
 void CGameLoop::actChangeColor()
 {
     CPlayer *pplayer_cur = &(this->m_players[this->m_current]);
-    ECardColor max_color = pplayer_cur->getMaxColor();
-    this->m_endcard.setColor(max_color);
+    if (this->m_current == 0)
+    {
+        ;
+    }
+    else
+    {
+        this->m_change_color = pplayer_cur->getChangeColor();
+    }
+    
+    this->m_endcard.setColor(m_change_color);
     emit endCardChanged(this->m_endcard);
+    emit changeColor(m_change_color);
 }
 
 int CGameLoop::getNextLocation()
@@ -413,6 +422,12 @@ int CGameLoop::getNextLocation()
         ;
     }
     return next;
+}
+
+void CGameLoop::clearPlayerBox(int num)
+{
+    CPlayer *pplayer = &(this->m_players[num]);
+    pplayer->clearBox();
 }
 
 

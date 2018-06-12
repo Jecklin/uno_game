@@ -230,3 +230,15 @@ bool CDeskBox::isEmpty()
 {
     return this->m_box.empty();
 }
+
+void CDeskBox::clearBox()
+{
+    if (this->m_box.empty())
+    {
+        ;
+    }
+    else
+    {
+        this->m_box.clear();
+    }
+}

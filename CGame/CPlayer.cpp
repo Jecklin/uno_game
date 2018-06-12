@@ -95,7 +95,7 @@ int CPlayer::getBoxSize() const
     return this->m_box.size();
 }
 
-ECardColor CPlayer::getMaxColor() const
+ECardColor CPlayer::getChangeColor() const
 {
     std::list<CCardInfo>::const_iterator    iter;
     CCardInfo                               index_card;
@@ -163,6 +163,19 @@ ECardColor CPlayer::getMaxColor() const
     return return_color;
 }
 
+void CPlayer::clearBox()
+{
+    if (this->m_box.empty())
+    {
+        ;
+    }
+    else
+    {
+        this->m_box.clear();  
+    }
+    
+}
+
 bool CPlayer::boxIsAllowOut(const CCardInfo &end_card)
 {
     bool                            is_allow = false;
@@ -214,7 +227,7 @@ bool CPlayer::cardIsAllowOut(const CCardInfo &end_card)
     //end card is black
     if ((end_card.getId() == ECI_Black) || (end_card.getId() == ECI_BlackFour))
     {
-        if (this->m_outcard.isSameColor(end_card))
+        if (this->m_outcard.isSimilarColor(end_card))
         {
             is_allow = true;
         }

@@ -28,7 +28,8 @@ public:
     void            playerSubCard(const CCardInfo &card);
     void            playerAddCard(const CCardInfo &card);
     int             getBoxSize() const;
-    ECardColor      getMaxColor() const;    
+    ECardColor      getChangeColor() const;
+    void            clearBox();
     
     //Judge
     bool            boxIsAllowOut(const CCardInfo &end_card);     //Other round
