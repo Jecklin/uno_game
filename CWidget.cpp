@@ -1,7 +1,6 @@
-#include "CWidget.h"
+﻿#include "CWidget.h"
 #include "CGameOverDialog.h"
 #include "ui_CWidget.h"
-#include "ui_CTopList.h"
 
 #include <QFileDialog>
 #include <QFile>
