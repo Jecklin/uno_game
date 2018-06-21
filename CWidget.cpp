@@ -420,8 +420,6 @@ void CWidget::onNotAllowOut()
 
 void CWidget::onGameOver()
 {
-
-    //******************************
     CGameOverDialog dialog;
     dialog.createDb();
     
@@ -437,7 +435,6 @@ void CWidget::onGameOver()
     }
     dialog.selectDb();    
     dialog.exec();
-    //******************************
     
     //enable(false)
     this->m_mainWidget->pushButtonStart->setEnabled(true);
