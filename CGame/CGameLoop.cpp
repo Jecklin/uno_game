@@ -48,16 +48,16 @@ void CGameLoop::initGame()
     if (this->m_players.empty())
     {
         CPlayer player_index;
-        player_index.setPlayerName("*Lili*");
+        player_index.setPlayerName("Lili");
         this->m_players.push_back(player_index);
         
-        player_index.setPlayerName("*Jack*");
+        player_index.setPlayerName("Jack");
         this->m_players.push_back(player_index);    
         
-        player_index.setPlayerName("*Anna*");
+        player_index.setPlayerName("Anna");
         this->m_players.push_back(player_index); 
         
-        player_index.setPlayerName("*Tom*");
+        player_index.setPlayerName("Tom");
         this->m_players.push_back(player_index);  
     }
     else

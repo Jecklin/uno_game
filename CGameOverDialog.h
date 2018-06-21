@@ -2,6 +2,10 @@
 #define CGAMEOVERDIALOG_H
 
 #include <QDialog>
+#include <QtSql/QSqlDatabase>
+#include <QtSql/QSqlQuery>
+#include <QMessageBox>
+#include <QStandardItemModel>
 
 namespace Ui {
 class CGameOverDialog;
@@ -15,10 +19,25 @@ public:
     explicit CGameOverDialog(QWidget *parent = 0);
     ~CGameOverDialog();
     
-    void    setTextBrowser(QString texts);
+public:
+    bool    createDb();
+    bool    updateDb(const QString &name, int score);
+    bool    selectDb();
+
     
 private:
-    Ui::CGameOverDialog *ui;
+    void    initTableView();
+    
+    
+private:
+    Ui::CGameOverDialog     *m_dialog;
+    QStandardItemModel      *m_data_model;
+    QSqlDatabase            m_db;
 };
+
+
+
+
+
 
 #endif // CGAMEOVERDIALOG_H

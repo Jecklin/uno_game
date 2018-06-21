@@ -32,6 +32,10 @@ CWidget::CWidget(QWidget *parent)
     connect(m_mainWidget->pushButtonGiveUp,SIGNAL(clicked(bool)),this,SLOT(onChoiceGiveUp()));    
     connect(this,SIGNAL(choiced()),this,SLOT(onChoiced())); 
     connect(this->m_mainWidget->comboBox,SIGNAL(currentIndexChanged(int)),this,SLOT(onComboxChoice(int)));
+    
+
+
+
 }
 
 CWidget::~CWidget()
@@ -416,23 +420,24 @@ void CWidget::onNotAllowOut()
 
 void CWidget::onGameOver()
 {
-    QString      texts;
-    QString      scores;
+
+    //******************************
+    CGameOverDialog dialog;
+    dialog.createDb();
+    
+    int          scores;
     CPlayer      player;
     QString      name;
-    
-    texts = QString::fromUtf8("*****  Game Over  ****\n");
     for (int i = 0; i < 4; ++i)
     {
         player = this->m_gameLoop->getPlayer(i);
-        scores = QString::number(player.getPlayerScore(),10);
+        scores = player.getPlayerScore();
         name = QString::fromStdString(player.getPlayerName());
-        texts += name + ": " + scores + "\n";
+        dialog.updateDb(name, scores);
     }
-    
-    CGameOverDialog dialog;
-    dialog.setTextBrowser(texts);
+    dialog.selectDb();    
     dialog.exec();
+    //******************************
     
     //enable(false)
     this->m_mainWidget->pushButtonStart->setEnabled(true);
