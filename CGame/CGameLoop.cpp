@@ -14,8 +14,11 @@ CGameLoop::CGameLoop()
     ,m_is_giveup(false)
     ,m_is_choiced_card(false)
     ,m_change_color()
+    ,m_db(nullptr)
 {
     this->m_state_machine = new CStateMachine(this);
+    this->m_db = new CDataBase();
+
 }
 
 CGameLoop::~CGameLoop()
@@ -28,6 +31,16 @@ CGameLoop::~CGameLoop()
     {
         delete this->m_state_machine;
         this->m_state_machine = nullptr;
+    }
+    
+    if (nullptr == this->m_db)
+    {
+        ;
+    }
+    else
+    {
+        delete this->m_db;
+        this->m_db = nullptr;
     }
 }
 
@@ -42,6 +55,8 @@ void CGameLoop::initGame()
 {
     //Init machine
     this->m_state_machine->initMachine();
+    
+
     
     
     //Init players name
@@ -335,20 +350,31 @@ void CGameLoop::errorPromt()
 
 void CGameLoop::setAllScores()
 {
+    //set winner score
     CPlayer *pplayer_cur = &(this->m_players[this->m_current]);
-    int num = 10;
-    pplayer_cur->setPlayerScore(num);
+    QString winner_name = pplayer_cur->getPlayerName();
+    int sou_score = this->m_db->selectDb(winner_name);
+    int tar_score = sou_score + 10;
+    this->m_db->updateDb(winner_name, tar_score);
+    
     
     //other player sub score
     for (unsigned int index = 0; index < this->m_players.size(); ++index)
     {
-        pplayer_cur = &(this->m_players[index]);
-        num = pplayer_cur->getBoxSize();
-        pplayer_cur->setPlayerScore(-num);
-    }
-    
+        pplayer_cur             = &(this->m_players[index]);
+        QString player_name     = pplayer_cur->getPlayerName();
+        int     player_box      = pplayer_cur->getBoxSize();
+        
+        sou_score = this->m_db->selectDb(player_name);
+        tar_score = sou_score - player_box;
+        this->m_db->updateDb(player_name, tar_score);
 
-    
+    }  
+}
+
+CDataBase::DbInfo& CGameLoop::getDb(int row)
+{
+    return m_db->selectDb(row);
 }
 
 CPlayer CGameLoop::getPlayer(int num)

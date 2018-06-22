@@ -1,11 +1,9 @@
-﻿#include "CWidget.h"
-#include "CGameOverDialog.h"
-#include "ui_CWidget.h"
-
+﻿#include "ui_CWidget.h"
 #include <QFileDialog>
 #include <QFile>
-#include <QString>
 
+#include "CWidget.h"
+#include "CGameOverDialog.h"
 
 CWidget::CWidget(QWidget *parent)
     :QWidget(parent)
@@ -32,8 +30,6 @@ CWidget::CWidget(QWidget *parent)
     connect(m_mainWidget->pushButtonGiveUp,SIGNAL(clicked(bool)),this,SLOT(onChoiceGiveUp()));    
     connect(this,SIGNAL(choiced()),this,SLOT(onChoiced())); 
     connect(this->m_mainWidget->comboBox,SIGNAL(currentIndexChanged(int)),this,SLOT(onComboxChoice(int)));
-    
-
 
 
 }
@@ -52,6 +48,7 @@ CWidget::~CWidget()
         delete this->m_gameLoop;
         this->m_gameLoop = nullptr;
     }
+    
     
     //delete mainWidget
     if (nullptr == this->m_mainWidget)
@@ -420,20 +417,18 @@ void CWidget::onNotAllowOut()
 
 void CWidget::onGameOver()
 {
+    //show dialog
     CGameOverDialog dialog;
-    dialog.createDb();
+    QString         name;
+    int             score;
     
-    int          scores;
-    CPlayer      player;
-    QString      name;
-    for (int i = 0; i < 4; ++i)
+    for (int row = 0; row < 4; ++row)
     {
-        player = this->m_gameLoop->getPlayer(i);
-        scores = player.getPlayerScore();
-        name = QString::fromStdString(player.getPlayerName());
-        dialog.updateDb(name, scores);
+        name = this->m_gameLoop->getDb(row).name;
+        score = this->m_gameLoop->getDb(row).score;
+        dialog.setTableItem(name, score, row);
     }
-    dialog.selectDb();    
+    
     dialog.exec();
     
     //enable(false)

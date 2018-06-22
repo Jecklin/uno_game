@@ -5,6 +5,7 @@
 #include "CCardInfoEnd.h"
 #include "CPlayer.h"
 #include "CStateMachine/CStateMachine.h"
+#include "CDataBase.h"
 
 class CGameLoop: public QWidget
 {
@@ -53,8 +54,9 @@ public:
     void            errorPromt();
  
     //StateEnd
-    void            setAllScores(); 
-    CPlayer         getPlayer(int num);
+    void                setAllScores();
+    CDataBase::DbInfo&  getDb(int row);
+    CPlayer             getPlayer(int num);
     
 signals:
     void            playerInCard(CCardInfo in_card, int current);
@@ -75,16 +77,17 @@ private:
 
     
 private:
-    std::vector<CPlayer>                m_players;              //玩家数组
-    CCardInfoEnd                        m_endcard;              //底牌
-    CDeskBox                            m_open_box;             //已出牌库
-    CDeskBox                            m_close_box;            //未起牌库
-    int                                 m_toward;               //出牌方向标识
-    int                                 m_current;              //当前出牌玩家位置
-    CStateMachine                       *m_state_machine;
-    bool                                m_is_giveup;
-    bool                                m_is_choiced_card;
-    ECardColor                          m_change_color;
+    std::vector<CPlayer>            m_players;              //玩家数组
+    CCardInfoEnd                    m_endcard;              //底牌
+    CDeskBox                        m_open_box;             //已出牌库
+    CDeskBox                        m_close_box;            //未起牌库
+    int                             m_toward;               //出牌方向标识
+    int                             m_current;              //当前出牌玩家位置
+    CStateMachine                   *m_state_machine;       //状态机
+    bool                            m_is_giveup;            //选择放弃
+    bool                            m_is_choiced_card;      //选择出牌
+    ECardColor                      m_change_color;         //选择要改变成的颜色
+    CDataBase                       *m_db;                  //数据库
 };
 
 

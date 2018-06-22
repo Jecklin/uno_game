@@ -45,7 +45,8 @@ SOURCES += \
     CGame/CDeskBox.cpp \
     CGame/CGameLoop.cpp \
     CGame/CPlayer.cpp \
-    CGameOverDialog.cpp
+    CGameOverDialog.cpp \
+    CGame/CDataBase.cpp
 
 HEADERS += \
         CWidget.h \
@@ -70,7 +71,8 @@ HEADERS += \
     CGame/CGameLoop.h \
     CGame/CPlayer.h \
     CGame/datatypedefine.h \
-    CGameOverDialog.h
+    CGameOverDialog.h \
+    CGame/CDataBase.h
 
 FORMS += \
         CWidget.ui \

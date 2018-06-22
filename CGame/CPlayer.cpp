@@ -53,12 +53,12 @@ void CPlayer::setPlayerScore(int score)
 
 
 //Name
-std::string CPlayer::getPlayerName() const
+QString CPlayer::getPlayerName() const
 {
     return this->m_name;
 }
 
-void CPlayer::setPlayerName(const std::string &name)
+void CPlayer::setPlayerName(const QString &name)
 {
     this->m_name = name;
 }

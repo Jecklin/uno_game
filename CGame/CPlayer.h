@@ -1,7 +1,7 @@
 #ifndef CPLAYER_H
 #define CPLAYER_H
 
-#include <string>
+#include <QString>
 #include <list>
 #include "CCardInfo.h"
 
@@ -21,8 +21,8 @@ public:
     void            setPlayerScore(int score);
 
     //Name
-    std::string     getPlayerName() const;
-    void            setPlayerName(const std::string &name);
+    QString         getPlayerName() const;
+    void            setPlayerName(const QString &name);
     
     //Box
     void            playerSubCard(const CCardInfo &card);
@@ -43,7 +43,7 @@ public:
 
 private:
     int             m_score;
-    std::string     m_name;
+    QString         m_name;
     CBox            m_box;
     bool            m_giveup;
     CCardInfo       m_outcard;

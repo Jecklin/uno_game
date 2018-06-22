@@ -53,8 +53,8 @@ private:
 private:
     Ui::CWidget         *m_mainWidget;
     CGameLoop           *m_gameLoop;
-    bool                m_color_choice;
-    int                 m_size[4];
+    bool                m_color_choice;         //选择改变的颜色
+    int                 m_size[4];              //玩家牌库数
 };
 
 #endif // CWIDGET_H

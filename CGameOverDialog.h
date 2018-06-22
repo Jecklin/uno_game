@@ -20,10 +20,7 @@ public:
     ~CGameOverDialog();
     
 public:
-    bool    createDb();
-    bool    updateDb(const QString &name, int score);
-    bool    selectDb();
-
+    void    setTableItem(const QString &name, int score, int row);
     
 private:
     void    initTableView();
@@ -32,12 +29,7 @@ private:
 private:
     Ui::CGameOverDialog     *m_dialog;
     QStandardItemModel      *m_data_model;
-    QSqlDatabase            m_db;
 };
-
-
-
-
 
 
 #endif // CGAMEOVERDIALOG_H
