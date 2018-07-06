@@ -383,6 +383,11 @@ CPlayer CGameLoop::getPlayer(int num)
     return *pplayer;
 }
 
+CPlayer CGameLoop::getWinner()
+{
+    return this->m_players[m_current];
+}
+
 
 
 void CGameLoop::actNextAddCard(int num)

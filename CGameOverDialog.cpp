@@ -56,7 +56,14 @@ void CGameOverDialog::setTableItem(const QString &name, int score, int row)
     
     m_data_model->item(row, 1)->setTextAlignment(Qt::AlignCenter);
     m_data_model->item(row, 1)->setForeground(QBrush(QColor(255, 0, 0)));
+    
+}
 
+void CGameOverDialog::setWinner(const QString &name)
+{
+    QString str = m_dialog->label->text();
+    str += name;
+    m_dialog->label->setText(str);
 }
 
 

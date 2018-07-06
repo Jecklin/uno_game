@@ -57,6 +57,7 @@ public:
     void                setAllScores();
     CDataBase::DbInfo&  getDb(int row);
     CPlayer             getPlayer(int num);
+    CPlayer             getWinner();
     
 signals:
     void            playerInCard(CCardInfo in_card, int current);

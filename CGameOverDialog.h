@@ -21,6 +21,7 @@ public:
     
 public:
     void    setTableItem(const QString &name, int score, int row);
+    void    setWinner(const QString &name);
     
 private:
     void    initTableView();

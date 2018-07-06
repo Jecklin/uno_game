@@ -77,3 +77,6 @@ HEADERS += \
 FORMS += \
         CWidget.ui \
     CGameOverDialog.ui
+
+RESOURCES += \
+    src.qrc
