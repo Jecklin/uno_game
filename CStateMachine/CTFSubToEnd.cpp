@@ -23,15 +23,12 @@ CTFSubToEnd::~CTFSubToEnd()
 bool CTFSubToEnd::transForm()
 {   
     bool is_ok = false;
-    if (this->m_gameloop->curPlayerIsWinner())
+    if (this->m_gameloop->curPlayerEmpty())
     {
         this->m_gameloop->setAllScores();
         is_ok = true;
     }
-    else
-    {
-        ;
-    }
+
     return is_ok;
 }
 

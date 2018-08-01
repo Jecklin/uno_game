@@ -17,16 +17,16 @@ public:
     typedef std::list<CCardInfo> CBox;
 
     //Score
-    int             getPlayerScore() const;
-    void            setPlayerScore(int score);
+    int             getScore() const;
+    void            setScore(int score);
 
     //Name
-    QString         getPlayerName() const;
-    void            setPlayerName(const QString &name);
+    QString         getName() const;
+    void            setName(const QString &name);
     
     //Box
-    void            playerSubCard(const CCardInfo &card);
-    void            playerAddCard(const CCardInfo &card);
+    void            removeCard(const CCardInfo &card);
+    void            addCard(const CCardInfo &card);
     int             getBoxSize() const;
     ECardColor      getChangeColor() const;
     void            clearBox();

@@ -37,208 +37,164 @@ void CDeskBox::subCard(const CCardInfo &card)
     }
 }
 
-CCardInfo CDeskBox::getRandomCard()
+void CDeskBox::popCard()
 {
-    std::list<CCardInfo>::iterator iter;
-    unsigned int                   sround = 0;
-    CCardInfo                      card_index;
+    m_box.pop_back();
+}
 
-    do
-    {
-        //Get srand card
-        iter = this->m_box.begin();
-        srand((unsigned int)time(nullptr));
-        sround = rand() % (this->m_box.size() - 1);
-        for (unsigned int move = 0; move < sround; ++ move)
-        {            
-            ++iter;
-        }
-        card_index = *iter;
+CCardInfo CDeskBox::backCard()
+{
+    return m_box.back();
+}
 
-        //Card is black or not
-        if (card_index.getColor() == ECC_Black)
-        {
-            ;
-        }
-        else
-        {
-            break;
-        }
 
-    }while(true);
+//CCardInfo CDeskBox::getRandomCard()
+//{
+//    std::list<CCardInfo>::iterator iter;
+//    unsigned int                   sround = 0;
+//    CCardInfo                      card_index;
+
+//    do
+//    {
+//        //Get srand card
+//        iter = this->m_box.begin();
+//        srand((unsigned int)time(nullptr));
+//        sround = rand() % (this->m_box.size() - 1);
+//        for (unsigned int move = 0; move < sround; ++ move)
+//        {            
+//            ++iter;
+//        }
+//        card_index = *iter;
+
+//        //Card is black or not
+//        if (card_index.getColor() == ECC_Black)
+//        {
+//            ;
+//        }
+//        else
+//        {
+//            break;
+//        }
+
+//    }while(true);
     
-    return card_index;
-}
+//    return card_index;
+//}
 
-CCardInfo CDeskBox::getEndCard()
-{
-    std::list<CCardInfo>::iterator iter = this->m_box.end();
-    --iter;
-    CCardInfo card;
-    card = *iter;
-    return card;
-}
+//CCardInfo CDeskBox::getEndCard()
+//{
+//    std::list<CCardInfo>::iterator iter = this->m_box.end();
+//    --iter;
+//    CCardInfo card;
+//    card = *iter;
+//    return card;
+//}
 
 void CDeskBox::initBox()
 {
-    if (this->m_box.empty())
+    //每回合重置牌库
+    if (!this->m_box.empty())
     {
-        ;
-    }
-    else
-    {
-        this->m_box.clear();
+        this->clearBox();
     }
   
-    //初始化数字牌
-    for (int index_eci = ECI_Zero; index_eci != ECI_Nine + 1; ++index_eci)      //id
-    {
-        CCardInfo index_rcard(ECC_Red, ECardId(index_eci), ECA_None);
-        this->m_box.push_back(index_rcard);
-        this->m_box.push_back(index_rcard);
+    //初始化 数字牌： 0-9,4种颜色各2张
+    cardToBoxId(ECI_Zero);
+    cardToBoxId(ECI_One);
+    cardToBoxId(ECI_Two);
+    cardToBoxId(ECI_Three);
+    cardToBoxId(ECI_Four);
+    cardToBoxId(ECI_Five);
+    cardToBoxId(ECI_Six);
+    cardToBoxId(ECI_Seven);
+    cardToBoxId(ECI_Eight);
+    cardToBoxId(ECI_Nine);
+    
+    //初始化 功能牌
+    cardToBoxAct(ECI_AddTwo, ECA_ActionTwo);                //+2
+    cardToBoxAct(ECI_Resverse, ECA_Reverse);                //反转
+    cardToBoxAct(ECI_Stop, ECA_Stop);                       //停止
+    
+    cardToBox(ECC_Black, ECI_Black, ECA_Black, 4);          //黑牌
+    cardToBox(ECC_Black, ECI_BlackFour, ECA_BlackFour, 4);  //+4黑牌
 
-        CCardInfo index_ycard(ECC_Yellow, ECardId(index_eci), ECA_None);
-        this->m_box.push_back(index_ycard);
-        this->m_box.push_back(index_ycard);
-
-        CCardInfo index_gcard(ECC_Green, ECardId(index_eci), ECA_None);
-        this->m_box.push_back(index_gcard);
-        this->m_box.push_back(index_gcard);
-
-        CCardInfo index_bcard(ECC_Blue, ECardId(index_eci), ECA_None);
-        this->m_box.push_back(index_bcard);
-        this->m_box.push_back(index_bcard);
-
-    }
-
-    //初始化 +2 功能牌
-    CCardInfo index_atrcard(ECC_Red, ECI_AddTwo, ECA_ActionTwo);
-    this->m_box.push_back(index_atrcard);
-    this->m_box.push_back(index_atrcard);
-
-    CCardInfo index_atycard(ECC_Yellow, ECI_AddTwo, ECA_ActionTwo);
-    this->m_box.push_back(index_atycard);
-    this->m_box.push_back(index_atycard);
-
-    CCardInfo index_atgcard(ECC_Green, ECI_AddTwo, ECA_ActionTwo);
-    this->m_box.push_back(index_atgcard);
-    this->m_box.push_back(index_atgcard);
-
-    CCardInfo index_atbcard(ECC_Blue, ECI_AddTwo, ECA_ActionTwo);
-    this->m_box.push_back(index_atbcard);
-    this->m_box.push_back(index_atbcard);
-
-    //初始化 反转 功能牌
-    CCardInfo index_rrcard(ECC_Red, ECI_Resverse, ECA_Reverse);
-    this->m_box.push_back(index_rrcard);
-    this->m_box.push_back(index_rrcard);
-
-    CCardInfo index_rycard(ECC_Yellow, ECI_Resverse, ECA_Reverse);
-    this->m_box.push_back(index_rycard);
-    this->m_box.push_back(index_rycard);
-
-    CCardInfo index_rgcard(ECC_Green, ECI_Resverse, ECA_Reverse);
-    this->m_box.push_back(index_rgcard);
-    this->m_box.push_back(index_rgcard);
-
-    CCardInfo index_rbcard(ECC_Blue, ECI_Resverse, ECA_Reverse);
-    this->m_box.push_back(index_rbcard);
-    this->m_box.push_back(index_rbcard);
-
-    //初始化 停止 功能牌
-    CCardInfo index_srcard(ECC_Red, ECI_Stop, ECA_Stop);
-    this->m_box.push_back(index_srcard);
-    this->m_box.push_back(index_srcard);
-
-    CCardInfo index_sycard(ECC_Yellow, ECI_Stop, ECA_Stop);
-    this->m_box.push_back(index_sycard);
-    this->m_box.push_back(index_sycard);
-
-    CCardInfo index_sgcard(ECC_Green, ECI_Stop, ECA_Stop);
-    this->m_box.push_back(index_sgcard);
-    this->m_box.push_back(index_sgcard);
-
-    CCardInfo index_sbcard(ECC_Blue, ECI_Stop, ECA_Stop);
-    this->m_box.push_back(index_sbcard);
-    this->m_box.push_back(index_sbcard);
-
-    //初始化 黑牌 高级牌
-    CCardInfo index_bcard(ECC_Black, ECI_Black, ECA_Black);
-    this->m_box.push_back(index_bcard);
-    this->m_box.push_back(index_bcard);
-    this->m_box.push_back(index_bcard);
-    this->m_box.push_back(index_bcard);
-
-    //初始化 +4黑牌 高级牌
-    CCardInfo index_bfcard(ECC_Black, ECI_BlackFour, ECA_BlackFour);
-    this->m_box.push_back(index_bfcard);
-    this->m_box.push_back(index_bfcard);
-    this->m_box.push_back(index_bfcard);
-    this->m_box.push_back(index_bfcard);
 }
 
 void CDeskBox::randomBox()
 {
-    std::list<CCardInfo>::iterator iter_one;
-    std::list<CCardInfo>::iterator iter_two;
-    CCardInfo                      card_index;
+    std::list<CCardInfo>::iterator iter_move;
+    std::list<CCardInfo>::iterator iter_end = m_box.end();
+    --iter_end;
     unsigned int                   sround = 0;
 
     srand((unsigned int)time(nullptr));
-    for (unsigned int change = 0; change < 1000; ++change)  //change < this->m_box.size()
+    for (unsigned int change = 0; change < 10000; ++change) 
     {
         //move iter_one
         sround = rand() % (this->m_box.size() - 1);
-        iter_one = this->m_box.begin();
+        iter_move = this->m_box.begin();
         for (unsigned int i = 0; i < sround; ++i )
         {
-            ++iter_one;
+            ++iter_move;
         }
-
-        //move iter_two
-        sround = rand() % (this->m_box.size() - 1);
-        iter_two = this->m_box.end();
-        --iter_two;
-        for (unsigned int i = 0; i < sround; ++i )
-        {
-            --iter_two;
-        }
-
+        
         //change
-        card_index = *iter_one;
-        *iter_one = *iter_two;
-        *iter_two = card_index;
+        CCardInfo card = m_box.back();
+        *iter_end = *iter_move;
+        *iter_move = card;
+
     }
 }
 
 void CDeskBox::removeBox(CDeskBox &sou)
 {
-    CCardInfo   card;
-    do
-    {
-        card = sou.getEndCard();
-        this->m_box.push_back(card);
-        sou.subCard(card);
-  
 
-    }while(!sou.isEmpty());
+    while(!sou.empty())
+    {
+        m_box.push_back(sou.backCard());
+        sou.popCard();
+    }
     
     this->randomBox();
 }
 
-bool CDeskBox::isEmpty()
+bool CDeskBox::empty()
 {
     return this->m_box.empty();
 }
 
 void CDeskBox::clearBox()
 {
-    if (this->m_box.empty())
+    if (!this->m_box.empty())
     {
-        ;
+        m_box.erase(m_box.begin());
     }
-    else
+    
+}
+
+void CDeskBox::cardToBox(ECardColor color, ECardId id, ECardAction action, int times)
+{
+    CCardInfo card(color, id, action);
+    
+    for (int i = 0; i < times; ++i)
     {
-        this->m_box.clear();
+        this->m_box.push_back(card);
     }
+    
+}
+
+void CDeskBox::cardToBoxId(ECardId id)
+{
+    cardToBox(ECC_Red, id, ECA_None);
+    cardToBox(ECC_Yellow, id, ECA_None);
+    cardToBox(ECC_Green, id, ECA_None);
+    cardToBox(ECC_Blue, id, ECA_None);
+}
+
+void CDeskBox::cardToBoxAct(ECardId id, ECardAction action)
+{
+    cardToBox(ECC_Red, id, action);
+    cardToBox(ECC_Yellow, id, action);
+    cardToBox(ECC_Green, id, action);
+    cardToBox(ECC_Blue, id, action);
 }

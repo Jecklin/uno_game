@@ -26,7 +26,7 @@ signals:
     
 public slots:
     void    onGameStart();
-    void    onPlayerInCard(CCardInfo in_card, int current);
+    void    onPlayerAddCard(CCardInfo in_card, int current);
     void    onPlayerOutCard(CCardInfo out_card, int current);
     void    onEndCardChanged(CCardInfo end_card);
     void    onNotAllowOut();

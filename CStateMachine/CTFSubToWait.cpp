@@ -23,17 +23,13 @@ CTFSubToWait::~CTFSubToWait()
 bool CTFSubToWait::transForm()
 {    
     bool is_ok = false;
-    if (this->m_gameloop->curPlayerIsWinner())
-    {
-        ;
-    }
-    else
+    if (!m_gameloop->curPlayerEmpty())
     {
         is_ok = true;
         this->m_gameloop->doPunish();
         this->m_gameloop->curToNext();
-        
     }
+
     return is_ok;
 }
 

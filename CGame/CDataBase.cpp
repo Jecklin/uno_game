@@ -1,12 +1,13 @@
 #include "CDataBase.h"
 #include <QMessageBox>
 #include <QDebug>
+#include <QSqlError>
 
 CDataBase::CDataBase()
-    :m_connection("connect")
+    :m_connection()
     ,m_info()
 {
-    this->createDb();
+    ;
 }
 
 CDataBase::~CDataBase()
@@ -34,6 +35,8 @@ CDataBase::~CDataBase()
 
 void CDataBase::createDb()
 {
+    qDebug() << "createDb";
+    
     QSqlDatabase db = QSqlDatabase::addDatabase("QSQLITE", m_connection);
     db.setHostName("players");
     db.setDatabaseName("DB_records");
@@ -48,27 +51,53 @@ void CDataBase::createDb()
     }
     else
     {
-        QSqlQuery query(db);
         
-        //here should be changed to  Zero in every round
-        if (db.contains(m_connection))
+        if (!db.tables().contains("person"))
         {
-//            query.exec("drop table person");
+            qDebug() << "create table person ";
+            
+            QSqlQuery query(db);
+            
+            query.prepare("create table person             ("
+                          "id      integer                 ,"
+                          "name    varchar(20)             ,"
+                          "score   integer                  )");
+            if (!query.exec())
+            {
+                qDebug() << query.lastError();
+            }
+            
+            query.prepare("insert into person values(0, 'Lili'         ,0)");
+            if (!query.exec())
+            {
+                qDebug() << query.lastError();
+            }
+            
+            query.prepare("insert into person values(1, 'Jack'         ,0)");
+            if (!query.exec())
+            {
+                qDebug() << query.lastError();
+            }
+            
+            query.prepare("insert into person values(2, 'Anna'         ,0)");
+            if (!query.exec())
+            {
+                qDebug() << query.lastError();
+            }
+            
+            query.prepare("insert into person values(3, 'Tom'         ,0)");
+            if (!query.exec())
+            {
+                qDebug() << query.lastError();
+            }
         }
-        else
-        {
-            query.exec("create table person             ("
-                       "id      int                     ,"
-                       "name    varchar(20)             ,"
-                       "score   int                     )");
-            query.exec("insert into person values(0, 'Lili'         ,0)");
-            query.exec("insert into person values(1, 'Jack'         ,0)");
-            query.exec("insert into person values(2, 'Anna'         ,0)");
-            query.exec("insert into person values(3, 'Tom'          ,0)");
-        }
+ 
+
+        
+    }
         
 
-    }
+
     
     db.close();
 
@@ -76,6 +105,10 @@ void CDataBase::createDb()
 
 void CDataBase::updateDb(const QString &name, int score)
 {
+    qDebug() << "updateDb";
+    
+    qDebug() << "name:" << name << "score:" << score;
+    
     QSqlDatabase db = QSqlDatabase::database(m_connection);
     
     if (!db.open())
@@ -90,10 +123,13 @@ void CDataBase::updateDb(const QString &name, int score)
     {        
         QSqlQuery query(db);
         
-        query.prepare("update person set score = (:da) where name = (:name)");
+        query.prepare("update person set score = :da where name = :name");
         query.bindValue(":da", score);
         query.bindValue(":name",name);
-        query.exec();
+        if (!query.exec())
+        {
+            qDebug() << query.lastError();
+        }
    
     }
     
@@ -103,35 +139,76 @@ void CDataBase::updateDb(const QString &name, int score)
 
 int CDataBase::selectDb(const QString &name)
 {
+    qDebug() << "selectDb(const QString &name)";
     QSqlDatabase db = QSqlDatabase::database(m_connection); 
     if (!db.open())
     {
         QMessageBox::critical(nullptr
                               ,QObject::tr("Cannot open database")
                               ,QObject::tr("Error")
-                              ,QMessageBox::Cancel);
-        
+                              ,QMessageBox::Cancel);        
     }
     else
     { 
         QSqlQuery   query(db);
-        query.prepare("select score from \"person\" where name = (:da)");
+        query.prepare("select score from \'person\' where name = :da;");
         query.bindValue(":da",name);
-        query.exec(); 
+        if (!query.exec())
+        {
+            qDebug() << query.lastError();
+        }
 
         while (query.next())
         {
             this->m_info.score = query.value("score").toInt();
         }
-    }
-    
+    }    
     db.close();
 
     return this->m_info.score;
     
 }
 
-CDataBase::DbInfo& CDataBase::selectDb(int row)
+//CDataBase::DbInfo& CDataBase::selectDb(int row)
+//{
+    
+//    qDebug() << "selectDb(int row)";
+    
+//    QSqlDatabase db = QSqlDatabase::database(m_connection); 
+//    if (!db.open())
+//    {
+//        QMessageBox::critical(nullptr
+//                              ,QObject::tr("Cannot open database")
+//                              ,QObject::tr("Error")
+//                              ,QMessageBox::Cancel);
+        
+//    }
+//    else
+//    { 
+//        QSqlQuery query(db);
+//        query.prepare("select name, score from \"person\" where id = (:da)");
+//        query.bindValue(":da",row);
+//        if (!query.exec())
+//        {
+//            qDebug() << query.lastError();
+//        }   
+
+//        while(query.next())
+//        {
+//            m_info.name = query.value(0).toString();
+//            m_info.score = query.value(1).toInt();
+//        }
+
+   
+//    }
+    
+//    db.close();
+   
+//    return m_info;
+    
+//}
+
+CDataBase::DbInfos* CDataBase::getInfos()
 {
     QSqlDatabase db = QSqlDatabase::database(m_connection); 
     if (!db.open())
@@ -145,24 +222,29 @@ CDataBase::DbInfo& CDataBase::selectDb(int row)
     else
     { 
         QSqlQuery query(db);
-        query.prepare("select name, score from \"person\" where id = (:da)");
-        query.bindValue(":da",row);
-        query.exec();    
+        query.prepare("select * from \"person\"");
+        if (!query.exec())
+        {
+            qDebug() << query.lastError();
+        }   
 
         while(query.next())
         {
-            m_info.name = query.value(0).toString();
-            m_info.score = query.value(1).toInt();
+            DbInfo info;
+            info.name = query.value(0).toString();
+            info.score = query.value(1).toInt();
+            m_infos->push_back(info);
         }
 
    
     }
     
     db.close();
-   
-    return m_info;
-
+    
+    return m_infos;
 }
+
+
 
 
 

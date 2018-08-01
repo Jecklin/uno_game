@@ -1,13 +1,15 @@
 ﻿#include "ui_CWidget.h"
 #include <QFileDialog>
 #include <QFile>
-
-#include "CWidget.h"
-#include "CGameOverDialog.h"
 #include <QDebug>
 #include <QDir>
 #include <QLayout>
 
+#include "CWidget.h"
+#include "CGameOverDialog.h"
+#include "CBeginDialog.h"
+
+//设置牌固定大小
 QSize CWidget::s_button_low(130, 200);
 QSize CWidget::s_button_top(130, 150);
 QSize CWidget::s_button_left(200, 50);
@@ -26,22 +28,24 @@ CWidget::CWidget(QWidget *parent)
     this->m_gameLoop = new CGameLoop;
     
     //Game loop
-    connect(m_gameLoop,SIGNAL(playerInCard(CCardInfo,int)),this,SLOT(onPlayerInCard(CCardInfo,int)));
-    connect(m_gameLoop,SIGNAL(playerOutCard(CCardInfo,int)),this,SLOT(onPlayerOutCard(CCardInfo,int)));
-    connect(m_gameLoop,SIGNAL(endCardChanged(CCardInfo)),this,SLOT(onEndCardChanged(CCardInfo)));
-    connect(m_gameLoop,SIGNAL(gameOver()),this,SLOT(onGameOver()));
-    connect(m_gameLoop,SIGNAL(notAllowOut()),this,SLOT(onErrorPromt()));
-    connect(m_gameLoop,SIGNAL(changeColor(ECardColor)),this,SLOT(onChangeColor(ECardColor)));
+    connect(m_gameLoop,SIGNAL(sPlayerAddCard(CCardInfo,int)),this,SLOT(onPlayerAddCard(CCardInfo,int)));
+    connect(m_gameLoop,SIGNAL(sPlayerOutCard(CCardInfo,int)),this,SLOT(onPlayerOutCard(CCardInfo,int)));
+    connect(m_gameLoop,SIGNAL(sEndCardChanged(CCardInfo)),this,SLOT(onEndCardChanged(CCardInfo)));
+    connect(m_gameLoop,SIGNAL(sGameOver()),this,SLOT(onGameOver()));
+    connect(m_gameLoop,SIGNAL(sNotAllowOut()),this,SLOT(onErrorPromt()));
+    connect(m_gameLoop,SIGNAL(sChangeColor(ECardColor)),this,SLOT(onChangeColor(ECardColor)));
     
     //Ui
-    connect(m_mainWidget->pushButtonStart,SIGNAL(clicked(bool)),this,SLOT(onGameStart()));   
-    connect(m_mainWidget->pushButtonGiveUp,SIGNAL(clicked(bool)),this,SLOT(onChoiceGiveUp()));    
+    connect(m_mainWidget->startButton,SIGNAL(clicked(bool)),this,SLOT(onGameStart()));   
+    connect(m_mainWidget->giveUpButton,SIGNAL(clicked(bool)),this,SLOT(onChoiceGiveUp()));  
+    connect(m_mainWidget->comboBox,SIGNAL(currentIndexChanged(int)),this,SLOT(onComboxChoice(int)));
     connect(this,SIGNAL(choiced()),this,SLOT(onChoiced())); 
-    connect(this->m_mainWidget->comboBox,SIGNAL(currentIndexChanged(int)),this,SLOT(onComboxChoice(int)));
-
-
-    //set background picture
-    this->setBackGround();
+    
+    
+    //To do:插入背景图片游戏会卡，暂未解决
+//    //set background picture
+//    this->setBackGround();
+    
 
     
 }
@@ -61,6 +65,7 @@ CWidget::~CWidget()
         this->m_gameLoop = nullptr;
     }
     
+
     
     //delete mainWidget
     if (nullptr == this->m_mainWidget)
@@ -181,19 +186,20 @@ void CWidget::unInitButton()
 
 void CWidget::onGameStart()
 {    
+
     //Init
     this->m_gameLoop->startGame();
     
     //enable(false)
-    this->m_mainWidget->pushButtonStart->setEnabled(false);
-    this->m_mainWidget->pushButtonGiveUp->setEnabled(true);
+    this->m_mainWidget->startButton->setEnabled(false);
+    this->m_mainWidget->giveUpButton->setEnabled(true);
     
     //Round
     this->onChoiced();
     
 }
 
-void CWidget::onPlayerInCard(CCardInfo in_card, int current)
+void CWidget::onPlayerAddCard(CCardInfo in_card, int current)
 {
     //更新底部browser
     if (current == 0)
@@ -287,24 +293,22 @@ void CWidget::onGameOver()
     
     //set winner
     CPlayer winner = m_gameLoop->getWinner();
-    dialog.setWinner(winner.getPlayerName());
+    dialog.setWinner(winner.getName());
     
     //show dialog
 
-    QString         name;
-    int             score;
-    
-    for (int row = 0; row < 4; ++row)
+    for (int i = 0; i < m_gameLoop->getPlayerSize(); ++i)
     {
-        name = this->m_gameLoop->getDb(row).name;
-        score = this->m_gameLoop->getDb(row).score;
-        dialog.setTableItem(name, score, row);
+        CPlayer player = m_gameLoop->getPlayer(i);
+        QString name = player.getName();
+        int     score = m_gameLoop->getPlayerScore(name);
+        dialog.setTableItem(name, score);
     }
     
     dialog.exec();
     
-    //enable(false)
-    this->m_mainWidget->pushButtonStart->setEnabled(true);
+    //set new round
+    this->m_mainWidget->startButton->setEnabled(true);
     this->unInitButton();
     this->m_mainWidget->EndCardButton->setIcon(QIcon(":/new/src/icons/card-back.jpg"));
 
@@ -313,7 +317,7 @@ void CWidget::onGameOver()
 
 void CWidget::onChoiceGiveUp()
 {
-    this->m_gameLoop->curPlayerChangeToGiveUp();
+    this->m_gameLoop->setGiveUp();
     emit choiced();
 }
 
@@ -330,11 +334,7 @@ void CWidget::onChoiceOutCard()
         cardInfo = sender->property("cardInfo").toString();
     }
     
-    if (cardInfo.isEmpty())
-    {
-        ;
-    }
-    else
+    if (!cardInfo.isEmpty())
     {
         int          first_space    = cardInfo.indexOf(" ");
         
@@ -347,7 +347,7 @@ void CWidget::onChoiceOutCard()
         ECardAction  action         = this->dbActionToCard(str_action);
         
         CCardInfo   card(color,id,action);
-        this->m_gameLoop->curPlayerChangeOutCard(card);
+        this->m_gameLoop->setOutCard(card);
         
         if ((id == ECI_Black) || (id == ECI_BlackFour))
         {
@@ -367,6 +367,7 @@ void CWidget::onChoiceOutCard()
         }
         
     }
+
     
     
 }
@@ -374,6 +375,7 @@ void CWidget::onChoiceOutCard()
 void CWidget::onChoiced()
 {
     this->m_mainWidget->labelPrompt->setText(QString::fromUtf8(""));
+    this->m_mainWidget->EndCardlabel->setText(QString::fromUtf8(" "));
     this->m_gameLoop->gameRound();
 }
 
@@ -520,7 +522,7 @@ ECardId CWidget::dbIdToCard(QString id)
         cardIds.insert("8", ECardId::ECI_Eight);
         cardIds.insert("9", ECardId::ECI_Nine);
         cardIds.insert("+2", ECardId::ECI_AddTwo);
-        cardIds.insert("Resverse", ECardId::ECI_Resverse);
+        cardIds.insert("Reverse", ECardId::ECI_Resverse);
         cardIds.insert("Stop", ECardId::ECI_Stop);
         cardIds.insert("Black", ECardId::ECI_Black);
         cardIds.insert("Black+4", ECardId::ECI_BlackFour);        
@@ -552,19 +554,19 @@ void CWidget::showPlayerScores()
 {
     QString str_score;
     int     score;
-    score       = this->m_gameLoop->getPlayerScore(0);
+    score       = this->m_gameLoop->getPlayerScore(m_gameLoop->getPlayer(0).getName());
     str_score   = QString::number(score, 10);
     this->m_mainWidget->labelScoreLow->setText(str_score);
     
-    score       = this->m_gameLoop->getPlayerScore(1);
+    score       = this->m_gameLoop->getPlayerScore(m_gameLoop->getPlayer(1).getName());
     str_score   = QString::number(score, 10);
     this->m_mainWidget->labelScoreLeft->setText(str_score);
     
-    score       = this->m_gameLoop->getPlayerScore(2);
+    score       = this->m_gameLoop->getPlayerScore(m_gameLoop->getPlayer(2).getName());
     str_score   = QString::number(score, 10);
     this->m_mainWidget->labelScoreTop->setText(str_score);
     
-    score       = this->m_gameLoop->getPlayerScore(3);
+    score       = this->m_gameLoop->getPlayerScore(m_gameLoop->getPlayer(3).getName());
     str_score   = QString::number(score, 10);
     this->m_mainWidget->labelScoreRight->setText(str_score);
 }
@@ -658,11 +660,7 @@ void CWidget::addButtonToLayout(QLayout *layout, CCardInfo card, QSize size, int
                + this->dbActionToString(card.getAction());
      QPushButton *button = new QPushButton(this);
      button->setProperty("cardInfo", card_info);
-//     button->setMinimumSize(size);
-//     button->setMaximumSize(size);
      button->resize(size);
-     qDebug() << size;
-
      button->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
      
      //button icon
@@ -734,87 +732,96 @@ void CWidget::setBoxSizes(QLabel *label, int current)
 QString CWidget::getCardDir(const CCardInfo &card)
 {
     QString dir = ":/new/src/icons/";
-    if (card.getColor() == ECC_Red)
-    {
-        dir.append("r-");
-    }
-    else if (card.getColor() == ECC_Yellow)
-    {
-        dir.append("y-");
-    }
-    else if (card.getColor() == ECC_Blue)
-    {
-        dir.append("b-");
-    }
-    else if (card.getColor() == ECC_Green)
-    {
-        dir.append("g-");
-    }
-    else if (card.getColor() == ECC_Black)
+    
+    if (card.getId() == ECI_Black)
     {
         dir.append("black");
     }
-    else
-    {
-        ;
-    }
-    
-    if (card.getId() == ECI_Zero)
-    {
-        dir.append("n0");
-    }
-    else if (card.getId() == ECI_One)
-    {
-        dir.append("n1");
-    }
-    else if (card.getId() == ECI_Two)
-    {
-        dir.append("n2");
-    }
-    else if (card.getId() == ECI_Three)
-    {
-        dir.append("n3");
-    }
-    else if (card.getId() == ECI_Four)
-    {
-        dir.append("n4");
-    }
-    else if (card.getId() == ECI_Five)
-    {
-        dir.append("n5");
-    }
-    else if (card.getId() == ECI_Six)
-    {
-        dir.append("n6");
-    }
-    else if (card.getId() == ECI_Seven)
-    {
-        dir.append("n7");
-    }
-    else if (card.getId() == ECI_Eight)
-    {
-        dir.append("n8");
-    }
-    else if (card.getId() == ECI_Nine)
-    {
-        dir.append("n9");
-    }
-    else if (card.getId() == ECI_AddTwo)
-    {
-        dir.append("add2");
-    }
-    else if (card.getId() == ECI_Resverse)
-    {
-        dir.append("rev");
-    }
-    else if (card.getId() == ECI_Stop)
-    {
-        dir.append("stop");
-    }
     else if (card.getId() == ECI_BlackFour)
     {
-        dir.append("-add4");
+        dir.append("black-add4");
     }
+    else
+    {
+        if (card.getColor() == ECC_Red)
+        {
+            dir.append("r-");
+        }
+        else if (card.getColor() == ECC_Yellow)
+        {
+            dir.append("y-");
+        }
+        else if (card.getColor() == ECC_Blue)
+        {
+            dir.append("b-");
+        }
+        else if (card.getColor() == ECC_Green)
+        {
+            dir.append("g-");
+        }
+        else
+        {
+            ;
+        }
+        
+        if (card.getId() == ECI_Zero)
+        {
+            dir.append("n0");
+        }
+        else if (card.getId() == ECI_One)
+        {
+            dir.append("n1");
+        }
+        else if (card.getId() == ECI_Two)
+        {
+            dir.append("n2");
+        }
+        else if (card.getId() == ECI_Three)
+        {
+            dir.append("n3");
+        }
+        else if (card.getId() == ECI_Four)
+        {
+            dir.append("n4");
+        }
+        else if (card.getId() == ECI_Five)
+        {
+            dir.append("n5");
+        }
+        else if (card.getId() == ECI_Six)
+        {
+            dir.append("n6");
+        }
+        else if (card.getId() == ECI_Seven)
+        {
+            dir.append("n7");
+        }
+        else if (card.getId() == ECI_Eight)
+        {
+            dir.append("n8");
+        }
+        else if (card.getId() == ECI_Nine)
+        {
+            dir.append("n9");
+        }
+        else if (card.getId() == ECI_AddTwo)
+        {
+            dir.append("add2");
+        }
+        else if (card.getId() == ECI_Resverse)
+        {
+            dir.append("rev");
+        }
+        else if (card.getId() == ECI_Stop)
+        {
+            dir.append("stop");
+        }
+        else
+        {
+            ;
+        }
+    }
+    
     
     dir.append(".jpg");
     return dir;

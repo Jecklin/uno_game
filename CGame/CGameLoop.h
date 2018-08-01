@@ -6,6 +6,7 @@
 #include "CPlayer.h"
 #include "CStateMachine/CStateMachine.h"
 #include "CDataBase.h"
+#include "CGameRule.h"
 
 class CGameLoop: public QWidget
 {
@@ -18,8 +19,9 @@ public:
     //StateStart
     void            startGame();                          
     void            initGame();
-    void            changeEndCard(const CCardInfo &card);
-    int             getPlayerScore(int current);
+    void            setEndCard(const CCardInfo &card);
+    void            setEndCard(ECardColor color);
+    int             getPlayerScore(const QString &name);
     void            gameRound();
                       
     //StateWait
@@ -27,11 +29,11 @@ public:
     
     //StateMy
     bool            curPlayerIsGiveUp();
-    void            curPlayerChangeToGiveUp();
+    void            setGiveUp();
     void            resetGiveUp();
     
-    bool            curPlayerIsChoicedCard();
-    void            curPlayerChangeOutCard(const CCardInfo &card);
+    bool            isChoicedCard();
+    void            setOutCard(const CCardInfo &card);
     void            resetChoicedCard();
     bool            myAllowOut();
     
@@ -39,12 +41,12 @@ public:
     bool            otherAllowOut();
     
     //StateAdd
-    void            curPlayerInCard();                              
-    void            playerTouchCard(int player_num);
+    void            curPlayerAddCard();                              
+    void            playerAddCard(int player_num);
     
     //StateSub
     void            curPlayerOutCard();
-    bool            curPlayerIsWinner();
+    bool            curPlayerEmpty();
     void            doPunish();                             //执行惩罚
     void            curToNext(); 
     void            setChangeColor(ECardColor color);
@@ -55,17 +57,19 @@ public:
  
     //StateEnd
     void                setAllScores();
-    CDataBase::DbInfo&  getDb(int row);
     CPlayer             getPlayer(int num);
     CPlayer             getWinner();
+    CDataBase*          getDb();
+    int                 getPlayerSize();
+    
     
 signals:
-    void            playerInCard(CCardInfo in_card, int current);
-    void            playerOutCard(CCardInfo out_card, int current);
-    void            endCardChanged(CCardInfo end_card);
-    void            notAllowOut();
-    void            gameOver();
-    void            changeColor(ECardColor color);
+    void            sPlayerAddCard(CCardInfo in_card, int current);
+    void            sPlayerOutCard(CCardInfo out_card, int current);
+    void            sEndCardChanged(CCardInfo end_card);
+    void            sNotAllowOut();
+    void            sGameOver();
+    void            sChangeColor(ECardColor color);
     
 private:
     //Do punish   
@@ -74,7 +78,7 @@ private:
     void            actReverse();
     void            actChangeColor(); 
     int             getNextLocation();
-    void            clearPlayerBox(int num);
+
 
     
 private:
@@ -89,6 +93,7 @@ private:
     bool                            m_is_choiced_card;      //选择出牌
     ECardColor                      m_change_color;         //选择要改变成的颜色
     CDataBase                       *m_db;                  //数据库
+    CGameRule                       *m_rule;
 };
 
 

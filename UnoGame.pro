@@ -46,7 +46,9 @@ SOURCES += \
     CGame/CGameLoop.cpp \
     CGame/CPlayer.cpp \
     CGameOverDialog.cpp \
-    CGame/CDataBase.cpp
+    CGame/CDataBase.cpp \
+    CBeginDialog.cpp \
+    CGameRule.cpp
 
 HEADERS += \
         CWidget.h \
@@ -72,11 +74,14 @@ HEADERS += \
     CGame/CPlayer.h \
     CGame/datatypedefine.h \
     CGameOverDialog.h \
-    CGame/CDataBase.h
+    CGame/CDataBase.h \
+    CBeginDialog.h \
+    CGameRule.h
 
 FORMS += \
         CWidget.ui \
-    CGameOverDialog.ui
+    CGameOverDialog.ui \
+    CBeginDialog.ui
 
 RESOURCES += \
     src.qrc

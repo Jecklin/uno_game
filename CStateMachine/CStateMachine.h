@@ -18,10 +18,9 @@ public:
     virtual int                 toNextState();
     
 public:
-    void                        initMachine();
-    void                        unInit();
-    
-    
+    void                        inIt();
+
+       
 private:
     typedef std::map<int, CState*> StateMap;
     

@@ -23,26 +23,20 @@ CTFMyToSub::~CTFMyToSub()
 bool CTFMyToSub::transForm()
 {
     bool is_ok = false;
-    if (this->m_gameloop->curPlayerIsGiveUp())
+    
+    if (!m_gameloop->curPlayerIsGiveUp())
     {
-        ;
-    }
-    else if (this->m_gameloop->curPlayerIsChoicedCard())
-    {
-        if (this->m_gameloop->myAllowOut())
+        if (m_gameloop->isChoicedCard())
         {
-            is_ok = true;
-            this->m_gameloop->curPlayerOutCard();
-        }
-        else
-        {
-            ;
+            if (m_gameloop->myAllowOut())
+            {
+                is_ok = true;
+                this->m_gameloop->curPlayerOutCard();
+                this->m_gameloop->resetChoicedCard();
+            }
         }
     }
-    else
-    {
-        ;
-    }
+    
 
     return is_ok;
 }

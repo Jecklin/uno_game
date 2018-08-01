@@ -21,6 +21,7 @@ public:
     
 public:
     void    setTableItem(const QString &name, int score, int row);
+    void    setTableItem(const QString &name, int score);
     void    setWinner(const QString &name);
     
 private:
@@ -29,7 +30,7 @@ private:
     
 private:
     Ui::CGameOverDialog     *m_dialog;
-    QStandardItemModel      *m_data_model;
+    QStandardItemModel      *m_model;
 };
 
 

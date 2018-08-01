@@ -41,30 +41,30 @@ CPlayer &CPlayer::operator =(const CPlayer &other)
 }
 
 //Score
-int CPlayer::getPlayerScore() const
+int CPlayer::getScore() const
 {
     return this->m_score;
 }
 
-void CPlayer::setPlayerScore(int score)
+void CPlayer::setScore(int score)
 {
     this->m_score += score;
 }
 
 
 //Name
-QString CPlayer::getPlayerName() const
+QString CPlayer::getName() const
 {
     return this->m_name;
 }
 
-void CPlayer::setPlayerName(const QString &name)
+void CPlayer::setName(const QString &name)
 {
     this->m_name = name;
 }
 
 //Box
-void CPlayer::playerSubCard(const CCardInfo &card)
+void CPlayer::removeCard(const CCardInfo &card)
 {
     std::list<CCardInfo>::iterator iter;
     CCardInfo card_index;
@@ -85,7 +85,7 @@ void CPlayer::playerSubCard(const CCardInfo &card)
 
 }
 
-void CPlayer::playerAddCard(const CCardInfo &card)
+void CPlayer::addCard(const CCardInfo &card)
 {
     this->m_box.push_back(card);
 }
@@ -165,13 +165,9 @@ ECardColor CPlayer::getChangeColor() const
 
 void CPlayer::clearBox()
 {
-    if (this->m_box.empty())
+    if (!this->m_box.empty())
     {
-        ;
-    }
-    else
-    {
-        this->m_box.clear();  
+        this->m_box.clear();
     }
     
 }
@@ -272,52 +268,6 @@ void CPlayer::setOutCard(const CCardInfo &card)
 {
     this->m_outcard = card;
 }
-
-
-//CCardInfo CPlayer::getSimilarCard(const CCardInfo &card)
-//{
-//    CCardInfo card_index;
-//    CCardInfo card_return;
-//    std::list<CCardInfo>::iterator iter;
-
-//    //end card is black
-//    if ((card.getId() == ECI_Black) || (card.getId() == ECI_BlackFour))
-//    {
-//        for (iter = this->m_box.begin(); iter != this->m_box.end(); ++iter)
-//        {
-//            card_index = *iter;
-//            if (card_index.getColor() & card.getColor())
-//            {
-//                card_return = card_index;
-//            }
-//            else
-//            {
-//                ;
-//            }
-
-//        }
-//    }
-
-//    //end card is normal
-//    else
-//    {
-//        for (iter = this->m_box.begin(); iter != this->m_box.end(); ++iter)
-//        {
-//            card_index = *iter;
-//            if ((card_index.getId() == card.getId()) || (card_index.getColor() & card.getColor()))
-//            {
-//                card_return = card_index;
-//            }
-//            else
-//            {
-//                ;
-//            }
-//        }
-//    }
-//    return card_return;
-
-//}
-
 
 
 

@@ -23,15 +23,12 @@ CTFOtherToAdd::~CTFOtherToAdd()
 bool CTFOtherToAdd::transForm()
 {
     bool is_ok = false;
-    if (this->m_gameloop->otherAllowOut())
-    {
-        ;
-    }
-    else
+    if (!m_gameloop->otherAllowOut())
     {
         is_ok = true;
-        this->m_gameloop->curPlayerInCard();
+        this->m_gameloop->curPlayerAddCard();
     }
+    
     return is_ok;
 }
 

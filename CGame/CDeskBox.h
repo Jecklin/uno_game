@@ -12,13 +12,21 @@ public:
     
     void        addCard(const CCardInfo &card);
     void        subCard(const CCardInfo &card);
-    CCardInfo   getRandomCard();
-    CCardInfo   getEndCard();
+    void        popCard();
+    CCardInfo   backCard();
+    
+//    CCardInfo   getRandomCard();
+//    CCardInfo   getEndCard();
     void        initBox();
     void        randomBox();
     void        removeBox(CDeskBox &sou);
-    bool        isEmpty();
+    bool        empty();
     void        clearBox();
+    
+private:
+    void        cardToBox(ECardColor color, ECardId id, ECardAction action, int times = 2);
+    void        cardToBoxId(ECardId id);
+    void        cardToBoxAct(ECardId id,  ECardAction action);
     
 private:
     std::list<CCardInfo> m_box;

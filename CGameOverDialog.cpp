@@ -8,7 +8,7 @@
 
 CGameOverDialog::CGameOverDialog(QWidget *parent):QDialog(parent)
     ,m_dialog(nullptr)
-    ,m_data_model(nullptr)
+    ,m_model(nullptr)
 {
     m_dialog = new Ui::CGameOverDialog();
     m_dialog->setupUi(this);
@@ -18,14 +18,14 @@ CGameOverDialog::CGameOverDialog(QWidget *parent):QDialog(parent)
 
 CGameOverDialog::~CGameOverDialog()
 {    
-    if (nullptr == m_data_model)
+    if (nullptr == m_model)
     {
         ;
     }
     else
     {
-        delete m_data_model;
-        m_data_model = nullptr;
+        delete m_model;
+        m_model = nullptr;
     }
     
     
@@ -51,12 +51,29 @@ void CGameOverDialog::setTableItem(const QString &name, int score, int row)
     itemScore = new QStandardItem;
     itemScore->setData(str_score, 0);
     
-    m_data_model->setItem(row, 0, itemName);
-    m_data_model->setItem(row, 1, itemScore);
+    m_model->setItem(row, 0, itemName);
+    m_model->setItem(row, 1, itemScore);
     
-    m_data_model->item(row, 1)->setTextAlignment(Qt::AlignCenter);
-    m_data_model->item(row, 1)->setForeground(QBrush(QColor(255, 0, 0)));
+    m_model->item(row, 1)->setTextAlignment(Qt::AlignCenter);
+    m_model->item(row, 1)->setForeground(QBrush(QColor(255, 0, 0)));
     
+}
+
+void CGameOverDialog::setTableItem(const QString &name, int score)
+{ 
+    QStandardItem *itemName = new QStandardItem;
+    itemName->setText(name);
+    itemName->setTextAlignment(Qt::AlignCenter);
+    
+    QStandardItem *itemScore = new QStandardItem;
+    itemScore->setText(QString::number(score, 10));
+    itemScore->setTextAlignment(Qt::AlignCenter);
+    
+    QList<QStandardItem*> items;
+    items << itemName << itemScore;
+    
+    m_model->appendRow(items);
+    m_dialog->tableView->setModel(m_model);
 }
 
 void CGameOverDialog::setWinner(const QString &name)
@@ -69,12 +86,12 @@ void CGameOverDialog::setWinner(const QString &name)
 
 void CGameOverDialog::initTableView()
 {
-    m_data_model = new QStandardItemModel();
-    m_dialog->tableView->setModel(m_data_model);
+    m_model = new QStandardItemModel();
+    m_dialog->tableView->setModel(m_model);
     
-    m_data_model->setColumnCount(2);
-    m_data_model->setHeaderData(0,Qt::Horizontal,"name");
-    m_data_model->setHeaderData(1,Qt::Horizontal,"score");    
+    m_model->setColumnCount(2);
+    m_model->setHeaderData(0,Qt::Horizontal,"name");
+    m_model->setHeaderData(1,Qt::Horizontal,"score");    
 }
 
 
