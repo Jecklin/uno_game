@@ -18,13 +18,13 @@ public:
 signals:
     void    sStart();
     void    sHistory();
-    void    sClear();
+    void    sRule();
     void    sExit();
     
 private slots:
     void    onStart();
     void    onHistory();
-    void    onClear();
+    void    onRule();
     void    onExit();
     
 private:

@@ -48,7 +48,8 @@ SOURCES += \
     CGameOverDialog.cpp \
     CGame/CDataBase.cpp \
     CBeginDialog.cpp \
-    CGameRule.cpp
+    CGameRule.cpp \
+    CRuleDialog.cpp
 
 HEADERS += \
         CWidget.h \
@@ -76,12 +77,14 @@ HEADERS += \
     CGameOverDialog.h \
     CGame/CDataBase.h \
     CBeginDialog.h \
-    CGameRule.h
+    CGameRule.h \
+    CRuleDialog.h
 
 FORMS += \
         CWidget.ui \
     CGameOverDialog.ui \
-    CBeginDialog.ui
+    CBeginDialog.ui \
+    CRuleDialog.ui
 
 RESOURCES += \
     src.qrc

@@ -70,9 +70,9 @@
       </spacer>
      </item>
      <item>
-      <widget class="QPushButton" name="cleanButton">
+      <widget class="QPushButton" name="ruleButton">
        <property name="text">
-        <string>清空历史</string>
+        <string>游戏规则</string>
        </property>
       </widget>
      </item>

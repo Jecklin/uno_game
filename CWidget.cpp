@@ -40,7 +40,7 @@ CWidget::CWidget(QWidget *parent)
     
     //Ui    
     connect(m_mainWidget->giveUpButton,SIGNAL(clicked(bool)),this,SLOT(onCGiveUp()));  
-    connect(m_mainWidget->comboBox,SIGNAL(currentIndexChanged(int)),this,SLOT(onCombox(int)));
+    connect(m_mainWidget->comboBox,SIGNAL(activated(int)),this,SLOT(onCombox(int)));
     connect(this,SIGNAL(choiced()),this,SLOT(onChoiced())); 
     
     
@@ -187,7 +187,9 @@ void CWidget::onOver()
         CPlayer player = m_gameLoop->getPlayer(i);
         QString name = player.getName();
         int     score = m_gameLoop->getPlayerScore(player);
+        int     size = player.getBoxSize();
         dialog.setTableItem(name, score);
+        dialog.setTableItem(size, i);
     }
     
     dialog.exec();
@@ -277,19 +279,19 @@ void CWidget::onChangeColor(ECardColor color)
 
 void CWidget::onCombox(int num)
 {
-    if (num == 0)
+    if (num == 1)
     {
         this->m_gameLoop->setChangeColor(ECC_Red);
     }
-    else if (num == 1)
+    else if (num == 2)
     {
         this->m_gameLoop->setChangeColor(ECC_Yellow);
     }
-    else if (num == 2)
+    else if (num == 3)
     {
         this->m_gameLoop->setChangeColor(ECC_Blue);
     }
-    else if (num == 3)
+    else if (num == 4)
     {
         this->m_gameLoop->setChangeColor(ECC_Green);
     }

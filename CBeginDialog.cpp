@@ -1,5 +1,6 @@
 #include "CBeginDialog.h"
 #include "ui_CBeginDialog.h"
+#include "CRuleDialog.h"
 
 CBeginDialog::CBeginDialog(QWidget *parent) :
     QDialog(parent),
@@ -9,6 +10,7 @@ CBeginDialog::CBeginDialog(QWidget *parent) :
     
     connect(ui->beginButton,SIGNAL(clicked(bool)),this,SLOT(accept()));
     connect(ui->exitButton,SIGNAL(clicked(bool)),this,SLOT(close()));
+    connect(ui->ruleButton,SIGNAL(clicked(bool)),this,SLOT(onRule()));
 }
 
 CBeginDialog::~CBeginDialog()
@@ -26,9 +28,10 @@ void CBeginDialog::onHistory()
     
 }
 
-void CBeginDialog::onClear()
+void CBeginDialog::onRule()
 {
-    
+    CRuleDialog dialog;
+    dialog.exec();
 }
 
 void CBeginDialog::onExit()

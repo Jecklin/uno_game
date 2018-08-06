@@ -20,7 +20,8 @@ public:
     ~CGameOverDialog();
     
 public:
-    void    setTableItem(const QString &name, int score, int row);
+//    void    setTableItem(const QString &name, int score, int row);
+    void    setTableItem(int add, int row);
     void    setTableItem(const QString &name, int score);
     void    setWinner(const QString &name);
     

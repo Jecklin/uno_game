@@ -542,6 +542,11 @@
              <widget class="QComboBox" name="comboBox">
               <item>
                <property name="text">
+                <string>Choice Color</string>
+               </property>
+              </item>
+              <item>
+               <property name="text">
                 <string>Red</string>
                </property>
               </item>
