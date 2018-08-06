@@ -23,10 +23,10 @@ CTFMyToAdd::~CTFMyToAdd()
 bool CTFMyToAdd::transForm()
 {
     bool is_ok = false;
-    if (this->m_gameloop->curPlayerIsGiveUp())
+    if (this->m_gameloop->giveUp())
     {
         is_ok = true;
-        this->m_gameloop->curPlayerAddCard();
+        m_gameloop->addCard(m_gameloop->current());
     }
     else
     {

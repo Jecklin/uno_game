@@ -69,7 +69,7 @@
            </widget>
           </item>
           <item>
-           <widget class="QLabel" name="labelNumTop">
+           <widget class="QLabel" name="topNumLabel">
             <property name="text">
              <string/>
             </property>
@@ -83,7 +83,7 @@
            </widget>
           </item>
           <item>
-           <widget class="QLabel" name="labelScoreTop">
+           <widget class="QLabel" name="topScoreLabel">
             <property name="text">
              <string/>
             </property>
@@ -152,14 +152,7 @@
            </widget>
           </item>
           <item>
-           <widget class="QLabel" name="labelNumLeft">
-            <property name="text">
-             <string/>
-            </property>
-           </widget>
-          </item>
-          <item>
-           <widget class="QLabel" name="labelScoreLeft">
+           <widget class="QLabel" name="leftNumLabel">
             <property name="text">
              <string/>
             </property>
@@ -169,6 +162,13 @@
            <widget class="QLabel" name="label_5">
             <property name="text">
              <string>Score:</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QLabel" name="leftScoreLabel">
+            <property name="text">
+             <string/>
             </property>
            </widget>
           </item>
@@ -436,7 +436,7 @@
            </widget>
           </item>
           <item>
-           <widget class="QLabel" name="labelNumRight">
+           <widget class="QLabel" name="rightNumLabel">
             <property name="text">
              <string/>
             </property>
@@ -450,7 +450,7 @@
            </widget>
           </item>
           <item>
-           <widget class="QLabel" name="labelScoreRight">
+           <widget class="QLabel" name="rightScoreLabel">
             <property name="text">
              <string/>
             </property>
@@ -591,7 +591,7 @@
              </widget>
             </item>
             <item>
-             <widget class="QLabel" name="labelNumLow">
+             <widget class="QLabel" name="lowNumLabel">
               <property name="text">
                <string/>
               </property>
@@ -600,12 +600,12 @@
             <item>
              <widget class="QLabel" name="label_4">
               <property name="text">
-               <string>Score</string>
+               <string>Score:</string>
               </property>
              </widget>
             </item>
             <item>
-             <widget class="QLabel" name="labelScoreLow">
+             <widget class="QLabel" name="lowScoreLabel">
               <property name="text">
                <string/>
               </property>

@@ -9,16 +9,17 @@ public:
     CGameRule(CGameLoop *game);
     
 public:
-    int             getCurrent() const;         //获得当前位置
+    int             current() const;         //获得当前位置
+    int             next();
+    
+    void            sroundCurrent();            //随机首个玩家
     void            toNext();                   //下一位置
     
     void            actNextAddCard(int num);
     void            actStop();
     void            actReverse();
-    void            actChangeColor(); 
-    
-private:
-    int             getNextLocation();
+    void            actChoiceColor(); 
+
        
     
 private:

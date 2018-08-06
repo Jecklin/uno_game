@@ -23,15 +23,15 @@ CTFMyToError::~CTFMyToError()
 bool CTFMyToError::transForm()
 {
     bool is_ok = false;
-    if (!m_gameloop->curPlayerIsGiveUp())
+    if (!m_gameloop->giveUp())
     {
-        if (m_gameloop->isChoicedCard())
+        if (m_gameloop->choiced())
         {
-            if (!m_gameloop->myAllowOut())
+            if (!m_gameloop->myAllowed())
             {
                 is_ok = true;
                 this->m_gameloop->errorPromt(); 
-                this->m_gameloop->resetChoicedCard();
+                this->m_gameloop->setChoiced(false);
             }
         }
     }

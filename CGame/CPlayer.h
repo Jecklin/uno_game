@@ -32,8 +32,8 @@ public:
     void            clearBox();
     
     //Judge
-    bool            boxIsAllowOut(const CCardInfo &end_card);     //Other round
-    bool            cardIsAllowOut(const CCardInfo &end_card);    //my round
+    bool            boxAllow(const CCardInfo &end_card);     //Other round
+    bool            cardAllow(const CCardInfo &end_card);    //my round
     bool            isGiveUp() const;
     void            changeToGiveUp();
     

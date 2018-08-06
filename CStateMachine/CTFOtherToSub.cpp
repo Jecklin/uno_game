@@ -23,10 +23,10 @@ CTFOtherToSub::~CTFOtherToSub()
 bool CTFOtherToSub::transForm()
 {
     bool is_ok = false;
-    if (m_gameloop->otherAllowOut())
+    if (m_gameloop->otherAllowed())
     {
         is_ok = true;
-        this->m_gameloop->curPlayerOutCard();
+        this->m_gameloop->curOutCard();
     }
 
     return is_ok;

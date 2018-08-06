@@ -18,56 +18,52 @@ class CWidget : public QWidget
 public:
     explicit CWidget(QWidget *parent = nullptr);
     ~CWidget();
-    
-    void    unInitButton();
 
 signals:
-    void    choiced();
+    void            choiced();
     
 public slots:
-    void    onGameStart();
-    void    onPlayerAddCard(CCardInfo in_card, int current);
-    void    onPlayerOutCard(CCardInfo out_card, int current);
-    void    onEndCardChanged(CCardInfo end_card);
-    void    onNotAllowOut();
-    void    onGameOver();
+    void            onStart();
+    void            onAddCard(CCardInfo in_card, int current);
+    void            onOutCard(CCardInfo out_card, int current);
+    void            onEndCardChanged(CCardInfo end_card);
+    void            onNotAllowOut();
+    void            onOver();
     
-    void    onChoiceGiveUp();
-    void    onChoiceOutCard();
-    void    onChoiced();
-    void    onErrorPromt();
-    void    onChangeColor(ECardColor color);
-    void    onComboxChoice(int num = -1);
+    void            onCGiveUp();
+    void            onCOutCard();
+    void            onChoiced();
+    void            onError();
+    void            onChangeColor(ECardColor color);
+    void            onCombox(int num = -1);
     
 
 private:
-    void                setBackGround();
-    static QString      dbColorToString(ECardColor color);
-    static QString      dbIdToString(ECardId id);
-    static QString      dbActionToString(ECardAction action);
+    void            initUI();
+    void            unInitUI();
+    void            setBackGround();
+    void            setScoreLabels();
+    void            setSizeLabel(QLabel *label,int current);
     
-    static ECardColor   dbColorToCard(QString color);
-    static ECardId      dbIdToCard(QString id);
-    static ECardAction  dbActionToCard(QString action);
-    
-    void                showPlayerScores();
-    void                setButtonIcon(QPushButton *button, CCardInfo card, bool hide = true, bool rotat = false);
-    void                addButtonToLayout(QLayout *layout, CCardInfo card, QSize size, int current = 0, bool hide = true, bool click = false);
-    void                subButtonAtLayout(QLayout *layout, CCardInfo card);
-    void                setBoxSizes(QLabel *label,int current);
-    QString             getCardDir(const CCardInfo &card);
+    void            setIcon(QPushButton *button, CCardInfo card, bool hide = true, bool rotat = false);
+    void            addButton(QLayout *layout, CCardInfo card, QSize size, int current = 0, bool hide = true, bool click = false);
+    void            subButton(QLayout *layout, CCardInfo card);
+
+    QString         getDir(const CCardInfo &card);    
+    void            unInitButtons();
+    void            unInitButton(QLayout *layout);
     
 private:
-    static QSize        s_button_low;
-    static QSize        s_button_top;
-    static QSize        s_button_left;
-    static QSize        s_button_mid;
-    static QSize        s_button_outCard;
+    static QSize    s_button_low;
+    static QSize    s_button_top;
+    static QSize    s_button_left;
+    static QSize    s_button_mid;
+    static QSize    s_button_outCard;
     
 private:
-    Ui::CWidget         *m_mainWidget;
-    CGameLoop           *m_gameLoop;
-    bool                m_color_choice;         //选择改变的颜色
+    Ui::CWidget     *m_mainWidget;
+    CGameLoop       *m_gameLoop;
+    bool            m_color_choice;         //选择改变的颜色
 
 };
 

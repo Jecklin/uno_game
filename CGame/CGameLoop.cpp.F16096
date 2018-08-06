@@ -1,13 +1,16 @@
 #include "CGameLoop.h"
 
+
+#include <iostream>
+
 CGameLoop::CGameLoop()
     :m_players()
     ,m_endcard()
     ,m_open_box()
     ,m_close_box()
     ,m_state_machine(nullptr)
-    ,m_giveup(false)
-    ,m_choiced(false)
+    ,m_is_giveup(false)
+    ,m_is_choiced_card(false)
     ,m_change_color()
     ,m_db(nullptr)
     ,m_rule(nullptr)
@@ -40,7 +43,7 @@ CGameLoop::~CGameLoop()
 
 }
 
-void CGameLoop::initGame()
+void CGameLoop::startGame()
 {
     //Init machine
     this->m_state_machine->inIt();
@@ -76,7 +79,9 @@ void CGameLoop::initGame()
     
     //Init end card
     CCardInfo card_index = this->m_close_box.backCard();
-    this->m_open_box.addCard(card_index);   
+
+    this->m_open_box.addCard(card_index);
+    
     this->setEndCard(card_index);
     this->m_close_box.popCard();
     
@@ -86,17 +91,41 @@ void CGameLoop::initGame()
     //Init one round
     for (int num = 0; num < 4; ++num)
     {
-        m_players.at(num).clearBox();
+        CPlayer *pplayer = &(this->m_players[num]);
+        pplayer->clearBox();
     }
     
-    //Do one round
     for (int round = 0; round < ( 7 * 4 ); ++round)
     {
-        addCard(current());
+        this->curPlayerAddCard();
         m_rule->toNext();
     }
-
     
+}
+
+void CGameLoop::setEndCard(const CCardInfo &card)
+{
+    this->m_endcard.setCard(card);
+    emit this->sEndCardChanged(card);    
+}
+
+void CGameLoop::setEndCard(ECardColor color)
+{
+    int current = m_rule->getCurrent();
+    
+    CPlayer *player = &(m_players[current]);
+    this->m_change_color = player->getChangeColor();    
+    this->m_endcard.setColor(color);
+    
+    emit sEndCardChanged(this->m_endcard);
+    emit sChangeColor(color);
+    
+}
+
+
+int CGameLoop::getPlayerScore(const QString &name)
+{
+    return this->m_db->selectDb(name);
 }
 
 void CGameLoop::gameRound()
@@ -116,49 +145,18 @@ void CGameLoop::gameRound()
         }
                
         //reset choiced
-        this->setGiveUp(false);
+        this->resetGiveUp();
         
         
     }while(true);
     
+
 }
 
-void CGameLoop::setEndCard(const CCardInfo &card)
-{
-    this->m_endcard.setCard(card);
-    emit this->sEndCardChanged(card);    
-}
-
-void CGameLoop::setEndCard(ECardColor color)
-{
-    CPlayer *player = &(m_players[current()]);
-    this->m_change_color = player->getChangeColor();    
-    this->m_endcard.setColor(color);
-    
-    emit sEndCardChanged(this->m_endcard);
-    emit sChangeColor(color);
-    
-}
-
-int CGameLoop::getPlayerScore(const CPlayer &player)
-{
-    return this->m_db->selectDb(player.getName());
-}
-
-int CGameLoop::current()
-{
-    return m_rule->current();
-}
-
-int CGameLoop::next()
-{
-    return m_rule->next();
-}
-
-bool CGameLoop::myRound()
+bool CGameLoop::curPlayerIsMy()
 {
     bool is_my = false;
-    if (m_rule->current() == 0)
+    if (m_rule->getCurrent() == 0)
     {
         is_my = true;
     }
@@ -169,45 +167,44 @@ bool CGameLoop::myRound()
     return is_my;
 }
 
-void CGameLoop::curToNext()
+bool CGameLoop::curPlayerIsGiveUp()
 {
-    m_rule->toNext();
-}
-
-bool CGameLoop::giveUp() const
-{
-    return this->m_giveup;
+    return this->m_is_giveup;
     
 }
-
-void CGameLoop::setGiveUp(bool giveup)
+void CGameLoop::setGiveUp()
 {
-    m_giveup = giveup;
+    this->m_is_giveup = true;
 }
 
-bool CGameLoop::choiced() const
+void CGameLoop::resetGiveUp()
 {
-    return this->m_choiced;
+    this->m_is_giveup = false;
 }
 
-void CGameLoop::setChoiced(bool choiced)
+bool CGameLoop::isChoicedCard()
 {
-    this->m_choiced = choiced;
+    return this->m_is_choiced_card;
 }
 
 void CGameLoop::setOutCard(const CCardInfo &card)
 {
-    CPlayer *player = &(m_players[current()]);
-    player->setOutCard(card);
-    setChoiced(true);
+    CPlayer *pplayer = &(this->m_players[m_rule->getCurrent()]);
+    pplayer->setOutCard(card);
+    this->m_is_choiced_card = true;
 }
 
-
-bool CGameLoop::myAllowed()
+void CGameLoop::resetChoicedCard()
 {
-    bool is_allow = false; 
-    CPlayer *player = &(m_players[current()]);
-    if (player->cardAllow(m_endcard))
+    this->m_is_choiced_card = false;
+}
+
+bool CGameLoop::myAllowOut()
+{
+    bool is_allow = false;
+    CPlayer *pplayer = &(this->m_players[m_rule->getCurrent()]);
+    
+    if (pplayer->cardIsAllowOut(this->m_endcard))
     {
         is_allow = true;
     }
@@ -219,11 +216,11 @@ bool CGameLoop::myAllowed()
     return is_allow;
 }
 
-bool CGameLoop::otherAllowed()
+bool CGameLoop::otherAllowOut()
 {
     bool is_allow = false;
-    CPlayer *player = &(m_players[current()]);
-    if (player->boxAllow(m_endcard))
+    CPlayer *pplayer = &(this->m_players[m_rule->getCurrent()]);
+    if (pplayer->boxIsAllowOut(this->m_endcard))
     {
         is_allow = true;
     }
@@ -235,44 +232,57 @@ bool CGameLoop::otherAllowed()
     return is_allow;
 }
 
-void CGameLoop::addCard(int playerNum)
+void CGameLoop::curPlayerAddCard()
 {
-    //Open box resicle
+    this->playerAddCard(m_rule->getCurrent());
+}
+
+void CGameLoop::playerAddCard(int player_num)
+{
+    CCardInfo card_index;
+    //Player touch card
     if (this->m_close_box.empty())
     {
         this->m_close_box.removeBox(this->m_open_box);
     }
+
+    //Open box resicle
+    else
+    {    
+        
+        CPlayer *pplayer = &(this->m_players[player_num]);
+        card_index = this->m_close_box.backCard();        
+        pplayer->addCard(card_index);
+        this->m_close_box.popCard();
+        
+    }
     
-    //Player touch card
-    CCardInfo card = this->m_close_box.backCard();
-    CPlayer *player = &(m_players[playerNum]);
-    player->addCard(card);
-    this->m_close_box.popCard();   
-    
-    emit sPlayerAddCard(card, playerNum); 
+    emit sPlayerAddCard(card_index, player_num); 
 }
 
-void CGameLoop::curOutCard()
+void CGameLoop::curPlayerOutCard()
 {
     //Player out card
-    CPlayer *player = &(m_players[current()]);
-    CCardInfo card = player->getOutCard();
-    m_open_box.addCard(card);
-    setEndCard(card);
-    player->removeCard(card);
+    CPlayer     *pplayer = &(this->m_players[m_rule->getCurrent()]);
+    CCardInfo   out_card = pplayer->getOutCard();
+
+    this->m_open_box.addCard(out_card);
+    this->setEndCard(out_card);
+
+    pplayer->removeCard(out_card);
     
-    emit sPlayerOutCard(card, current());
+    emit sPlayerOutCard(out_card, m_rule->getCurrent());
     
 }
 
 bool CGameLoop::curPlayerEmpty()
 {
     bool empty = false;
-    CPlayer *player = &(m_players[current()]);
-    if (player->getBoxSize() == 0)
+    
+    CPlayer     *pplayer = &(this->m_players[m_rule->getCurrent()]);
+    if (pplayer->getBoxSize() == 0)
     {
         empty = true;
-        
     }
 
     return empty;
@@ -280,7 +290,7 @@ bool CGameLoop::curPlayerEmpty()
 
 void CGameLoop::doPunish()
 {
-    CPlayer *player = &(m_players[current()]);
+    CPlayer *player = &(m_players[m_rule->getCurrent()]);
     CCardInfo card = player->getOutCard();
     if (card.isFunctionCard())
     {
@@ -311,31 +321,19 @@ void CGameLoop::doPunish()
         else
         {
             ;
-        }    
+        }
+        
+        
         
     }
     
 }
 
-void CGameLoop::actChangeColor()
+
+void CGameLoop::curToNext()
 {
-    if (m_rule->current() == 0)
-    {
-        ;
-    }
-    else
-    {
-        CPlayer *player = &(m_players[current()]);
-        m_change_color = player->getChangeColor();
-    }
-    
-    this->m_endcard.setColor(m_change_color);
-    
-    emit sEndCardChanged(this->m_endcard);
-    emit sChangeColor(m_change_color);
+    m_rule->toNext();
 }
-
-
 
 void CGameLoop::setChangeColor(ECardColor color)
 {
@@ -355,20 +353,23 @@ void CGameLoop::errorPromt()
 void CGameLoop::setAllScores()
 {
     //set winner score
-    CPlayer *player = &(m_players[current()]);
-    QString win_name  = player->getName();
-    int     win_score = m_db->selectDb(win_name) + 10;
+    CPlayer *pplayer_cur = &(this->m_players[m_rule->getCurrent()]);
+    QString winner_name = pplayer_cur->getName();
+    int sou_score = this->m_db->selectDb(winner_name);
+    int tar_score = sou_score + 10;
+    this->m_db->updateDb(winner_name, tar_score);
     
-    this->m_db->updateDb(win_name, win_score);
     
     //other player sub score
     for (unsigned int index = 0; index < this->m_players.size(); ++index)
     {
-        QString name  = m_players.at(index).getName();
-        int     box   = m_players.at(index).getBoxSize();
-        int     score = m_db->selectDb(name) - box;
+        pplayer_cur             = &(this->m_players[index]);
+        QString player_name     = pplayer_cur->getName();
+        int     player_box      = pplayer_cur->getBoxSize();
         
-        this->m_db->updateDb(name, score);
+        sou_score = this->m_db->selectDb(player_name);
+        tar_score = sou_score - player_box;
+        this->m_db->updateDb(player_name, tar_score);
 
     }  
 }
@@ -380,10 +381,35 @@ CPlayer CGameLoop::getPlayer(int num)
     return *pplayer;
 }
 
+CPlayer CGameLoop::getWinner()
+{
+    return this->m_players[m_rule->getCurrent()];
+}
+
+CDataBase *CGameLoop::getDb()
+{
+    return this->m_db;
+}
+
 int CGameLoop::getPlayerSize()
 {
     return this->m_players.size();
 }
 
 
-
+void CGameLoop::actChangeColor()
+{
+    CPlayer *pplayer_cur = &(this->m_players[m_rule->getCurrent()]);
+    if (m_rule->getCurrent() == 0)
+    {
+        ;
+    }
+    else
+    {
+        this->m_change_color = pplayer_cur->getChangeColor();
+    }
+    
+    this->m_endcard.setColor(m_change_color);
+    emit sEndCardChanged(this->m_endcard);
+    emit sChangeColor(m_change_color);
+}

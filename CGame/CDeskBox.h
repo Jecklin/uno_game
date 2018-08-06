@@ -13,7 +13,7 @@ public:
     void        addCard(const CCardInfo &card);
     void        subCard(const CCardInfo &card);
     void        popCard();
-    CCardInfo   backCard();
+    CCardInfo&  backCard();
     
 //    CCardInfo   getRandomCard();
 //    CCardInfo   getEndCard();

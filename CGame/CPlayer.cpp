@@ -172,7 +172,7 @@ void CPlayer::clearBox()
     
 }
 
-bool CPlayer::boxIsAllowOut(const CCardInfo &end_card)
+bool CPlayer::boxAllow(const CCardInfo &end_card)
 {
     bool                            is_allow = false;
     CCardInfo                       card_index;
@@ -217,7 +217,7 @@ bool CPlayer::boxIsAllowOut(const CCardInfo &end_card)
     return is_allow;
 }
 
-bool CPlayer::cardIsAllowOut(const CCardInfo &end_card)
+bool CPlayer::cardAllow(const CCardInfo &end_card)
 {
     bool is_allow = false;
     //end card is black

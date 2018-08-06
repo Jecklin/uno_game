@@ -42,53 +42,11 @@ void CDeskBox::popCard()
     m_box.pop_back();
 }
 
-CCardInfo CDeskBox::backCard()
+CCardInfo& CDeskBox::backCard()
 {
     return m_box.back();
 }
 
-
-//CCardInfo CDeskBox::getRandomCard()
-//{
-//    std::list<CCardInfo>::iterator iter;
-//    unsigned int                   sround = 0;
-//    CCardInfo                      card_index;
-
-//    do
-//    {
-//        //Get srand card
-//        iter = this->m_box.begin();
-//        srand((unsigned int)time(nullptr));
-//        sround = rand() % (this->m_box.size() - 1);
-//        for (unsigned int move = 0; move < sround; ++ move)
-//        {            
-//            ++iter;
-//        }
-//        card_index = *iter;
-
-//        //Card is black or not
-//        if (card_index.getColor() == ECC_Black)
-//        {
-//            ;
-//        }
-//        else
-//        {
-//            break;
-//        }
-
-//    }while(true);
-    
-//    return card_index;
-//}
-
-//CCardInfo CDeskBox::getEndCard()
-//{
-//    std::list<CCardInfo>::iterator iter = this->m_box.end();
-//    --iter;
-//    CCardInfo card;
-//    card = *iter;
-//    return card;
-//}
 
 void CDeskBox::initBox()
 {

@@ -17,38 +17,39 @@ public:
     ~CGameLoop();
     
     //StateStart
-    void            startGame();                          
-    void            initGame();
+    void            initGame(); 
+    void            gameRound();
     void            setEndCard(const CCardInfo &card);
     void            setEndCard(ECardColor color);
-    int             getPlayerScore(const QString &name);
-    void            gameRound();
-                      
+    int             getPlayerScore(const CPlayer &player);
+    int             current();
+    int             next();
+
+    
     //StateWait
-    bool            curPlayerIsMy();
+    bool            myRound();
+    void            curToNext(); 
     
     //StateMy
-    bool            curPlayerIsGiveUp();
-    void            setGiveUp();
-    void            resetGiveUp();
-    
-    bool            isChoicedCard();
+    bool            giveUp() const;
+    void            setGiveUp(bool giveup);    
+    bool            choiced() const;
+    void            setChoiced(bool choiced);    
     void            setOutCard(const CCardInfo &card);
-    void            resetChoicedCard();
-    bool            myAllowOut();
+    bool            myAllowed();
     
     //StateOther                            
-    bool            otherAllowOut();
+    bool            otherAllowed();
     
     //StateAdd
-    void            curPlayerAddCard();                              
-    void            playerAddCard(int player_num);
+    void            addCard(int playerNum); //下面两个函数改成这一个，还没实现
     
     //StateSub
-    void            curPlayerOutCard();
+    void            curOutCard();
     bool            curPlayerEmpty();
     void            doPunish();                             //执行惩罚
-    void            curToNext(); 
+    
+    void            actChangeColor(); 
     void            setChangeColor(ECardColor color);
     ECardColor      getChangeColor();
   
@@ -56,12 +57,10 @@ public:
     void            errorPromt();
  
     //StateEnd
-    void                setAllScores();
-    CPlayer             getPlayer(int num);
-    CPlayer             getWinner();
-    CDataBase*          getDb();
-    int                 getPlayerSize();
-    
+    void            setAllScores();
+    CPlayer         getPlayer(int num);
+    int             getPlayerSize();                        //获得玩家人数
+      
     
 signals:
     void            sPlayerAddCard(CCardInfo in_card, int current);
@@ -71,26 +70,15 @@ signals:
     void            sGameOver();
     void            sChangeColor(ECardColor color);
     
-private:
-    //Do punish   
-    void            actNextAddCard(int num);
-    void            actStop();
-    void            actReverse();
-    void            actChangeColor(); 
-    int             getNextLocation();
-
-
     
 private:
     std::vector<CPlayer>            m_players;              //玩家数组
     CCardInfoEnd                    m_endcard;              //底牌
     CDeskBox                        m_open_box;             //已出牌库
     CDeskBox                        m_close_box;            //未起牌库
-    int                             m_toward;               //出牌方向标识
-    int                             m_current;              //当前出牌玩家位置
     CStateMachine                   *m_state_machine;       //状态机
-    bool                            m_is_giveup;            //选择放弃
-    bool                            m_is_choiced_card;      //选择出牌
+    bool                            m_giveup;               //选择放弃
+    bool                            m_choiced;              //选择出牌
     ECardColor                      m_change_color;         //选择要改变成的颜色
     CDataBase                       *m_db;                  //数据库
     CGameRule                       *m_rule;

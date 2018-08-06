@@ -9,28 +9,52 @@ CGameRule::CGameRule(CGameLoop *game)
     ;
 }
 
-int CGameRule::getCurrent() const
+int CGameRule::current() const
 {
     return m_current;
 }
 
+int CGameRule::next()
+{
+    int next = m_current + m_toward;
+    if (next > m_game->getPlayerSize()-1)  //m_players.size() - 1
+    {
+        next -= m_game->getPlayerSize(); //m_game->getPlayerSize()
+    }
+    else if (next < 0)
+    {
+        next += m_game->getPlayerSize();
+    }
+    else
+    {
+        ;
+    }
+    return next;
+}
+
+void CGameRule::sroundCurrent()
+{
+    srand((unsigned int)time(nullptr));
+    int sround = rand() % (m_game->getPlayerSize() - 1);
+    m_current = sround;
+}
+
 void CGameRule::toNext()
 {
-    this->m_current = getNextLocation();
+    this->m_current = next();
 }
 
 void CGameRule::actNextAddCard(int num)
 {
-    int next = this->getNextLocation();
     for (int touch = 0; touch < num; ++touch)
     {
-        m_game->playerAddCard(next);
+        m_game->addCard(next());
     }
 }
 
 void CGameRule::actStop()
 {
-    this->m_current = this->getNextLocation();
+    this->m_current = this->next();
 }
 
 void CGameRule::actReverse()
@@ -49,25 +73,9 @@ void CGameRule::actReverse()
     }
 }
 
-void CGameRule::actChangeColor()
+void CGameRule::actChoiceColor()
 {
-    
+    m_game->actChangeColor();
 }
 
-int CGameRule::getNextLocation()
-{
-//    int next = m_current + m_toward;
-//    if (next > 3)  //m_players.size() - 1
-//    {
-//        next -= m_players.size();
-//    }
-//    else if (next < 0)
-//    {
-//        next += m_players.size();
-//    }
-//    else
-//    {
-//        ;
-//    }
-//    return next;
-}
+

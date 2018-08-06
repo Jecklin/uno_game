@@ -23,7 +23,7 @@ CTFWaitToMy::~CTFWaitToMy()
 bool CTFWaitToMy::transForm()
 {
     bool is_ok = false;
-    if (this->m_gameloop->curPlayerIsMy())
+    if (this->m_gameloop->myRound())
     {
         is_ok = true;
     }
