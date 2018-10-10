@@ -6,14 +6,26 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>1500</width>
-    <height>1300</height>
+    <width>2000</width>
+    <height>1530</height>
    </rect>
+  </property>
+  <property name="minimumSize">
+   <size>
+    <width>2000</width>
+    <height>0</height>
+   </size>
+  </property>
+  <property name="maximumSize">
+   <size>
+    <width>2000</width>
+    <height>16777215</height>
+   </size>
   </property>
   <property name="windowTitle">
    <string>CWidget</string>
   </property>
-  <layout class="QGridLayout" name="gridLayout_6">
+  <layout class="QGridLayout" name="gridLayout">
    <item row="0" column="0">
     <layout class="QHBoxLayout" name="horizontalLayout_2">
      <item>
@@ -31,10 +43,22 @@
      </item>
      <item>
       <widget class="QGroupBox" name="groupBoxTop">
+       <property name="minimumSize">
+        <size>
+         <width>1000</width>
+         <height>300</height>
+        </size>
+       </property>
+       <property name="maximumSize">
+        <size>
+         <width>1000</width>
+         <height>300</height>
+        </size>
+       </property>
        <property name="title">
         <string>Anna</string>
        </property>
-       <layout class="QGridLayout" name="gridLayout">
+       <layout class="QGridLayout" name="gridLayout_3" rowstretch="1,20">
         <item row="0" column="0">
          <layout class="QHBoxLayout" name="horizontalLayout_4">
           <item>
@@ -45,7 +69,7 @@
            </widget>
           </item>
           <item>
-           <widget class="QLabel" name="labelNumTop">
+           <widget class="QLabel" name="topNumLabel">
             <property name="text">
              <string/>
             </property>
@@ -59,7 +83,7 @@
            </widget>
           </item>
           <item>
-           <widget class="QLabel" name="labelScoreTop">
+           <widget class="QLabel" name="topScoreLabel">
             <property name="text">
              <string/>
             </property>
@@ -68,24 +92,10 @@
          </layout>
         </item>
         <item row="1" column="0">
-         <widget class="QTextBrowser" name="textBrowserTop"/>
-        </item>
-        <item row="2" column="0">
-         <layout class="QHBoxLayout" name="horizontalLayout_8">
-          <item>
-           <widget class="QLabel" name="label_6">
-            <property name="text">
-             <string>OutCard:</string>
-            </property>
-           </widget>
-          </item>
-          <item>
-           <widget class="QLabel" name="labelOutCardTop">
-            <property name="text">
-             <string/>
-            </property>
-           </widget>
-          </item>
+         <layout class="QHBoxLayout" name="layoutTop">
+          <property name="sizeConstraint">
+           <enum>QLayout::SetDefaultConstraint</enum>
+          </property>
          </layout>
         </item>
        </layout>
@@ -107,15 +117,33 @@
     </layout>
    </item>
    <item row="1" column="0">
-    <layout class="QHBoxLayout" name="horizontalLayout">
+    <layout class="QHBoxLayout" name="horizontalLayout" stretch="1,2,1">
      <item>
       <widget class="QGroupBox" name="groupBoxLeft">
+       <property name="minimumSize">
+        <size>
+         <width>400</width>
+         <height>700</height>
+        </size>
+       </property>
+       <property name="maximumSize">
+        <size>
+         <width>400</width>
+         <height>700</height>
+        </size>
+       </property>
        <property name="title">
         <string>Jack</string>
        </property>
-       <layout class="QGridLayout" name="gridLayout_2">
+       <layout class="QGridLayout" name="gridLayout_2" rowstretch="1,20">
         <item row="0" column="0">
          <layout class="QHBoxLayout" name="horizontalLayout_5">
+          <property name="spacing">
+           <number>5</number>
+          </property>
+          <property name="sizeConstraint">
+           <enum>QLayout::SetMinimumSize</enum>
+          </property>
           <item>
            <widget class="QLabel" name="label_7">
             <property name="text">
@@ -124,7 +152,7 @@
            </widget>
           </item>
           <item>
-           <widget class="QLabel" name="labelNumLeft">
+           <widget class="QLabel" name="leftNumLabel">
             <property name="text">
              <string/>
             </property>
@@ -138,7 +166,7 @@
            </widget>
           </item>
           <item>
-           <widget class="QLabel" name="labelScoreLeft">
+           <widget class="QLabel" name="leftScoreLabel">
             <property name="text">
              <string/>
             </property>
@@ -147,24 +175,13 @@
          </layout>
         </item>
         <item row="1" column="0">
-         <widget class="QTextBrowser" name="textBrowserLeft"/>
-        </item>
-        <item row="1" column="1">
-         <layout class="QVBoxLayout" name="verticalLayout">
-          <item>
-           <widget class="QLabel" name="label_12">
-            <property name="text">
-             <string>OutCard:</string>
-            </property>
-           </widget>
-          </item>
-          <item>
-           <widget class="QLabel" name="labelOutCardLeft">
-            <property name="text">
-             <string/>
-            </property>
-           </widget>
-          </item>
+         <layout class="QVBoxLayout" name="layoutLeft">
+          <property name="spacing">
+           <number>5</number>
+          </property>
+          <property name="sizeConstraint">
+           <enum>QLayout::SetDefaultConstraint</enum>
+          </property>
          </layout>
         </item>
        </layout>
@@ -172,30 +189,244 @@
      </item>
      <item>
       <widget class="QGroupBox" name="groupBoxMid">
+       <property name="minimumSize">
+        <size>
+         <width>700</width>
+         <height>700</height>
+        </size>
+       </property>
+       <property name="maximumSize">
+        <size>
+         <width>700</width>
+         <height>700</height>
+        </size>
+       </property>
        <property name="title">
         <string>EndCard</string>
        </property>
-       <layout class="QGridLayout" name="gridLayout_5">
-        <item row="1" column="0">
-         <widget class="QPushButton" name="pushButtonStart">
-          <property name="text">
-           <string>Game Start</string>
-          </property>
-         </widget>
+       <layout class="QGridLayout" name="gridLayout_6" rowstretch="5,5,5,1">
+        <item row="0" column="0" colspan="3">
+         <layout class="QHBoxLayout" name="horizontalLayout_12">
+          <item>
+           <spacer name="horizontalSpacer_5">
+            <property name="orientation">
+             <enum>Qt::Horizontal</enum>
+            </property>
+            <property name="sizeHint" stdset="0">
+             <size>
+              <width>40</width>
+              <height>20</height>
+             </size>
+            </property>
+           </spacer>
+          </item>
+          <item>
+           <layout class="QHBoxLayout" name="layoutTopOutCard"/>
+          </item>
+          <item>
+           <spacer name="horizontalSpacer_6">
+            <property name="orientation">
+             <enum>Qt::Horizontal</enum>
+            </property>
+            <property name="sizeHint" stdset="0">
+             <size>
+              <width>40</width>
+              <height>20</height>
+             </size>
+            </property>
+           </spacer>
+          </item>
+         </layout>
         </item>
-        <item row="0" column="0">
-         <widget class="QTextBrowser" name="textBrowserEndCard"/>
+        <item row="1" column="0">
+         <layout class="QVBoxLayout" name="layoutLeftOutCard">
+          <property name="spacing">
+           <number>1</number>
+          </property>
+          <property name="rightMargin">
+           <number>20</number>
+          </property>
+         </layout>
+        </item>
+        <item row="1" column="1">
+         <layout class="QVBoxLayout" name="verticalLayout_2" stretch="0">
+          <property name="spacing">
+           <number>10</number>
+          </property>
+          <property name="leftMargin">
+           <number>10</number>
+          </property>
+          <property name="topMargin">
+           <number>10</number>
+          </property>
+          <property name="rightMargin">
+           <number>10</number>
+          </property>
+          <property name="bottomMargin">
+           <number>10</number>
+          </property>
+          <item>
+           <widget class="QPushButton" name="EndCardButton">
+            <property name="minimumSize">
+             <size>
+              <width>100</width>
+              <height>150</height>
+             </size>
+            </property>
+            <property name="maximumSize">
+             <size>
+              <width>100</width>
+              <height>150</height>
+             </size>
+            </property>
+            <property name="layoutDirection">
+             <enum>Qt::LeftToRight</enum>
+            </property>
+            <property name="autoFillBackground">
+             <bool>false</bool>
+            </property>
+            <property name="text">
+             <string/>
+            </property>
+            <property name="iconSize">
+             <size>
+              <width>100</width>
+              <height>150</height>
+             </size>
+            </property>
+           </widget>
+          </item>
+         </layout>
+        </item>
+        <item row="1" column="2">
+         <layout class="QVBoxLayout" name="layoutRightOutCard">
+          <property name="leftMargin">
+           <number>20</number>
+          </property>
+         </layout>
+        </item>
+        <item row="2" column="0" colspan="3">
+         <layout class="QHBoxLayout" name="horizontalLayout_14">
+          <item>
+           <spacer name="horizontalSpacer_7">
+            <property name="orientation">
+             <enum>Qt::Horizontal</enum>
+            </property>
+            <property name="sizeHint" stdset="0">
+             <size>
+              <width>40</width>
+              <height>20</height>
+             </size>
+            </property>
+           </spacer>
+          </item>
+          <item>
+           <layout class="QHBoxLayout" name="layoutLowOutCard">
+            <property name="spacing">
+             <number>0</number>
+            </property>
+           </layout>
+          </item>
+          <item>
+           <spacer name="horizontalSpacer_8">
+            <property name="orientation">
+             <enum>Qt::Horizontal</enum>
+            </property>
+            <property name="sizeHint" stdset="0">
+             <size>
+              <width>40</width>
+              <height>20</height>
+             </size>
+            </property>
+           </spacer>
+          </item>
+         </layout>
+        </item>
+        <item row="3" column="0" colspan="3">
+         <layout class="QHBoxLayout" name="horizontalLayout_15">
+          <item>
+           <spacer name="horizontalSpacer_9">
+            <property name="orientation">
+             <enum>Qt::Horizontal</enum>
+            </property>
+            <property name="sizeHint" stdset="0">
+             <size>
+              <width>40</width>
+              <height>20</height>
+             </size>
+            </property>
+           </spacer>
+          </item>
+          <item>
+           <layout class="QVBoxLayout" name="verticalLayout">
+            <item>
+             <widget class="QLabel" name="EndCardlabel">
+              <property name="minimumSize">
+               <size>
+                <width>300</width>
+                <height>0</height>
+               </size>
+              </property>
+              <property name="maximumSize">
+               <size>
+                <width>300</width>
+                <height>16777215</height>
+               </size>
+              </property>
+              <property name="text">
+               <string/>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <widget class="QPushButton" name="startButton">
+              <property name="text">
+               <string>Game Start</string>
+              </property>
+              <property name="checkable">
+               <bool>false</bool>
+              </property>
+             </widget>
+            </item>
+           </layout>
+          </item>
+          <item>
+           <spacer name="horizontalSpacer_10">
+            <property name="orientation">
+             <enum>Qt::Horizontal</enum>
+            </property>
+            <property name="sizeHint" stdset="0">
+             <size>
+              <width>40</width>
+              <height>20</height>
+             </size>
+            </property>
+           </spacer>
+          </item>
+         </layout>
         </item>
        </layout>
       </widget>
      </item>
      <item>
       <widget class="QGroupBox" name="groupBoxRight">
+       <property name="minimumSize">
+        <size>
+         <width>400</width>
+         <height>700</height>
+        </size>
+       </property>
+       <property name="maximumSize">
+        <size>
+         <width>400</width>
+         <height>700</height>
+        </size>
+       </property>
        <property name="title">
         <string>Tom</string>
        </property>
-       <layout class="QGridLayout" name="gridLayout_4">
-        <item row="0" column="1">
+       <layout class="QGridLayout" name="gridLayout_4" rowstretch="1,20">
+        <item row="0" column="0">
          <layout class="QHBoxLayout" name="horizontalLayout_6">
           <item>
            <widget class="QLabel" name="label_9">
@@ -205,7 +436,7 @@
            </widget>
           </item>
           <item>
-           <widget class="QLabel" name="labelNumRight">
+           <widget class="QLabel" name="rightNumLabel">
             <property name="text">
              <string/>
             </property>
@@ -219,7 +450,7 @@
            </widget>
           </item>
           <item>
-           <widget class="QLabel" name="labelScoreRight">
+           <widget class="QLabel" name="rightScoreLabel">
             <property name="text">
              <string/>
             </property>
@@ -228,25 +459,11 @@
          </layout>
         </item>
         <item row="1" column="0">
-         <layout class="QVBoxLayout" name="verticalLayout_2">
-          <item>
-           <widget class="QLabel" name="label_11">
-            <property name="text">
-             <string>OutCard:</string>
-            </property>
-           </widget>
-          </item>
-          <item>
-           <widget class="QLabel" name="labelOutCardRight">
-            <property name="text">
-             <string/>
-            </property>
-           </widget>
-          </item>
+         <layout class="QVBoxLayout" name="layoutRight">
+          <property name="sizeConstraint">
+           <enum>QLayout::SetDefaultConstraint</enum>
+          </property>
          </layout>
-        </item>
-        <item row="1" column="1">
-         <widget class="QTextBrowser" name="textBrowserRight"/>
         </item>
        </layout>
       </widget>
@@ -270,108 +487,148 @@
      </item>
      <item>
       <widget class="QGroupBox" name="groupBoxLow">
+       <property name="minimumSize">
+        <size>
+         <width>1000</width>
+         <height>500</height>
+        </size>
+       </property>
+       <property name="maximumSize">
+        <size>
+         <width>1000</width>
+         <height>500</height>
+        </size>
+       </property>
        <property name="title">
         <string>Lili</string>
        </property>
-       <layout class="QGridLayout" name="gridLayout_3">
+       <property name="flat">
+        <bool>false</bool>
+       </property>
+       <property name="checkable">
+        <bool>false</bool>
+       </property>
+       <layout class="QGridLayout" name="gridLayout_5" rowstretch="1,20">
         <item row="0" column="0">
          <layout class="QHBoxLayout" name="horizontalLayout_9">
           <item>
-           <widget class="QLabel" name="label_13">
-            <property name="text">
-             <string>OutCard:</string>
-            </property>
-           </widget>
+           <layout class="QHBoxLayout" name="horizontalLayout_11">
+            <item>
+             <widget class="QLabel" name="label_15">
+              <property name="text">
+               <string>Prompt:</string>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <widget class="QLabel" name="labelPrompt">
+              <property name="text">
+               <string/>
+              </property>
+             </widget>
+            </item>
+           </layout>
           </item>
           <item>
-           <widget class="QLabel" name="labelOutCardLow">
-            <property name="text">
-             <string/>
-            </property>
-           </widget>
+           <layout class="QHBoxLayout" name="horizontalLayout_8">
+            <item>
+             <widget class="QLabel" name="label_6">
+              <property name="text">
+               <string>Change color:</string>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <widget class="QComboBox" name="comboBox">
+              <item>
+               <property name="text">
+                <string>Choice Color</string>
+               </property>
+              </item>
+              <item>
+               <property name="text">
+                <string>Red</string>
+               </property>
+              </item>
+              <item>
+               <property name="text">
+                <string>Yellow</string>
+               </property>
+              </item>
+              <item>
+               <property name="text">
+                <string>Blue</string>
+               </property>
+              </item>
+              <item>
+               <property name="text">
+                <string>Green</string>
+               </property>
+              </item>
+             </widget>
+            </item>
+           </layout>
+          </item>
+          <item>
+           <layout class="QHBoxLayout" name="horizontalLayout_10">
+            <item>
+             <widget class="QPushButton" name="giveUpButton">
+              <property name="enabled">
+               <bool>false</bool>
+              </property>
+              <property name="text">
+               <string>Give Up</string>
+              </property>
+              <property name="checkable">
+               <bool>false</bool>
+              </property>
+             </widget>
+            </item>
+           </layout>
+          </item>
+          <item>
+           <layout class="QHBoxLayout" name="horizontalLayout_7">
+            <item>
+             <widget class="QLabel" name="label_8">
+              <property name="text">
+               <string>Num:</string>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <widget class="QLabel" name="lowNumLabel">
+              <property name="text">
+               <string/>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <widget class="QLabel" name="label_4">
+              <property name="text">
+               <string>Score:</string>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <widget class="QLabel" name="lowScoreLabel">
+              <property name="text">
+               <string/>
+              </property>
+             </widget>
+            </item>
+           </layout>
           </item>
          </layout>
         </item>
         <item row="1" column="0">
-         <layout class="QHBoxLayout" name="horizontalLayout_11">
-          <item>
-           <widget class="QLabel" name="label_15">
-            <property name="text">
-             <string>Prompt:</string>
-            </property>
-           </widget>
-          </item>
-          <item>
-           <widget class="QLabel" name="labelPrompt">
-            <property name="text">
-             <string/>
-            </property>
-           </widget>
-          </item>
+         <layout class="QHBoxLayout" name="layoutLow">
+          <property name="spacing">
+           <number>5</number>
+          </property>
+          <property name="sizeConstraint">
+           <enum>QLayout::SetDefaultConstraint</enum>
+          </property>
          </layout>
-        </item>
-        <item row="2" column="0">
-         <layout class="QHBoxLayout" name="horizontalLayout_10">
-          <item>
-           <widget class="QLabel" name="label_10">
-            <property name="text">
-             <string>Choice:</string>
-            </property>
-           </widget>
-          </item>
-          <item>
-           <widget class="QLineEdit" name="lineEditChoice"/>
-          </item>
-          <item>
-           <widget class="QPushButton" name="pushButtonOutCard">
-            <property name="text">
-             <string>Out Card</string>
-            </property>
-           </widget>
-          </item>
-          <item>
-           <widget class="QPushButton" name="pushButtonGiveUp">
-            <property name="text">
-             <string>Give Up</string>
-            </property>
-           </widget>
-          </item>
-         </layout>
-        </item>
-        <item row="3" column="0">
-         <layout class="QHBoxLayout" name="horizontalLayout_7">
-          <item>
-           <widget class="QLabel" name="label_8">
-            <property name="text">
-             <string>Num:</string>
-            </property>
-           </widget>
-          </item>
-          <item>
-           <widget class="QLabel" name="labelNumLow">
-            <property name="text">
-             <string/>
-            </property>
-           </widget>
-          </item>
-          <item>
-           <widget class="QLabel" name="label_4">
-            <property name="text">
-             <string>Score</string>
-            </property>
-           </widget>
-          </item>
-          <item>
-           <widget class="QLabel" name="labelScoreLow">
-            <property name="text">
-             <string/>
-            </property>
-           </widget>
-          </item>
-         </layout>
-        </item>
-        <item row="4" column="0">
-         <widget class="QTextBrowser" name="textBrowserLow"/>
         </item>
        </layout>
       </widget>
