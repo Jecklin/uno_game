@@ -1,5 +1,4 @@
-#ifndef CRULEDIALOG_H
-#define CRULEDIALOG_H
+﻿#pragma once
 
 #include <QDialog>
 
@@ -23,4 +22,3 @@ private:
     Ui::CRuleDialog *ui;
 };
 
-#endif // CRULEDIALOG_H

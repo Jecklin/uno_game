@@ -1,50 +1,29 @@
-#include "CTFMyToError.h"
+﻿#include "CTFMyToError.h"
 
-CTFMyToError::CTFMyToError(CGameLoop *gameloop)
-    :m_src(State_My)
-    ,m_tar(State_Error)
-    ,m_gameloop(gameloop)
+CTFMyToError::CTFMyToError(CJudge *judge):CAbstractTransform(judge)
 {
-    
+    this->m_src = State_My;
+    this->m_tar = State_Error;
 }
 
-CTFMyToError::~CTFMyToError()
+bool CTFMyToError::TransForm()
 {
-    if (this->m_gameloop == nullptr)
+    bool result = false;
+    if (!this->m_judge->CurPlayerGiveUp())
     {
-        ;
-    }
-    else
-    {
-        this->m_gameloop = nullptr;
-    }
-}
-
-bool CTFMyToError::transForm()
-{
-    bool is_ok = false;
-    if (!m_gameloop->giveUp())
-    {
-        if (m_gameloop->choiced())
+        if (this->m_judge->CurPlayerChoiced())
         {
-            if (!m_gameloop->myAllowed())
+            if (!this->m_judge->CurPlayerAllowedOut())
             {
-                is_ok = true;
-                this->m_gameloop->errorPromt(); 
-                this->m_gameloop->setChoiced(false);
+                //reset choiced
+                result = true;
+                this->m_judge->SetCurPlayerChoiced(false);
+                
+                //emit
+                this->m_judge->CurPlayerErrorPromt();
             }
+
         }
     }
-
-    return is_ok;
-}
-
-int CTFMyToError::srcState() const
-{
-    return this->m_src;
-}
-
-int CTFMyToError::tarState() const
-{
-    return this->m_tar;
+    return result;
 }

@@ -1,43 +1,18 @@
-#include "CTFSubToEnd.h"
+﻿#include "CTFSubToEnd.h"
 
-CTFSubToEnd::CTFSubToEnd(CGameLoop *gameloop)
-    :m_src(State_Sub)
-    ,m_tar(State_End)
-    ,m_gameloop(gameloop)
+CTFSubToEnd::CTFSubToEnd(CJudge *judge):CAbstractTransform(judge)
 {
-    
+    this->m_src = State_Sub;
+    this->m_tar = State_End;
 }
 
-CTFSubToEnd::~CTFSubToEnd()
-{
-    if (this->m_gameloop == nullptr)
-    {
-        ;
-    }
-    else
-    {
-        this->m_gameloop = nullptr;
-    }
-}
-
-bool CTFSubToEnd::transForm()
+bool CTFSubToEnd::TransForm()
 {   
-    bool is_ok = false;
-    if (this->m_gameloop->curPlayerEmpty())
+    bool result = false;
+    if (this->m_judge->CurPlayerEmpty())
     {
-        this->m_gameloop->setAllScores();
-        is_ok = true;
+        this->m_judge->SetAllScores();
+        result = true;
     }
-
-    return is_ok;
-}
-
-int CTFSubToEnd::srcState() const
-{
-    return this->m_src;
-}
-
-int CTFSubToEnd::tarState() const
-{
-    return this->m_tar;
+    return result;
 }

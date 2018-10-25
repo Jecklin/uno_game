@@ -1,389 +1,188 @@
-#include "CGameLoop.h"
+﻿#include "CGameLoop.h"
+#include "CPlayerAttribute.h"
+#include "CPlayer.h"
 
 CGameLoop::CGameLoop()
     :m_players()
     ,m_endcard()
-    ,m_open_box()
-    ,m_close_box()
-    ,m_state_machine(nullptr)
-    ,m_giveup(false)
-    ,m_choiced(false)
-    ,m_change_color()
+    ,m_openBox()
+    ,m_closeBox()
+    ,m_judge(nullptr)
+    ,m_stateMachine(nullptr)
     ,m_db(nullptr)
-    ,m_rule(nullptr)
 {
-    this->m_state_machine = new CStateMachine(this);
+    this->m_judge         = new CJudge(this);
+    this->m_stateMachine  = new CStateMachine(m_judge);
     this->m_db            = new CDataBase();
-    this->m_rule          = new CGameRule(this);
+
 }
 
 CGameLoop::~CGameLoop()
 {
-    if (this->m_state_machine != nullptr)
+    if (this->m_stateMachine != nullptr)
     {
-        delete this->m_state_machine;
-        this->m_state_machine = nullptr;
+        delete this->m_stateMachine;
+        this->m_stateMachine = nullptr;
     }
 
-    
     if (this->m_db != nullptr)
     {
         delete this->m_db;
         this->m_db = nullptr;
     }
     
-    if (this->m_rule != nullptr)
+    if (this->m_judge != nullptr)
     {
-        delete this->m_rule;
-        this->m_rule = nullptr;
+        delete this->m_judge;
+        this->m_judge = nullptr;
     }
 
+    if (!this->m_players.empty())
+    {
+        delete this->m_players.at(0);
+        this->m_players.removeFirst();
+    }
+    
 }
 
-void CGameLoop::initGame()
+void CGameLoop::InitGame()
 {
     //Init machine
-    this->m_state_machine->inIt();
+    this->m_stateMachine->InIt();
     
     //Init DataBase
-    this->m_db->createDb();
+    this->m_db->CreateDb();
 
     
     //Init players name
     if (this->m_players.empty())
     {
-        CPlayer player_index;
-        player_index.setName("Lili");
-        this->m_players.push_back(player_index);
+        CPlayer *player = new CPlayer("Lili");
+        this->m_players.push_back(player);
         
-        player_index.setName("Jack");
-        this->m_players.push_back(player_index);    
+        player = new CPlayer("Jack");
+        this->m_players.push_back(player);
         
-        player_index.setName("Anna");
-        this->m_players.push_back(player_index); 
+        player = new CPlayer("Anna");
+        this->m_players.push_back(player);
         
-        player_index.setName("Tom");
-        this->m_players.push_back(player_index);  
+        player = new CPlayer("Tom");
+        this->m_players.push_back(player);
     }
  
     
     //Init close box    
-    this->m_close_box.initBox();
-    this->m_close_box.randomBox();
+    this->m_closeBox.InitBox();
+    this->m_closeBox.RandomBox();
     
     //Init open box
-    this->m_open_box.clearBox();
+    if (!m_openBox.Empty())
+    {
+        m_openBox.RemoveAll();
+    }
     
     //Init end card
-    CCardInfo card_index = this->m_close_box.backCard();
-    this->m_open_box.addCard(card_index);   
-    this->setEndCard(card_index);
-    this->m_close_box.popCard();
+    CCardInfo topCard = m_closeBox.GetTopCard();
+    this->m_openBox.AddCard(topCard);
+    this->m_endcard.SetCard(topCard);
+    this->m_closeBox.RemoveCard(topCard);
+    this->sEndCardChanged(topCard);
     
-    //Init current
-    m_rule->sroundCurrent();
+    
+    //Init judge
+    this->m_judge->SroundCurStation();
+    this->m_judge->SetCloseBox(this->m_closeBox);
+    this->m_judge->SetOpenBox(this->m_openBox);
+    this->m_judge->SetEndCard(this->m_endcard);
+    this->m_judge->SetCurPlayer(this->m_players.at(m_judge->GetCurStation()));
     
     //Init one round
-    for (int num = 0; num < 4; ++num)
+    QVector<CPlayer*>::ConstIterator iter = m_players.begin();
+    for (iter; iter != m_players.end(); ++iter)
     {
-        m_players.at(num).clearBox();
+        CPlayer *player = *iter;
+        if (!player->GetBox().Empty())
+        {
+            player->GetBox().RemoveAll();
+        }
+        
     }
     
     //Do one round
-    for (int round = 0; round < ( 7 * 4 ); ++round)
+    for (int i = 0; i < 7 * 4; ++i)
     {
-        addCard(current());
-        m_rule->toNext();
+        this->m_judge->CurPlayerAddCard();
+        this->m_judge->ToNext();
     }
-
     
 }
 
-void CGameLoop::gameRound()
+void CGameLoop::GameRound()
 {
     do
     {
-        this->m_state_machine->toNextState();
+        this->m_stateMachine->ToNextState();
         
-        if (this->m_state_machine->getCurState() == State_End)
+        if (this->m_stateMachine->GetCurState() == State_End)
         {
             emit sGameOver();
             break;
         }
-        else if (this->m_state_machine->getCurState() == State_My)
+        else if (this->m_stateMachine->GetCurState() == State_My)
         {
             break;
         }
                
         //reset choiced
-        this->setGiveUp(false);
+        this->m_judge->SetCurPlayerGiveup(false);
         
         
     }while(true);
     
 }
 
-void CGameLoop::setEndCard(const CCardInfo &card)
+
+int CGameLoop::GetPlayerScore(CPlayer *player)
 {
-    this->m_endcard.setCard(card);
-    emit this->sEndCardChanged(card);    
-}
-
-void CGameLoop::setEndCard(ECardColor color)
-{
-    CPlayer *player = &(m_players[current()]);
-    this->m_change_color = player->getChangeColor();    
-    this->m_endcard.setColor(color);
-    
-    emit sEndCardChanged(this->m_endcard);
-    emit sChangeColor(color);
-    
-}
-
-int CGameLoop::getPlayerScore(const CPlayer &player)
-{
-    return this->m_db->selectDb(player.getName());
-}
-
-int CGameLoop::current()
-{
-    return m_rule->current();
-}
-
-int CGameLoop::next()
-{
-    return m_rule->next();
-}
-
-bool CGameLoop::myRound()
-{
-    bool is_my = false;
-    if (m_rule->current() == 0)
-    {
-        is_my = true;
-    }
-    else
-    {
-        ;
-    }
-    return is_my;
-}
-
-void CGameLoop::curToNext()
-{
-    m_rule->toNext();
-}
-
-bool CGameLoop::giveUp() const
-{
-    return this->m_giveup;
-    
-}
-
-void CGameLoop::setGiveUp(bool giveup)
-{
-    m_giveup = giveup;
-}
-
-bool CGameLoop::choiced() const
-{
-    return this->m_choiced;
-}
-
-void CGameLoop::setChoiced(bool choiced)
-{
-    this->m_choiced = choiced;
-}
-
-void CGameLoop::setOutCard(const CCardInfo &card)
-{
-    CPlayer *player = &(m_players[current()]);
-    player->setOutCard(card);
-    setChoiced(true);
-}
-
-
-bool CGameLoop::myAllowed()
-{
-    bool is_allow = false; 
-    CPlayer *player = &(m_players[current()]);
-    if (player->cardAllow(m_endcard))
-    {
-        is_allow = true;
-    }
-    else
-    {
-        ;
-    }
-        
-    return is_allow;
-}
-
-bool CGameLoop::otherAllowed()
-{
-    bool is_allow = false;
-    CPlayer *player = &(m_players[current()]);
-    if (player->boxAllow(m_endcard))
-    {
-        is_allow = true;
-    }
-    else
-    {
-        ;
-    }
-    
-    return is_allow;
-}
-
-void CGameLoop::addCard(int playerNum)
-{
-    //Open box resicle
-    if (this->m_close_box.empty())
-    {
-        this->m_close_box.removeBox(this->m_open_box);
-    }
-    
-    //Player touch card
-    CCardInfo card = this->m_close_box.backCard();
-    CPlayer *player = &(m_players[playerNum]);
-    player->addCard(card);
-    this->m_close_box.popCard();   
-    
-    emit sPlayerAddCard(card, playerNum); 
-}
-
-void CGameLoop::curOutCard()
-{
-    //Player out card
-    CPlayer *player = &(m_players[current()]);
-    CCardInfo card = player->getOutCard();
-    m_open_box.addCard(card);
-    setEndCard(card);
-    player->removeCard(card);
-    
-    emit sPlayerOutCard(card, current());
-    
-}
-
-bool CGameLoop::curPlayerEmpty()
-{
-    bool empty = false;
-    CPlayer *player = &(m_players[current()]);
-    if (player->getBoxSize() == 0)
-    {
-        empty = true;
-        
-    }
-
-    return empty;
-}
-
-void CGameLoop::doPunish()
-{
-    CPlayer *player = &(m_players[current()]);
-    CCardInfo card = player->getOutCard();
-    if (card.isFunctionCard())
-    {
-        if (card.getId() == ECI_AddTwo)
-        {
-            m_rule->actNextAddCard(2);
-            m_rule->actStop();
-        }
-        else if (card.getId() == ECI_Resverse)
-        {
-            m_rule->actReverse();
-        }
-        else if (card.getId() == ECI_Stop)
-        {
-            m_rule->actStop();
-        }
-        else if (card.getId() == ECI_Black)
-        {
-            m_rule->actChoiceColor();
-            m_rule->actStop();
-        }
-        else if (card.getId() == ECI_BlackFour)
-        {
-            m_rule->actChoiceColor();
-            m_rule->actNextAddCard(4);
-            m_rule->actStop();
-        }
-        else
-        {
-            ;
-        }    
-        
-    }
-    
-}
-
-void CGameLoop::actChangeColor()
-{
-    if (m_rule->current() == 0)
-    {
-        ;
-    }
-    else
-    {
-        CPlayer *player = &(m_players[current()]);
-        m_change_color = player->getChangeColor();
-    }
-    
-    this->m_endcard.setColor(m_change_color);
-    
-    emit sEndCardChanged(this->m_endcard);
-    emit sChangeColor(m_change_color);
+    return m_db->selectDb(player->GetAttribute().getName());
 }
 
 
 
-void CGameLoop::setChangeColor(ECardColor color)
+CJudge* CGameLoop::GetJudge()
 {
-    this->m_change_color = color;
+    return this->m_judge;
 }
 
-ECardColor CGameLoop::getChangeColor()
-{
-    return this->m_change_color;
-}
-
-void CGameLoop::errorPromt()
-{
-    emit sNotAllowOut();
-}
-
-void CGameLoop::setAllScores()
+void CGameLoop::SetAllScores()
 {
     //set winner score
-    CPlayer *player = &(m_players[current()]);
-    QString win_name  = player->getName();
-    int     win_score = m_db->selectDb(win_name) + 10;
-    
-    this->m_db->updateDb(win_name, win_score);
+    int current = this->m_judge->GetCurStation();
+    CPlayer *player = this->m_players.at(current);
+    QString winName  = player->GetAttribute().getName();
+    int     winScore = m_db->selectDb(winName) + 10;
+    this->m_db->updateDb(winName, winScore);
     
     //other player sub score
-    for (unsigned int index = 0; index < this->m_players.size(); ++index)
+    for (int i = 0; i < 4; ++i)
     {
-        QString name  = m_players.at(index).getName();
-        int     box   = m_players.at(index).getBoxSize();
-        int     score = m_db->selectDb(name) - box;
-        
+        player          = this->m_players.at(i);
+        QString name    = player->GetAttribute().getName();
+        int     box     = player->GetBox().Size();
+        int     score   = m_db->selectDb(name) - box;
         this->m_db->updateDb(name, score);
-
-    }  
+    }
 }
 
 
-CPlayer CGameLoop::getPlayer(int num)
+CPlayer* CGameLoop::GetPlayer(int num)
 {
-    CPlayer *pplayer = &(this->m_players[num]);
-    return *pplayer;
+    CPlayer *player = this->m_players.at(num);
+    return player;
 }
 
-int CGameLoop::getPlayerSize()
+CCardInfoEnd &CGameLoop::GetEndCard()
 {
-    return this->m_players.size();
+    return this->m_endcard;
 }
-
-
 

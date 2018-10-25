@@ -1,9 +1,10 @@
-#include "CDeskBox.h"
+﻿#include "CDeskBox.h"
+#include "CCardInfo.h"
+#include <QList>
 #include <cstdlib>
 #include <time.h>
 
 CDeskBox::CDeskBox()
-    :m_box()
 {
     
 }
@@ -13,75 +14,43 @@ CDeskBox::~CDeskBox()
     
 }
 
-void CDeskBox::addCard(const CCardInfo &card)
-{
-    this->m_box.push_back(card);
-}
-
-void CDeskBox::subCard(const CCardInfo &card)
-{
-    std::list<CCardInfo>::iterator iter;
-    CCardInfo card_index;
-    for (iter = this->m_box.begin(); iter != this->m_box.end(); ++iter)
-    {
-        card_index = *iter;
-        if (card == card_index)
-        {
-            this->m_box.erase(iter);
-            break;
-        }
-        else
-        {
-            ;
-        }
-    }
-}
-
-void CDeskBox::popCard()
-{
-    m_box.pop_back();
-}
-
-CCardInfo& CDeskBox::backCard()
-{
-    return m_box.back();
-}
 
 
-void CDeskBox::initBox()
+
+void CDeskBox::InitBox()
 {
     //每回合重置牌库
     if (!this->m_box.empty())
     {
-        this->clearBox();
+        this->RemoveAll();
     }
   
     //初始化 数字牌： 0-9,4种颜色各2张
-    cardToBoxId(ECI_Zero);
-    cardToBoxId(ECI_One);
-    cardToBoxId(ECI_Two);
-    cardToBoxId(ECI_Three);
-    cardToBoxId(ECI_Four);
-    cardToBoxId(ECI_Five);
-    cardToBoxId(ECI_Six);
-    cardToBoxId(ECI_Seven);
-    cardToBoxId(ECI_Eight);
-    cardToBoxId(ECI_Nine);
+    InitCardId(ECI_Zero);
+    InitCardId(ECI_One);
+    InitCardId(ECI_Two);
+    InitCardId(ECI_Three);
+    InitCardId(ECI_Four);
+    InitCardId(ECI_Five);
+    InitCardId(ECI_Six);
+    InitCardId(ECI_Seven);
+    InitCardId(ECI_Eight);
+    InitCardId(ECI_Nine);
     
     //初始化 功能牌
-    cardToBoxAct(ECI_AddTwo, ECA_ActionTwo);                //+2
-    cardToBoxAct(ECI_Resverse, ECA_Reverse);                //反转
-    cardToBoxAct(ECI_Stop, ECA_Stop);                       //停止
+    InitCardAct(ECI_AddTwo, ECA_ActionTwo);                //+2
+    InitCardAct(ECI_Resverse, ECA_Reverse);                //反转
+    InitCardAct(ECI_Stop, ECA_Stop);                       //停止
     
-    cardToBox(ECC_Black, ECI_Black, ECA_Black, 4);          //黑牌
-    cardToBox(ECC_Black, ECI_BlackFour, ECA_BlackFour, 4);  //+4黑牌
+    InitCard(ECC_Black, ECI_Black, ECA_Black, 4);          //黑牌
+    InitCard(ECC_Black, ECI_BlackFour, ECA_BlackFour, 4);  //+4黑牌
 
 }
 
-void CDeskBox::randomBox()
+void CDeskBox::RandomBox()
 {
-    std::list<CCardInfo>::iterator iter_move;
-    std::list<CCardInfo>::iterator iter_end = m_box.end();
+    QList<CCardInfo>::iterator iter_move;
+    QList<CCardInfo>::iterator iter_end = m_box.end();
     --iter_end;
     unsigned int                   sround = 0;
 
@@ -104,33 +73,19 @@ void CDeskBox::randomBox()
     }
 }
 
-void CDeskBox::removeBox(CDeskBox &sou)
+CCardInfo& CDeskBox::GetTopCard()
 {
-
-    while(!sou.empty())
-    {
-        m_box.push_back(sou.backCard());
-        sou.popCard();
-    }
-    
-    this->randomBox();
+    return this->m_box.back();
 }
 
-bool CDeskBox::empty()
+void CDeskBox::RemoveBox(CDeskBox *box)
 {
-    return this->m_box.empty();
+    CCardInfo card = box->GetTopCard();
+    this->AddCard(card);
+    box->RemoveCard(card);
 }
 
-void CDeskBox::clearBox()
-{
-    if (!this->m_box.empty())
-    {
-        m_box.erase(m_box.begin());
-    }
-    
-}
-
-void CDeskBox::cardToBox(ECardColor color, ECardId id, ECardAction action, int times)
+void CDeskBox::InitCard(ECardColor color, ECardId id, ECardAction action, int times)
 {
     CCardInfo card(color, id, action);
     
@@ -141,18 +96,18 @@ void CDeskBox::cardToBox(ECardColor color, ECardId id, ECardAction action, int t
     
 }
 
-void CDeskBox::cardToBoxId(ECardId id)
+void CDeskBox::InitCardId(ECardId id)
 {
-    cardToBox(ECC_Red, id, ECA_None);
-    cardToBox(ECC_Yellow, id, ECA_None);
-    cardToBox(ECC_Green, id, ECA_None);
-    cardToBox(ECC_Blue, id, ECA_None);
+    InitCard(ECC_Red, id, ECA_None);
+    InitCard(ECC_Yellow, id, ECA_None);
+    InitCard(ECC_Green, id, ECA_None);
+    InitCard(ECC_Blue, id, ECA_None);
 }
 
-void CDeskBox::cardToBoxAct(ECardId id, ECardAction action)
+void CDeskBox::InitCardAct(ECardId id, ECardAction action)
 {
-    cardToBox(ECC_Red, id, action);
-    cardToBox(ECC_Yellow, id, action);
-    cardToBox(ECC_Green, id, action);
-    cardToBox(ECC_Blue, id, action);
+    InitCard(ECC_Red, id, action);
+    InitCard(ECC_Yellow, id, action);
+    InitCard(ECC_Green, id, action);
+    InitCard(ECC_Blue, id, action);
 }

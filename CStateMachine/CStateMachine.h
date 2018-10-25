@@ -1,32 +1,26 @@
-#ifndef CSTATEMACHINE_H
-#define CSTATEMACHINE_H
+﻿#pragma once
 
 #include "CState.h"
 #include "CAbstractState.h"
-#include <map>
+#include "CGame/CJudge.h"
+#include <QMap>
 
-class CGameLoop;
 
 class CStateMachine:public CAbstractState
 {
 public:
-    explicit                    CStateMachine(CGameLoop *loop);
-    virtual                     ~CStateMachine();
-    
-public:
-    virtual int                 getCurState() const;
-    virtual int                 toNextState();
-    
-public:
-    void                        inIt();
+    CStateMachine(CJudge *judge);
+    virtual   ~CStateMachine();
+    void               InIt();
 
-       
+    virtual int        GetCurState() const;
+    virtual int        ToNextState();
+           
 private:
-    typedef std::map<int, CState*> StateMap;
+    typedef QMap<int, CState*> StateMap;
     
-    CGameLoop                    *m_gameloop;
-    StateMap                     m_states;
-    CState                       *m_curstate;    
+    CJudge             *m_judge;
+    StateMap            m_states;
+    CState             *m_curstate;    
 };
 
-#endif // CSTATEMACHINE_H

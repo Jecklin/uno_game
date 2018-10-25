@@ -1,4 +1,4 @@
-#include "CDataBase.h"
+﻿#include "CDataBase.h"
 #include <QMessageBox>
 #include <QDebug>
 #include <QSqlError>
@@ -33,7 +33,7 @@ CDataBase::~CDataBase()
     
 }
 
-void CDataBase::createDb()
+void CDataBase::CreateDb()
 {
     qDebug() << "createDb";
     

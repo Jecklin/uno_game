@@ -1,5 +1,4 @@
-#ifndef CWIDGET_H
-#define CWIDGET_H
+﻿#pragma once
 
 #include <QWidget>
 #include <QPushButton>
@@ -27,6 +26,7 @@ public slots:
     void            onAddCard(CCardInfo in_card, int current);
     void            onOutCard(CCardInfo out_card, int current);
     void            onEndCardChanged(CCardInfo end_card);
+    void            onEndCardChanged(ECardColor color);
     void            onNotAllowOut();
     void            onOver();
     
@@ -34,9 +34,8 @@ public slots:
     void            onCOutCard();
     void            onChoiced();
     void            onError();
-    void            onChangeColor(ECardColor color);
     void            onCombox(int num = -1);
-    
+    void            onBlackToColor(ECardColor color);
 
 private:
     void            initUI();
@@ -67,4 +66,3 @@ private:
 
 };
 
-#endif // CWIDGET_H

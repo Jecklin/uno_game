@@ -1,43 +1,20 @@
-#include "CTFOtherToAdd.h"
+﻿#include "CTFOtherToAdd.h"
 
-CTFOtherToAdd::CTFOtherToAdd(CGameLoop *gameloop)
-    :m_src(State_Other)
-    ,m_tar(State_Add)
-    ,m_gameloop(gameloop)
+CTFOtherToAdd::CTFOtherToAdd(CJudge *judge):CAbstractTransform(judge)
 {
-    
+    this->m_src = State_Other;
+    this->m_tar = State_Add;
 }
 
-CTFOtherToAdd::~CTFOtherToAdd()
+bool CTFOtherToAdd::TransForm()
 {
-    if (this->m_gameloop == nullptr)
+    bool result = false;
+    if (!this->m_judge->AutoCurPlayerAllowedOut())
     {
-        ;
+        result = true;
+        this->m_judge->CurPlayerAddCard();   
     }
-    else
-    {
-        this->m_gameloop = nullptr;
-    }
+    return result;
+
 }
 
-bool CTFOtherToAdd::transForm()
-{
-    bool is_ok = false;
-    if (!m_gameloop->otherAllowed())
-    {
-        is_ok = true;
-        m_gameloop->addCard(m_gameloop->current());
-    }
-    
-    return is_ok;
-}
-
-int CTFOtherToAdd::srcState() const
-{
-    return this->m_src;
-}
-
-int CTFOtherToAdd::tarState() const
-{
-    return this->m_tar;
-}

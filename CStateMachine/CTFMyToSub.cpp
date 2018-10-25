@@ -1,52 +1,26 @@
-#include "CTFMyToSub.h"
+﻿#include "CTFMyToSub.h"
 
-CTFMyToSub::CTFMyToSub(CGameLoop *gameloop)
-    :m_src(State_My)
-    ,m_tar(State_Sub)
-    ,m_gameloop(gameloop)
+CTFMyToSub::CTFMyToSub(CJudge *judge):CAbstractTransform(judge)
 {
-    
+    this->m_src = State_My;
+    this->m_tar = State_Sub;
 }
 
-CTFMyToSub::~CTFMyToSub()
+bool CTFMyToSub::TransForm()
 {
-    if (this->m_gameloop == nullptr)
+    bool result = false;
+    if (!this->m_judge->CurPlayerGiveUp())
     {
-        ;
-    }
-    else
-    {
-        this->m_gameloop = nullptr;
-    }
-}
-
-bool CTFMyToSub::transForm()
-{
-    bool is_ok = false;
-    
-    if (!m_gameloop->giveUp())
-    {
-        if (m_gameloop->choiced())
+        if (this->m_judge->CurPlayerChoiced())
         {
-            if (m_gameloop->myAllowed())
+            if (this->m_judge->CurPlayerAllowedOut())
             {
-                is_ok = true;
-                this->m_gameloop->curOutCard();
-                this->m_gameloop->setChoiced(false);
+                result = true;
+                this->m_judge->CurPlayerOutCard();
             }
         }
     }
     
-
-    return is_ok;
+    return result;    
 }
 
-int CTFMyToSub::srcState() const
-{
-    return this->m_src;
-}
-
-int CTFMyToSub::tarState() const
-{
-    return this->m_tar;
-}

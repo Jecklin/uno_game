@@ -8,13 +8,14 @@
 #include "CWidget.h"
 #include "CGameOverDialog.h"
 #include "CBeginDialog.h"
+#include "CGame/CCardTranslator.h"
 
 //设置牌固定大小
-QSize CWidget::s_button_low(130, 200);
-QSize CWidget::s_button_top(130, 150);
-QSize CWidget::s_button_left(200, 50);
-QSize CWidget::s_button_mid(100, 150);
-QSize CWidget::s_button_outCard(100, 100);
+QSize CWidget::s_button_low(100, 130);
+QSize CWidget::s_button_top(50, 150);
+QSize CWidget::s_button_left(150, 50);
+QSize CWidget::s_button_mid(100, 130);
+QSize CWidget::s_button_outCard(80, 80);
 
 CWidget::CWidget(QWidget *parent)
     :QWidget(parent)
@@ -34,9 +35,11 @@ CWidget::CWidget(QWidget *parent)
     //Game loop
     connect(m_gameLoop,SIGNAL(sPlayerAddCard(CCardInfo,int)),this,SLOT(onAddCard(CCardInfo,int)));
     connect(m_gameLoop,SIGNAL(sPlayerOutCard(CCardInfo,int)),this,SLOT(onOutCard(CCardInfo,int)));
-    connect(m_gameLoop,SIGNAL(sEndCardChanged(CCardInfo)),this,SLOT(onEndCardChanged(CCardInfo)));   
-    connect(m_gameLoop,SIGNAL(sNotAllowOut()),this,SLOT(onError()));
-    connect(m_gameLoop,SIGNAL(sChangeColor(ECardColor)),this,SLOT(onChangeColor(ECardColor)));
+    connect(m_gameLoop,SIGNAL(sEndCardChanged(CCardInfo)),this,SLOT(onEndCardChanged(CCardInfo))); 
+    connect(m_gameLoop,SIGNAL(sEndCardChanged(ECardColor)),this,SLOT(onEndCardChanged(ECardColor)));
+    connect(m_gameLoop,SIGNAL(sBlackToColor(ECardColor)),this,SLOT(onBlackToColor(ECardColor)));
+    connect(m_gameLoop,SIGNAL(sErrorPromt()),this,SLOT(onError()));
+
     
     //Ui    
     connect(m_mainWidget->giveUpButton,SIGNAL(clicked(bool)),this,SLOT(onCGiveUp()));  
@@ -85,11 +88,11 @@ CWidget::~CWidget()
 void CWidget::onStart()
 {    
     //Init
-    this->m_gameLoop->initGame();
+    this->m_gameLoop->InitGame();
     this->initUI();
  
     //Round
-    this->m_gameLoop->gameRound();
+    this->m_gameLoop->GameRound();
     
 }
 
@@ -167,6 +170,13 @@ void CWidget::onEndCardChanged(CCardInfo end_card)
     setIcon(m_mainWidget->EndCardButton, end_card, false);
 }
 
+void CWidget::onEndCardChanged(ECardColor color)
+{
+    CCardInfoEnd card = this->m_gameLoop->GetEndCard();
+    card.SetColor(color);
+    setIcon(m_mainWidget->EndCardButton, card, false);
+}
+
 void CWidget::onNotAllowOut()
 {
     QString error = "Choice Error, not allow out";
@@ -178,16 +188,16 @@ void CWidget::onOver()
     CGameOverDialog dialog;
     
     //set winner
-    CPlayer winner = m_gameLoop->getPlayer(m_gameLoop->current());
-    dialog.setWinner(winner.getName());
+    CPlayer *winner = m_gameLoop->GetPlayer(m_gameLoop->GetJudge()->GetCurStation());
+    dialog.setWinner(winner->GetAttribute().getName());
     
     //show dialog
-    for (int i = 0; i < m_gameLoop->getPlayerSize(); ++i)
+    for (int i = 0; i < 4; ++i)
     {
-        CPlayer player = m_gameLoop->getPlayer(i);
-        QString name = player.getName();
-        int     score = m_gameLoop->getPlayerScore(player);
-        int     size = player.getBoxSize();
+        CPlayer *player = m_gameLoop->GetPlayer(i);
+        QString  name   = player->GetAttribute().getName();
+        int      score = m_gameLoop->GetPlayerScore(player);
+        int      size = player->GetBox().Size();
         dialog.setTableItem(name, score);
         dialog.setTableItem(size, i);
     }
@@ -202,7 +212,7 @@ void CWidget::onOver()
 
 void CWidget::onCGiveUp()
 {
-    this->m_gameLoop->setGiveUp(true);
+    this->m_gameLoop->GetJudge()->SetCurPlayerGiveup(true);
     emit choiced();
 }
 
@@ -228,13 +238,13 @@ void CWidget::onCOutCard()
         QString     str_action      = cardInfo.section(' ',2, 2).trimmed();
        
         
-        ECardColor   color          = CCardInfo::toColor(str_color);
-        ECardId      id             = CCardInfo::toID(str_id);
-        ECardAction  action         = CCardInfo::toAction(str_action);
+        ECardColor   color          = CCardTranslator::ToColor(str_color);
+        ECardId      id             = CCardTranslator::ToID(str_id);
+        ECardAction  action         = CCardTranslator::ToAction(str_action);
         
         CCardInfo   card(color,id,action);
-        this->m_gameLoop->setOutCard(card);
-        
+        this->m_gameLoop->GetPlayer(this->m_gameLoop->GetJudge()->GetCurStation())->SetOutCard(card);
+        this->m_gameLoop->GetJudge()->SetCurPlayerChoiced(true);
         
         if ((id == ECI_Black) || (id == ECI_BlackFour))
         {
@@ -254,8 +264,6 @@ void CWidget::onCOutCard()
         }
         
     }
-
-    
     
 }
 
@@ -263,7 +271,7 @@ void CWidget::onChoiced()
 {
     this->m_mainWidget->labelPrompt->setText(QString::fromUtf8(""));
     this->m_mainWidget->EndCardlabel->setText(QString::fromUtf8(" "));
-    this->m_gameLoop->gameRound();
+    this->m_gameLoop->GameRound();
 }
 
 void CWidget::onError()
@@ -271,29 +279,24 @@ void CWidget::onError()
     this->m_mainWidget->labelPrompt->setText(QString::fromUtf8("choiced error"));
 }
 
-void CWidget::onChangeColor(ECardColor color)
-{
-    QString     texts = QString::fromUtf8("Is color: ") + CCardInfo::toString(color);
-    this->m_mainWidget->EndCardlabel->setText(texts);
-}
-
 void CWidget::onCombox(int num)
 {
     if (num == 1)
     {
-        this->m_gameLoop->setChangeColor(ECC_Red);
+        this->m_gameLoop->GetJudge()->SetCurPlayerChangedColor(ECC_Red);
+        
     }
     else if (num == 2)
     {
-        this->m_gameLoop->setChangeColor(ECC_Yellow);
+        this->m_gameLoop->GetJudge()->SetCurPlayerChangedColor(ECC_Yellow);
     }
     else if (num == 3)
     {
-        this->m_gameLoop->setChangeColor(ECC_Blue);
+        this->m_gameLoop->GetJudge()->SetCurPlayerChangedColor(ECC_Blue);
     }
     else if (num == 4)
     {
-        this->m_gameLoop->setChangeColor(ECC_Green);
+        this->m_gameLoop->GetJudge()->SetCurPlayerChangedColor(ECC_Green);
     }
     else
     {
@@ -301,6 +304,12 @@ void CWidget::onCombox(int num)
     }
     
     this->m_color_choice = true;
+}
+
+void CWidget::onBlackToColor(ECardColor color)
+{
+    QString     texts = QString::fromUtf8("Is color: ") + CCardTranslator::ToString(color);
+    this->m_mainWidget->EndCardlabel->setText(texts);
 }
 
 void CWidget::initUI()
@@ -325,7 +334,7 @@ void CWidget::unInitUI()
 
 void CWidget::setBackGround()
 {
-    this->setAutoFillBackground(true);
+//    this->setAutoFillBackground(true);
     QPalette palet = this->palette();
     palet.setBrush(QPalette::Window
                    , QBrush(QPixmap(":/new/src/icons/background.jpg").scaled(this->size()
@@ -339,26 +348,26 @@ void CWidget::setScoreLabels()
 {
     QString str_score;
     int     score;
-    score       = this->m_gameLoop->getPlayerScore(m_gameLoop->getPlayer(0));
+    score       = this->m_gameLoop->GetPlayerScore(m_gameLoop->GetPlayer(0));
     str_score   = QString::number(score, 10);
     this->m_mainWidget->lowScoreLabel->setText(str_score);
     
-    score       = this->m_gameLoop->getPlayerScore(m_gameLoop->getPlayer(1));
+    score       = this->m_gameLoop->GetPlayerScore(m_gameLoop->GetPlayer(1));
     str_score   = QString::number(score, 10);
     this->m_mainWidget->leftScoreLabel->setText(str_score);
     
-    score       = this->m_gameLoop->getPlayerScore(m_gameLoop->getPlayer(2));
+    score       = this->m_gameLoop->GetPlayerScore(m_gameLoop->GetPlayer(2));
     str_score   = QString::number(score, 10);
     this->m_mainWidget->topScoreLabel->setText(str_score);
     
-    score       = this->m_gameLoop->getPlayerScore(m_gameLoop->getPlayer(3));
+    score       = this->m_gameLoop->GetPlayerScore(m_gameLoop->GetPlayer(3));
     str_score   = QString::number(score, 10);
     this->m_mainWidget->rightScoreLabel->setText(str_score);
 }
 
 void CWidget::setSizeLabel(QLabel *label, int current)
 {
-    int score = m_gameLoop->getPlayer(current).getBoxSize();
+    int score = m_gameLoop->GetPlayer(current)->GetBox().Size();
     label->setText(QString::number(score, 10));
 }
 
@@ -393,11 +402,11 @@ void CWidget::addButton(QLayout *layout, CCardInfo card, QSize size, int current
 {
      QString         card_info;
      
-     card_info = CCardInfo::toString(card.getColor())
+     card_info = CCardTranslator::ToString(card.GetColor())
                + " "
-               + CCardInfo::toString(card.getId())
+               + CCardTranslator::ToString(card.GetId())
                + " "
-               + CCardInfo::toString(card.getAction());
+               + CCardTranslator::ToString(card.GetAction());
      
      QPushButton *button = new QPushButton(this);
      button->setProperty("cardInfo", card_info);
@@ -439,11 +448,11 @@ void CWidget::subButton(QLayout *layout, CCardInfo card)
 {
     QString cardInfo;
     
-    cardInfo = CCardInfo::toString(card.getColor())
+    cardInfo = CCardTranslator::ToString(card.GetColor())
               + " "
-              + CCardInfo::toString(card.getId())
+              + CCardTranslator::ToString(card.GetId())
               + " "
-              + CCardInfo::toString(card.getAction());
+              + CCardTranslator::ToString(card.GetAction());
     
     for (int i = layout->count() - 1 ; i >= 0; --i)
     {
@@ -472,29 +481,29 @@ QString CWidget::getDir(const CCardInfo &card)
 {
     QString dir = ":/new/src/icons/";
     
-    if (card.getId() == ECI_Black)
+    if (card.GetId() == ECI_Black)
     {
         dir.append("black");
     }
-    else if (card.getId() == ECI_BlackFour)
+    else if (card.GetId() == ECI_BlackFour)
     {
         dir.append("black-add4");
     }
     else
     {
-        if (card.getColor() == ECC_Red)
+        if (card.GetColor() == ECC_Red)
         {
             dir.append("r-");
         }
-        else if (card.getColor() == ECC_Yellow)
+        else if (card.GetColor() == ECC_Yellow)
         {
             dir.append("y-");
         }
-        else if (card.getColor() == ECC_Blue)
+        else if (card.GetColor() == ECC_Blue)
         {
             dir.append("b-");
         }
-        else if (card.getColor() == ECC_Green)
+        else if (card.GetColor() == ECC_Green)
         {
             dir.append("g-");
         }
@@ -503,55 +512,55 @@ QString CWidget::getDir(const CCardInfo &card)
             ;
         }
         
-        if (card.getId() == ECI_Zero)
+        if (card.GetId() == ECI_Zero)
         {
             dir.append("n0");
         }
-        else if (card.getId() == ECI_One)
+        else if (card.GetId() == ECI_One)
         {
             dir.append("n1");
         }
-        else if (card.getId() == ECI_Two)
+        else if (card.GetId() == ECI_Two)
         {
             dir.append("n2");
         }
-        else if (card.getId() == ECI_Three)
+        else if (card.GetId() == ECI_Three)
         {
             dir.append("n3");
         }
-        else if (card.getId() == ECI_Four)
+        else if (card.GetId() == ECI_Four)
         {
             dir.append("n4");
         }
-        else if (card.getId() == ECI_Five)
+        else if (card.GetId() == ECI_Five)
         {
             dir.append("n5");
         }
-        else if (card.getId() == ECI_Six)
+        else if (card.GetId() == ECI_Six)
         {
             dir.append("n6");
         }
-        else if (card.getId() == ECI_Seven)
+        else if (card.GetId() == ECI_Seven)
         {
             dir.append("n7");
         }
-        else if (card.getId() == ECI_Eight)
+        else if (card.GetId() == ECI_Eight)
         {
             dir.append("n8");
         }
-        else if (card.getId() == ECI_Nine)
+        else if (card.GetId() == ECI_Nine)
         {
             dir.append("n9");
         }
-        else if (card.getId() == ECI_AddTwo)
+        else if (card.GetId() == ECI_AddTwo)
         {
             dir.append("add2");
         }
-        else if (card.getId() == ECI_Resverse)
+        else if (card.GetId() == ECI_Resverse)
         {
             dir.append("rev");
         }
-        else if (card.getId() == ECI_Stop)
+        else if (card.GetId() == ECI_Stop)
         {
             dir.append("stop");
         }

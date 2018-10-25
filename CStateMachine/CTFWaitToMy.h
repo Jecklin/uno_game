@@ -1,23 +1,13 @@
-#ifndef CTFWAITTOMY_H
-#define CTFWAITTOMY_H
+﻿#pragma once
 
 #include "CAbstractTransform.h"
 
 class CTFWaitToMy : public CAbstractTransform
 {
 public:
-    CTFWaitToMy(CGameLoop *gameloop = nullptr);
-    ~CTFWaitToMy();
+    CTFWaitToMy(CJudge *judge);
 
-public:
-    virtual bool        transForm();
-    virtual int         srcState() const;
-    virtual int         tarState() const;
-    
-private:
-    int                 m_src;
-    int                 m_tar;
-    CGameLoop           *m_gameloop;
+    virtual bool        TransForm();
 };
 
-#endif // CTFWAITTOMY_H
+
