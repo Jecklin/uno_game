@@ -1,28 +1,25 @@
-#ifndef CSTATE_H
-#define CSTATE_H
+﻿#pragma once
 
 #include "CAbstractState.h"
-#include <list>
+#include <QList>
 
 class CAbstractTransform;
 
 class CState:public CAbstractState
 {
 public:
-    explicit        CState(int state);
-    virtual         ~CState();
-    
-public:
-    virtual int     getCurState() const;
-    virtual int     toNextState();
-    
-public:
-    void            addTransform(CAbstractTransform *transform);
-    void            removeTransform(CAbstractTransform *transform);
+    CState(int state);
+    virtual  ~CState();
+
+    virtual int     GetCurState() const;
+    virtual int     ToNextState();
+
+    void            AddTransform(CAbstractTransform *transform);
+    void            RemoveTransform(CAbstractTransform *transform);
     
 private:
     int                             m_state;
-    std::list<CAbstractTransform*>  m_transforms;
+    QList<CAbstractTransform*>      m_transforms;
 };
 
-#endif // CSTATE_H
+

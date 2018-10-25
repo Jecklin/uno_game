@@ -1,4 +1,4 @@
-#include "CState.h"
+﻿#include "CState.h"
 #include "CAbstractTransform.h"
 
 CState::CState(int state)
@@ -10,67 +10,53 @@ CState::CState(int state)
 
 CState::~CState()
 {
-    std::list<CAbstractTransform*>::iterator iter;
-    do
+    //delete m_transforms
+    while(!this->m_transforms.empty())
     {
-        if (this->m_transforms.empty())
-        {
-            break;
-        }
-        else
-        {
-            iter = this->m_transforms.begin();
-            m_transforms.erase(iter);
-        }
-        
-    }while(true);
+        this->m_transforms.erase(this->m_transforms.begin());
+    }
 }
 
-int CState::getCurState() const
+int CState::GetCurState() const
 {
     return this->m_state;
 }
 
-int CState::toNextState()
+int CState::ToNextState()
 {
-    int return_state = this->m_state;
-    std::list<CAbstractTransform*>::iterator iter;
-    for (iter = this->m_transforms.begin(); iter != this->m_transforms.end(); ++iter)
+    int result = this->m_state;
+    QList<CAbstractTransform*>::const_iterator iter = this->m_transforms.begin();
+    
+    for (iter; iter != this->m_transforms.end(); ++iter)
     {
-        CAbstractTransform *ptran = *iter;
-        if (ptran->transForm())
+        CAbstractTransform *transform = *iter;
+        if (transform->TransForm())
         {
-            return_state = ptran->tarState();
+            result = transform->TarState();
             break;
         }
-        else
-        {
-            ;
-        }
-        
     }
-    return return_state;
-    
+
+    return result;
+        
 }
 
-void CState::addTransform(CAbstractTransform *transform)
+void CState::AddTransform(CAbstractTransform *transform)
 {
     this->m_transforms.push_back(transform);
 }
 
-void CState::removeTransform(CAbstractTransform *transform)
+void CState::RemoveTransform(CAbstractTransform *transform)
 {
-    std::list<CAbstractTransform*>::iterator iter;
-    for (iter = this->m_transforms.begin(); iter != this->m_transforms.end(); ++iter)
+    QList<CAbstractTransform*>::Iterator iter = this->m_transforms.begin();
+    
+    for (iter; iter != this->m_transforms.end(); ++iter)
     {
-        CAbstractTransform *ptran = *iter;
-        if (ptran == transform)
+        CAbstractTransform *findTransform = *iter;
+        if (findTransform == transform)
         {
             this->m_transforms.erase(iter);
+            break;
         }
-        else
-        {
-            ;
-        }   
     }
 }

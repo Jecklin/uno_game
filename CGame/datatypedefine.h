@@ -1,5 +1,4 @@
-#ifndef DATATYPEDEFINE_H
-#define DATATYPEDEFINE_H
+﻿#pragma once
 enum ECardAction
 {
     ECA_Invalid     =   -1,
@@ -57,4 +56,3 @@ enum EGameState
     State_End           ,
     State_Error  
 };
-#endif // DATATYPEDEFINE_H

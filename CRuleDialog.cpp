@@ -1,4 +1,4 @@
-#include "CRuleDialog.h"
+﻿#include "CRuleDialog.h"
 #include "ui_CRuleDialog.h"
 
 CRuleDialog::CRuleDialog(QWidget *parent) :

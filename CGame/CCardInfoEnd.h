@@ -1,5 +1,4 @@
-#ifndef CCARDINFOEND_H
-#define CCARDINFOEND_H
+﻿#pragma once
 
 #include "CCardInfo.h"
 
@@ -10,9 +9,9 @@ public:
     ~CCardInfoEnd();
 
 public:
-    void setColor(const ECardColor color);
-    void setCard(const CCardInfo &card);
+    void SetColor(const ECardColor color);
+    void SetCard(const CCardInfo &card);
     
 };
 
-#endif // CCARDINFOEND_H
+

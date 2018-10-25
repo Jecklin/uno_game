@@ -1,45 +1,18 @@
-#include "CTFWaitToMy.h"
+﻿#include "CTFWaitToMy.h"
 
-CTFWaitToMy::CTFWaitToMy(CGameLoop *gameloop)
-    :m_src(State_Wait)
-    ,m_tar(State_My)
-    ,m_gameloop(gameloop)
+CTFWaitToMy::CTFWaitToMy(CJudge *judge):CAbstractTransform(judge)
 {
+    this->m_src = State_Wait;
+    this->m_tar = State_My;
+}
+
+bool CTFWaitToMy::TransForm()
+{
+    bool result = false;
     
-}
-
-CTFWaitToMy::~CTFWaitToMy()
-{
-    if (this->m_gameloop == nullptr)
+    if (this->m_judge->GetCurStation() == 0)
     {
-        ;
+        result = true;
     }
-    else
-    {
-        this->m_gameloop = nullptr;
-    }
-}
-
-bool CTFWaitToMy::transForm()
-{
-    bool is_ok = false;
-    if (this->m_gameloop->myRound())
-    {
-        is_ok = true;
-    }
-    else
-    {
-        ;
-    }
-    return is_ok;
-}
-
-int CTFWaitToMy::srcState() const
-{
-    return this->m_src;
-}
-
-int CTFWaitToMy::tarState() const
-{
-    return this->m_tar;
+    return result;
 }

@@ -1,45 +1,19 @@
-#include "CTFWaitToOther.h"
+﻿#include "CTFWaitToOther.h"
 
-CTFWaitToOther::CTFWaitToOther(CGameLoop *gameloop)
-    :m_src(State_Wait)
-    ,m_tar(State_Other)
-    ,m_gameloop(gameloop)
+CTFWaitToOther::CTFWaitToOther(CJudge *judge):CAbstractTransform(judge)
 {
+    this->m_src = State_Wait;
+    this->m_tar = State_Other;
+}
+
+bool CTFWaitToOther::TransForm()
+{
+    bool result = false;
     
-}
-
-CTFWaitToOther::~CTFWaitToOther()
-{
-    if (this->m_gameloop == nullptr)
+    if (this->m_judge->GetCurStation() != 0)
     {
-        ;
+        result = true;
     }
-    else
-    {
-        this->m_gameloop = nullptr;
-    }
-}
+    return result;
 
-bool CTFWaitToOther::transForm()
-{
-    bool is_ok = false;
-    if (!this->m_gameloop->myRound())
-    {
-        is_ok = true;
-    }
-    else
-    {
-        ;
-    }
-    return is_ok;
-}
-
-int CTFWaitToOther::srcState() const
-{
-    return this->m_src;
-}
-
-int CTFWaitToOther::tarState() const
-{
-    return this->m_tar;
 }

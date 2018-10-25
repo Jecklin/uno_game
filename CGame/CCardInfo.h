@@ -1,8 +1,6 @@
-#ifndef CCARDINFO_H
-#define CCARDINFO_H
+﻿#pragma once
 
 #include "datatypedefine.h"
-#include <QString>
 
 class CCardInfo
 {
@@ -15,29 +13,16 @@ public:
 
     CCardInfo& operator =   (const CCardInfo &other);
     bool       operator ==  (const CCardInfo &other) const;
+    bool       operator !=  (const CCardInfo &other) const;
 
 public:
-    ECardColor   getColor()  const;
-    ECardId      getId()     const;
-    ECardAction  getAction() const;
+    ECardColor   GetColor()  const;
+    ECardId      GetId()     const;
+    ECardAction  GetAction() const;
     
-    bool         isFunctionCard();
-    bool         isSameColor(const CCardInfo &card);
-    bool         isSameId(const CCardInfo &card);
-    bool         isSimilarColor(const CCardInfo &card);
-    
-    static QString      toString(ECardColor color);
-    static QString      toString(ECardId id);
-    static QString      toString(ECardAction action);
-    
-    static ECardColor   toColor(QString color);
-    static ECardId      toID(QString id);
-    static ECardAction  toAction(QString action);
-
 protected:
     ECardColor   m_color;
     ECardId      m_id;
-    ECardAction  m_action;
+    ECardAction  m_action; 
 };
 
-#endif // CCARDINFO_H

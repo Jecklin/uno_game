@@ -1,6 +1,4 @@
-#ifndef CGAMEOVERDIALOG_H
-#define CGAMEOVERDIALOG_H
-
+﻿#pragma once
 #include <QDialog>
 #include <QtSql/QSqlDatabase>
 #include <QtSql/QSqlQuery>
@@ -35,4 +33,3 @@ private:
 };
 
 
-#endif // CGAMEOVERDIALOG_H

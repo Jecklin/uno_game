@@ -1,44 +1,27 @@
-#include "CTFSubToWait.h"
+﻿#include "CTFSubToWait.h"
 
-CTFSubToWait::CTFSubToWait(CGameLoop *gameloop)
-    :m_src(State_Sub)
-    ,m_tar(State_Wait)
-    ,m_gameloop(gameloop)
+CTFSubToWait::CTFSubToWait(CJudge *judge):CAbstractTransform(judge)
 {
-    
+    this->m_src = State_Sub;
+    this->m_tar = State_Wait;
 }
 
-CTFSubToWait::~CTFSubToWait()
-{
-    if (this->m_gameloop == nullptr)
-    {
-        ;
-    }
-    else
-    {
-        this->m_gameloop = nullptr;
-    }
-}
 
-bool CTFSubToWait::transForm()
+bool CTFSubToWait::TransForm()
 {    
-    bool is_ok = false;
-    if (!m_gameloop->curPlayerEmpty())
+    bool result = false;
+    if (!this->m_judge->CurPlayerEmpty())
     {
-        is_ok = true;
-        this->m_gameloop->doPunish();
-        this->m_gameloop->curToNext();
+        result = true;
+        if (this->m_judge->EndCardIsBlack())
+        {
+            this->m_judge->CurPlayerChangeColor();
+            
+        }
+        
+        this->m_judge->ToNext();
+        this->m_judge->Punish();
     }
+    return result;
 
-    return is_ok;
-}
-
-int CTFSubToWait::srcState() const
-{
-    return this->m_src;
-}
-
-int CTFSubToWait::tarState() const
-{
-    return this->m_tar;
 }

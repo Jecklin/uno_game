@@ -1,22 +1,11 @@
-#ifndef CTFMYTOSUB_H
-#define CTFMYTOSUB_H
+﻿#pragma once
 
 #include "CAbstractTransform.h"
 
 class CTFMyToSub : public CAbstractTransform
 {
 public:
-    CTFMyToSub(CGameLoop *gameloop = nullptr);
-    ~CTFMyToSub();
+    CTFMyToSub(CJudge *judge);
 
-public:
-    virtual bool        transForm();
-    virtual int         srcState() const;
-    virtual int         tarState() const;
-    
-private:
-    int                 m_src;
-    int                 m_tar;
-    CGameLoop           *m_gameloop;
+    virtual bool        TransForm();
 };
-#endif // CTFMYTOSUB_H

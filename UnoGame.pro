@@ -48,8 +48,11 @@ SOURCES += \
     CGameOverDialog.cpp \
     CGame/CDataBase.cpp \
     CBeginDialog.cpp \
-    CGameRule.cpp \
-    CRuleDialog.cpp
+    CRuleDialog.cpp \
+    CGame/CPlayerAttribute.cpp \
+    CGame/CCardTranslator.cpp \
+    CGame/CJudge.cpp \
+    CGame/CBox.cpp
 
 HEADERS += \
         CWidget.h \
@@ -77,8 +80,11 @@ HEADERS += \
     CGameOverDialog.h \
     CGame/CDataBase.h \
     CBeginDialog.h \
-    CGameRule.h \
-    CRuleDialog.h
+    CRuleDialog.h \
+    CGame/CPlayerAttribute.h \
+    CGame/CCardTranslator.h \
+    CGame/CJudge.h \
+    CGame/CBox.h
 
 FORMS += \
         CWidget.ui \

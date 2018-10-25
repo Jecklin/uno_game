@@ -1,5 +1,4 @@
-#ifndef CBEGINDIALOG_H
-#define CBEGINDIALOG_H
+﻿#pragma once
 
 #include <QDialog>
 
@@ -31,4 +30,3 @@ private:
     Ui::CBeginDialog *ui;
 };
 
-#endif // CBEGINDIALOG_H

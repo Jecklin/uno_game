@@ -1,13 +1,12 @@
-#ifndef CABSTRACTSTATE_H
-#define CABSTRACTSTATE_H
-
-#include <iostream>
+﻿#pragma once
+#include <QList>
 
 class CAbstractState
 {    
 public:
-    virtual int getCurState() const     = 0;
-    virtual int toNextState()           = 0;
+    virtual int GetCurState() const     = 0;
+    virtual int ToNextState()           = 0;
+    
 };
 
-#endif // CABSTRACTSTATE_H
+

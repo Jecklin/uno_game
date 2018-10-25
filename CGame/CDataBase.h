@@ -1,5 +1,4 @@
-#ifndef CDATABASE_H
-#define CDATABASE_H
+﻿#pragma once
 #include <QtSql/QSqlDatabase>
 #include <QtSql/QSqlQuery>
 
@@ -18,7 +17,7 @@ public:
     typedef QList<DbInfo> DbInfos;
     
 public:
-    void            createDb();
+    void            CreateDb();
     void            updateDb(const QString &name, int score);
     int             selectDb(const QString &name);
     
@@ -31,4 +30,4 @@ private:
     DbInfos             *m_infos;
 };
 
-#endif // CDATABASE_H
+

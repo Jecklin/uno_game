@@ -1,22 +1,11 @@
-#ifndef CTFSUBTOEND_H
-#define CTFSUBTOEND_H
-
+﻿#pragma once
 #include "CAbstractTransform.h"
 
 class CTFSubToEnd : public CAbstractTransform
 {
 public:
-    CTFSubToEnd(CGameLoop *gameloop = nullptr);
-    ~CTFSubToEnd();
+    CTFSubToEnd(CJudge *judge);
 
-public:
-    virtual bool        transForm();
-    virtual int         srcState() const;
-    virtual int         tarState() const;
-    
-private:
-    int                 m_src;
-    int                 m_tar;
-    CGameLoop           *m_gameloop;
+    virtual bool        TransForm();
 };
-#endif // CTFSUBTOEND_H
+

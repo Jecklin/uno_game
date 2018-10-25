@@ -6,20 +6,20 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>2000</width>
-    <height>1530</height>
+    <width>1700</width>
+    <height>900</height>
    </rect>
   </property>
   <property name="minimumSize">
    <size>
-    <width>2000</width>
+    <width>1700</width>
     <height>0</height>
    </size>
   </property>
   <property name="maximumSize">
    <size>
-    <width>2000</width>
-    <height>16777215</height>
+    <width>1700</width>
+    <height>900</height>
    </size>
   </property>
   <property name="windowTitle">
@@ -46,13 +46,13 @@
        <property name="minimumSize">
         <size>
          <width>1000</width>
-         <height>300</height>
+         <height>150</height>
         </size>
        </property>
        <property name="maximumSize">
         <size>
          <width>1000</width>
-         <height>300</height>
+         <height>150</height>
         </size>
        </property>
        <property name="title">
@@ -123,13 +123,13 @@
        <property name="minimumSize">
         <size>
          <width>400</width>
-         <height>700</height>
+         <height>400</height>
         </size>
        </property>
        <property name="maximumSize">
         <size>
          <width>400</width>
-         <height>700</height>
+         <height>400</height>
         </size>
        </property>
        <property name="title">
@@ -191,14 +191,14 @@
       <widget class="QGroupBox" name="groupBoxMid">
        <property name="minimumSize">
         <size>
-         <width>700</width>
-         <height>700</height>
+         <width>400</width>
+         <height>400</height>
         </size>
        </property>
        <property name="maximumSize">
         <size>
-         <width>700</width>
-         <height>700</height>
+         <width>400</width>
+         <height>400</height>
         </size>
        </property>
        <property name="title">
@@ -251,7 +251,7 @@
         <item row="1" column="1">
          <layout class="QVBoxLayout" name="verticalLayout_2" stretch="0">
           <property name="spacing">
-           <number>10</number>
+           <number>20</number>
           </property>
           <property name="leftMargin">
            <number>10</number>
@@ -269,14 +269,14 @@
            <widget class="QPushButton" name="EndCardButton">
             <property name="minimumSize">
              <size>
-              <width>100</width>
-              <height>150</height>
+              <width>80</width>
+              <height>80</height>
              </size>
             </property>
             <property name="maximumSize">
              <size>
-              <width>100</width>
-              <height>150</height>
+              <width>80</width>
+              <height>80</height>
              </size>
             </property>
             <property name="layoutDirection">
@@ -290,8 +290,8 @@
             </property>
             <property name="iconSize">
              <size>
-              <width>100</width>
-              <height>150</height>
+              <width>80</width>
+              <height>80</height>
              </size>
             </property>
            </widget>
@@ -413,13 +413,13 @@
        <property name="minimumSize">
         <size>
          <width>400</width>
-         <height>700</height>
+         <height>400</height>
         </size>
        </property>
        <property name="maximumSize">
         <size>
          <width>400</width>
-         <height>700</height>
+         <height>400</height>
         </size>
        </property>
        <property name="title">
@@ -490,13 +490,13 @@
        <property name="minimumSize">
         <size>
          <width>1000</width>
-         <height>500</height>
+         <height>200</height>
         </size>
        </property>
        <property name="maximumSize">
         <size>
          <width>1000</width>
-         <height>500</height>
+         <height>200</height>
         </size>
        </property>
        <property name="title">

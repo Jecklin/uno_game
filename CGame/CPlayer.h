@@ -1,51 +1,56 @@
-#ifndef CPLAYER_H
-#define CPLAYER_H
+﻿#pragma once
 
 #include <QString>
 #include <list>
-#include "CCardInfo.h"
+#include "datatypedefine.h"
+#include "CPlayerAttribute.h"
+#include "CBox.h"
+
+class CCardInfo;
+
+
 
 class CPlayer
 {
 public:
     CPlayer();
+    CPlayer(QString name);
     ~CPlayer();
-    CPlayer(const CPlayer &other);
-    CPlayer& operator =(const CPlayer &other);
+    CPlayer(CPlayer &other);
+    CPlayer& operator =(CPlayer &other);
 
 public:
-    typedef std::list<CCardInfo> CBox;
+    CPlayerAttribute    GetAttribute() const; 
+    void                SetAttribute(const CPlayerAttribute &attribute);
+    
+    CBox&               GetBox();
+    void                SetBox(CBox &box);
+    
+    bool                IsGiveUp();
+    void                SetGiveUp(bool giveup);
+    
+    bool                IsChoiced();
+    void                SetChoiced(bool choice);
+    
+    void                AddCard(const CCardInfo &card);
+    void                RemoveCard(const CCardInfo &card);
+    
+    CCardInfo&          GetOutCard();
+    void                SetOutCard(const CCardInfo &card);
 
-    //Score
-    int             getScore() const;
-    void            setScore(int score);
+    ECardColor          GetMostColor();
+    void                SetChangeColor(ECardColor color);
+    ECardColor          GetChangeColor();
+    
+    
 
-    //Name
-    QString         getName() const;
-    void            setName(const QString &name);
-    
-    //Box
-    void            removeCard(const CCardInfo &card);
-    void            addCard(const CCardInfo &card);
-    int             getBoxSize() const;
-    ECardColor      getChangeColor() const;
-    void            clearBox();
-    
-    //Judge
-    bool            boxAllow(const CCardInfo &end_card);     //Other round
-    bool            cardAllow(const CCardInfo &end_card);    //my round
-    bool            isGiveUp() const;
-    void            changeToGiveUp();
-    
-    //Out card
-    CCardInfo       getOutCard() const;
-    void            setOutCard(const CCardInfo &card);
+
 
 private:
-    int             m_score;
-    QString         m_name;
-    CBox            m_box;
-    bool            m_giveup;
-    CCardInfo       m_outcard;
+    CPlayerAttribute    m_attribute;
+    CBox                m_box;
+    bool                m_giveup;
+    bool                m_choiced;
+    CCardInfo           m_outcard;
+    ECardColor          m_changeColor;
 };
-#endif // CPLAYER_H
